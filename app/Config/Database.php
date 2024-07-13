@@ -3,7 +3,7 @@
 namespace Config;
 
 use CodeIgniter\Database\Config;
-use CodeIgniter\DotEnv\DotEnv;
+use Config\DotEnv;
 
 /**
  * Database Configuration
