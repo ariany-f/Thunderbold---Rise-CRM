@@ -25,30 +25,17 @@ class Database extends Config
 	 */
 	public $defaultGroup = 'default';
 
+	public $host;
+	public $username;
+	public $password;
+	public $database;
+
 	/**
 	 * The default database connection.
 	 *
 	 * @var array
 	 */
-	public $default = [
-		'DSN'      => '',
-		'hostname' => DB_HOST,
-		'username' => DB_USERNAME,
-		'password' => DB_PASSWORD,
-		'database' => DB_DATABASE,
-		'DBDriver' => 'MySQLi',
-		'DBPrefix' => 'rise_',
-		'pConnect' => false,
-		'DBDebug'  => (ENVIRONMENT !== 'production'),
-		'charset'  => 'utf8',
-		'DBCollat' => 'utf8_general_ci',
-		'swapPre'  => '',
-		'encrypt'  => false,
-		'compress' => false,
-		'strictOn' => false,
-		'failover' => [],
-		'port'     => 3306,
-	];
+	public $default;
 
 	/**
 	 * This database connection is used when
@@ -81,6 +68,31 @@ class Database extends Config
 	public function __construct()
 	{
 		parent::__construct();
+
+		$this->host = $_ENV['DB_HOST'];
+		$this->username = $_ENV['DB_USERNAME'];
+		$this->password = $_ENV['DB_PASSWORD'];
+		$this->datebase = $_ENV['DB_DATABASE'];
+
+		$this->default = [
+			'DSN'      => '',
+			'hostname' => $this->host,
+			'username' => $this->username,
+			'password' => $this->password,
+			'database' => $this->datebase,
+			'DBDriver' => 'MySQLi',
+			'DBPrefix' => 'rise_',
+			'pConnect' => false,
+			'DBDebug'  => (ENVIRONMENT !== 'production'),
+			'charset'  => 'utf8',
+			'DBCollat' => 'utf8_general_ci',
+			'swapPre'  => '',
+			'encrypt'  => false,
+			'compress' => false,
+			'strictOn' => false,
+			'failover' => [],
+			'port'     => 3306,
+		];
 
 		// Ensure that we always set the database group to 'tests' if
 		// we are currently running an automated test suite, so that
