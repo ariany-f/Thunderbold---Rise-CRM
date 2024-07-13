@@ -3,7 +3,6 @@
 namespace Config;
 
 use CodeIgniter\Database\Config;
-use CodeIgniter\Config\DotEnv;
 
 /**
  * Database Configuration
@@ -31,7 +30,25 @@ class Database extends Config
 	 *
 	 * @var array
 	 */
-	public $default;
+	public $default = [
+		'DSN'      => '',
+		'hostname' => DB_HOST,
+		'username' => DB_USERNAME,
+		'password' => DB_PASSWORD,
+		'database' => DB_DATABASE,
+		'DBDriver' => 'MySQLi',
+		'DBPrefix' => 'rise_',
+		'pConnect' => false,
+		'DBDebug'  => (ENVIRONMENT !== 'production'),
+		'charset'  => 'utf8',
+		'DBCollat' => 'utf8_general_ci',
+		'swapPre'  => '',
+		'encrypt'  => false,
+		'compress' => false,
+		'strictOn' => false,
+		'failover' => [],
+		'port'     => 3306,
+	];
 
 	/**
 	 * This database connection is used when
@@ -64,31 +81,6 @@ class Database extends Config
 	public function __construct()
 	{
 		parent::__construct();
-
-		// Carrega as variáveis do .env usando o helper DotEnv
-		$dotenv = DotEnv::createImmutable(ROOTPATH);
-		$dotenv->load();
-
-		// Define as configurações padrão usando as variáveis do .env
-		$this->default = [
-			'DSN'      => '',
-			'hostname' => $_ENV['DB_HOST'],
-			'username' => $_ENV['DB_USERNAME'],
-			'password' => $_ENV['DB_PASSWORD'],
-			'database' => $_ENV['DB_DATABASE'],
-			'DBDriver' => 'MySQLi',
-			'DBPrefix' => 'rise_',
-			'pConnect' => false,
-			'DBDebug'  => (ENVIRONMENT !== 'production'),
-			'charset'  => 'utf8',
-			'DBCollat' => 'utf8_general_ci',
-			'swapPre'  => '',
-			'encrypt'  => false,
-			'compress' => false,
-			'strictOn' => false,
-			'failover' => [],
-			'port'     => 3306,
-		];
 
 		// Ensure that we always set the database group to 'tests' if
 		// we are currently running an automated test suite, so that
