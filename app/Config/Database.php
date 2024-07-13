@@ -66,7 +66,7 @@ class Database extends Config
 		parent::__construct();
 
 		// Carrega as variáveis do .env usando o helper DotEnv
-		$dotenv = DotEnv::createMutable(ROOTPATH);
+		$dotenv = DotEnv::createImmutable(ROOTPATH);
 		$dotenv->load();
 
 		// Define as configurações padrão usando as variáveis do .env

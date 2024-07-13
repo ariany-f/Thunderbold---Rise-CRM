@@ -11,6 +11,7 @@
 
 namespace CodeIgniter\Config;
 
+use Dotenv\Dotenv;
 use InvalidArgumentException;
 
 /**
@@ -230,5 +231,19 @@ class DotEnv
                 // switch getenv default to null
                 return $value === false ? null : $value;
         }
+    }
+
+    /**
+     * Creates an immutable instance of the Dotenv class.
+     *
+     * @param string $path
+     * @param string $file
+     * @return Dotenv
+     */
+    public static function createImmutable(string $path, string $file = '.env'): Dotenv
+    {
+        $dotenv = new Dotenv($path, $file);
+        $dotenv->load();
+        return $dotenv;
     }
 }
