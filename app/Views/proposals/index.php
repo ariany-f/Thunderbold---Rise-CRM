@@ -45,7 +45,7 @@
             ],
             printColumns: combineCustomFieldsColumns([0, 1, 3, 5, 6, 7], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([0, 1, 3, 5, 6, 7], '<?php echo $custom_field_headers; ?>'),
-            summation: [{column: 6, dataType: 'currency', currencySymbol: AppHelper.settings.currencySymbol}]
+            summation: [{column: 7, dataType: 'currency', currencySymbol: AppHelper.settings.currencySymbol}]
         });
     };
 
