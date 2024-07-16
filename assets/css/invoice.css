@@ -96,3 +96,10 @@
     size:  auto;   /* auto is the initial value */
     margin: 0mm;  /* this affects the margin in the printer settings */
 }
+
+
+body
+{
+    border: none ;
+    margin: 2.5cm; /* margin you want for the content */
+}
