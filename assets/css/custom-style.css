@@ -79,3 +79,7 @@
 .badge.bg-primary {
     /* background-color: #0EBC5B !important; */
 }
+
+.dashboard-image {
+    max-width: 200px;
+}
