@@ -10,7 +10,7 @@
                 success: function (result) {
                     if (result.success) {
                         document.body.innerHTML = result.print_view; //add proposal's print view to the page
-                        //$("html").css({"overflow": "visible"});
+                        $("html").css({"overflow": "visible"});
 
                         setTimeout(function () {
                             window.print();
