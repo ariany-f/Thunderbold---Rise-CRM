@@ -39,7 +39,7 @@
   padding: 0 !important;
 }
 .ribbon span:before {
-  /* content: "";
+  content: "";
   position: absolute;
   left: 0px;
   top: 100%;
@@ -47,10 +47,10 @@
   border-left: 3px solid #aaa;
   border-right: 3px solid transparent;
   border-bottom: 3px solid transparent;
-  border-top: 3px solid #aaa; */
+  border-top: 3px solid #aaa;
 }
 .ribbon span:after {
-  /* content: "";
+  content: "";
   position: absolute;
   right: 0px;
   top: 100%;
@@ -58,7 +58,7 @@
   border-left: 3px solid transparent;
   border-right: 3px solid #aaa;
   border-bottom: 3px solid transparent;
-  border-top: 3px solid #aaa; */
+  border-top: 3px solid #aaa;
 }
 .invoice-meta {
   font-size: 100% !important;

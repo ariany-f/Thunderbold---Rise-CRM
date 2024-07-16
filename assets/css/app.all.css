@@ -1476,7 +1476,7 @@ img.mfp-img {
 }
 @media print {
   .print-peview {
-    color: #000;
+    color: #fff;
   }
   a[href]:after {
     content: none !important;
