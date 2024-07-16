@@ -52,7 +52,7 @@ $total_after_discount_row = '<tr>
     <?php if ($proposal_total_summary->tax) { ?>
         <tr>
             <td colspan="2" style="text-align: right;"><?php echo $proposal_total_summary->tax_name; ?></td>
-            <td colspan="2" style="text-align: right; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
+            <td colspan="2" style="text-align: right; width: 15%; border: 1px solid #fff; background-color: #f4f4f4;">
                 <?php echo to_currency($proposal_total_summary->tax, $proposal_total_summary->currency_symbol); ?>
             </td>
         </tr>
@@ -60,7 +60,7 @@ $total_after_discount_row = '<tr>
     <?php if ($proposal_total_summary->tax2) { ?>
         <tr>
             <td colspan="2" style="text-align: right;"><?php echo $proposal_total_summary->tax_name2; ?></td>
-            <td colspan="2" style="text-align: right; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
+            <td colspan="2" style="text-align: right; width: 15%; border: 1px solid #fff; background-color: #f4f4f4;">
                 <?php echo to_currency($proposal_total_summary->tax2, $proposal_total_summary->currency_symbol); ?>
             </td>
         </tr>
