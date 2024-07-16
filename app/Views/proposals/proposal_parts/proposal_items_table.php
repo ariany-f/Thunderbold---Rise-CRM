@@ -37,7 +37,7 @@ $total_after_discount_row = '<tr>
     <?php } ?>
     <tr>
         <td colspan="2" style="text-align: right;"><?php echo app_lang("sub_total"); ?></td>
-        <td style="text-align: right; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
+        <td style="text-align: center; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
             <?php echo $proposal_total_summary->proposal_total_quantity; ?>
         </td>
         <td style="text-align: right; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
