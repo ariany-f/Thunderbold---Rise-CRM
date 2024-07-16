@@ -94,12 +94,11 @@
 @page 
 {
     size:  auto;   /* auto is the initial value */
-    margin: 0mm;  /* this affects the margin in the printer settings */
+    margin: 25mm;  /* this affects the margin in the printer settings */
 }
 
 
 body
 {
     border: none;
-    margin: 1cm 1cm 1cm 1cm; /* margin you want for the content */
 }
