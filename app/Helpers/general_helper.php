@@ -2256,7 +2256,7 @@ if (!function_exists('prepare_proposal_view')) {
             $parser_data["PROPOSAL_EXPIRY_DATE"] = format_to_date($proposal_info->valid_until, false);
             $parser_data["PROPOSAL_ITEMS"] = view("proposals/proposal_parts/proposal_items_table", $proposal_data);
             $parser_data["PROPOSAL_NOTE"] = $proposal_info->note;
-            $parser_data["APP_TITLE"] = get_setting("app_title");
+            $parser_data["APP_TITLE"] = '';//get_setting("app_title");
 
             $parser_data["COMPANY_INFO"] = view("proposals/proposal_parts/proposal_from");
 
