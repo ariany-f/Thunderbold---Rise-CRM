@@ -477,7 +477,13 @@ class Projects extends Security_Controller {
         ));
 
         $estimate_id = $this->request->getPost('estimate_id');
-        $status = $this->request->getPost('status');
+        if ($id) {
+            $status = $this->request->getPost('status');
+        }
+        else
+        {
+            $status = 'open';
+        }
         $order_id = $this->request->getPost('order_id');
         $project_type = $this->request->getPost('project_type');
 
@@ -555,6 +561,7 @@ class Projects extends Security_Controller {
 
                 log_notification("project_created", array("project_id" => $save_id));
             }
+            unset($save_id['client_name']);
             echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
