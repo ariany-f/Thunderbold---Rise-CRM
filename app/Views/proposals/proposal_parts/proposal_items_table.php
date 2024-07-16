@@ -36,11 +36,11 @@ $total_after_discount_row = '<tr>
         </tr>
     <?php } ?>
     <tr>
-        <td style="text-align: right;"><?php echo app_lang("sub_total"); ?></td>
+        <td colspan="2" style="text-align: right;"><?php echo app_lang("sub_total"); ?></td>
         <td style="text-align: right; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
             <?php echo $proposal_total_summary->proposal_total_quantity; ?>
         </td>
-        <td colspan="2" style="text-align: right; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
+        <td style="text-align: right; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
             <?php echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?>
         </td>
     </tr>
