@@ -7,7 +7,7 @@
                 echo modal_anchor("", "<i data-feather='edit' class='icon-16'></i> " . app_lang('batch_update'), array("class" => "btn btn-info text-white hide batch-update-btn", "title" => app_lang('batch_update'), "data-post-project_id" => $project_id));
                 echo js_anchor("<i data-feather='check-square' class='icon-16'></i> " . app_lang("cancel_selection"), array("class" => "hide btn btn-default batch-cancel-btn"));
             }
-            if ($can_create_tasks) {
+            if ($can_create_tasks && ($login_user->user_type == "staff" || $is_ticket)) {
                 echo modal_anchor(get_uri("projects/task_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . ($is_ticket ? app_lang('add_multiple_tickets') : app_lang('add_multiple_tasks')), array("class" => "btn btn-default", "title" => ($is_ticket ? app_lang('add_multiple_tickets') : app_lang('add_multiple_tasks')), "data-post-project_id" => $project_id, "data-post-add_type" => "multiple"));
                 echo modal_anchor(get_uri("projects/task_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . ($is_ticket ? app_lang('add_ticket') : app_lang('add_task')), array("class" => "btn btn-success", "title" => ($is_ticket ? app_lang('add_ticket') : app_lang('add_task')), "data-post-project_id" => $project_id));
             }
