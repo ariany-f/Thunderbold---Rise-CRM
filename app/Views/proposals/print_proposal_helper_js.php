@@ -13,7 +13,7 @@
                         //$("html").css({"overflow": "visible"});
 
                         setTimeout(function () {
-                           // window.print();
+                            window.print();
                         }, 200);
                     } else {
                         appAlert.error(result.message);
