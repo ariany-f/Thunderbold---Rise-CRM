@@ -73,22 +73,25 @@
             <!--        </div>-->
             <!--    </div>-->
             <!--</div>-->
-            <div class="form-group">
-                <div class="row">
-                    <label for="milestone_id" class=" col-md-3"><?php echo app_lang('milestone'); ?></label>
-                    <div class="col-md-9" id="dropdown-apploader-section">
-                        <?php
-                        echo form_input(array(
-                            "id" => "milestone_id",
-                            "name" => "milestone_id",
-                            "value" => $model_info->milestone_id,
-                            "class" => "form-control",
-                            "placeholder" => app_lang('milestone')
-                        ));
-                        ?>
+            
+            <?php if ($login_user->user_type === "staff") { ?>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="milestone_id" class=" col-md-3"><?php echo app_lang('milestone'); ?></label>
+                        <div class="col-md-9" id="dropdown-apploader-section">
+                            <?php
+                            echo form_input(array(
+                                "id" => "milestone_id",
+                                "name" => "milestone_id",
+                                "value" => $model_info->milestone_id,
+                                "class" => "form-control",
+                                "placeholder" => app_lang('milestone')
+                            ));
+                            ?>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
 
             <?php if ($show_assign_to_dropdown) { ?>
                 <div class="form-group">
