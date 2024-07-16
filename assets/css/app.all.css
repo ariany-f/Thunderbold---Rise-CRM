@@ -6359,7 +6359,7 @@ input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-s
   background-color: #fff !important;
 }
 .proposal-preview-container {
-  padding: 100px;
+  padding: 2.5cm;
 }
 .proposal-preview-container .note-editor.note-frame, .proposal-preview-container .note-editor.note-airframe {
   border: none;
