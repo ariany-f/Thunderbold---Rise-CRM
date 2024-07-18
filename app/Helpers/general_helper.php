@@ -2253,6 +2253,7 @@ if (!function_exists('prepare_proposal_view')) {
 
             $parser_data["PROPOSAL_ID"] = get_proposal_id($proposal_info->id);
             $parser_data["PROPOSAL_DATE"] = format_to_date($proposal_info->proposal_date, false);
+            $parser_data["PROPOSAL_NAME"] = $proposal_info->name;
             $parser_data["PROPOSAL_EXPIRY_DATE"] = format_to_date($proposal_info->valid_until, false);
             $parser_data["PROPOSAL_ITEMS"] = view("proposals/proposal_parts/proposal_items_table", $proposal_data);
             $parser_data["PROPOSAL_NOTE"] = $proposal_info->note;
@@ -2324,6 +2325,7 @@ if (!function_exists('get_available_proposal_variables')) {
         $variables = array(
             "PROPOSAL_ID",
             "PROPOSAL_DATE",
+            "PROPOSAL_NAME",
             "PROPOSAL_EXPIRY_DATE",
             "PROPOSAL_ITEMS",
             "PROPOSAL_NOTE",
