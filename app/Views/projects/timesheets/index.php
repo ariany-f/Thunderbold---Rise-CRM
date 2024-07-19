@@ -2,8 +2,8 @@
     <ul id="project-timesheet-tabs" data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white title" role="tablist">
         <li class="nav-item title-tab"><h4 class="pl15 pt10 pr15"><?php echo app_lang("timesheets"); ?></h4></li>
 
-        <li class="nav-item"><a class="nav-link" id="timesheet-details-button" role="presentation" href="javascript:;" data-bs-target="#timesheet-details"><?php echo app_lang("details"); ?></a></li>
         <li class="nav-item"><a class="nav-link" role="presentation" href="<?php echo_uri("projects/timesheet_summary/" . $project_id); ?>" data-bs-target="#timesheet-summary"><?php echo app_lang('summary'); ?></a></li>
+        <li class="nav-item"><a class="nav-link" id="timesheet-details-button" role="presentation" href="javascript:;" data-bs-target="#timesheet-details"><?php echo app_lang("details"); ?></a></li>
         <li class="nav-item"><a class="nav-link" role="presentation" href="<?php echo_uri("projects/timesheet_chart/" . $project_id); ?>" data-bs-target="#timesheet-chart"><?php echo app_lang('chart'); ?></a></li>
 
         <div class="tab-title clearfix no-border">

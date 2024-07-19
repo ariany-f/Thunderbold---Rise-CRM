@@ -96,6 +96,24 @@
     </div>
 <?php } ?>
 
+
+<div class="form-group">
+    <div class="row">
+        <label for="company_cnpj" class="<?php echo $label_column; ?>"><?php echo app_lang('company_cnpj'); ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "company_cnpj",
+                "name" => "company_cnpj",
+                "value" => $model_info->company_cnpj ? $model_info->company_cnpj : "",
+                "class" => "form-control",
+                "placeholder" => app_lang('company_cnpj')
+            ));
+            ?>
+
+        </div>
+    </div>
+</div>
 <div class="form-group">
     <div class="row">
         <label for="address" class="<?php echo $label_column; ?>"><?php echo app_lang('address'); ?></label>

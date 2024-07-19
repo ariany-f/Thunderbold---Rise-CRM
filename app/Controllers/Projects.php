@@ -1352,7 +1352,7 @@ class Projects extends Security_Controller {
         foreach ($task_statuses as $status) {
             $status_key = "status_$status->title";
             if (property_exists($data, $status_key)) {
-                $status_columns[] = $data->$status_key;
+                $status_columns[] = "<div class='badge' style='background-color:".$status->color.";'><b style='font-size: 14px;'>" . $data->$status_key . "</b></div>";
             } else {
                 $status_columns[] = 0; // Se não houver dados para o status, adicione 0
             }
@@ -3988,7 +3988,12 @@ class Projects extends Security_Controller {
 
         $result_data = array();
         foreach ($list_data as $data) {
-            $result_data[] = $this->_make_task_row($data, $custom_fields);
+             
+            $options = array("project_id" => $data->project_id, "task_id" => $data->id);
+
+            $timesheet_info = $this->Timesheets_model->count_total_time($options)->timesheet_total;
+            
+            $result_data[] = $this->_make_task_row($data, $custom_fields, $timesheet_info);
         }
 
         $result["data"] = $result_data;
@@ -4057,7 +4062,12 @@ class Projects extends Security_Controller {
 
         $result_data = array();
         foreach ($list_data as $data) {
-            $result_data[] = $this->_make_task_row($data, $custom_fields);
+            
+            $options = array("project_id" => $data->project_id, "task_id" => $data->id);
+
+            $timesheet_info = $this->Timesheets_model->count_total_time($options)->timesheet_total;
+            
+            $result_data[] = $this->_make_task_row($data, $custom_fields, $timesheet_info);
         }
 
         $result["data"] = $result_data;
@@ -4074,12 +4084,16 @@ class Projects extends Security_Controller {
         $data = $this->Tasks_model->get_details($options)->getRow();
         $this->init_project_permission_checker($data->project_id);
 
-        return $this->_make_task_row($data, $custom_fields);
+        $options = array("project_id" => $data->project_id, "task_id" => $id);
+
+        $timesheet_info = $this->Timesheets_model->count_total_time($options)->timesheet_total;
+
+        return $this->_make_task_row($data, $custom_fields, $timesheet_info);
     }
 
     /* prepare a row of task list table */
 
-    private function _make_task_row($data, $custom_fields) {
+    private function _make_task_row($data, $custom_fields, $timesheet_info) {
         $unread_comments_class = "";
         $icon = "";
         if (isset($data->unread) && $data->unread && $data->unread != "0") {
@@ -4155,11 +4169,34 @@ class Projects extends Security_Controller {
         if ($data->status_key_name === "done") {
             $checkbox_class = "checkbox-checked";
         }
+          
+        $status_class = "";
+        
+        if(app_lang($data->status_key_name) == 'Esperando')
+        {
+            $status_class = 'bg-danger';
+        }
+        if(app_lang($data->status_key_name) == 'Em progresso')
+        {
+            $status_class = 'bg-warning';
+        }
+        if(app_lang($data->status_key_name) == 'Qualidade')
+        {
+            $status_class = 'bg-info';
+        }
+        if(app_lang($data->status_key_name) == 'Em Validação')
+        {
+            $status_class = 'bg-purple';
+        }
+        if(app_lang($data->status_key_name) == 'Concluído')
+        {
+            $status_class = 'bg-green';
+        }
 
         if (($this->login_user->user_type == "staff" && can_edit_this_task_status($data->assigned_to)) || ($this->login_user->user_type == "client" && $this->can_edit_tasks())) {
             //show changeable status checkbox and link to team members
             $check_status = js_anchor("<span class='$checkbox_class mr15 float-start'></span>", array('title' => "", "class" => "js-task", "data-id" => $data->id, "data-value" => $data->status_key_name === "done" ? "1" : "3", "data-act" => "update-task-status-checkbox")) . $data->id;
-            $status = js_anchor($data->status_key_name ? app_lang($data->status_key_name) : $data->status_title, array('title' => "", "class" => "", "data-id" => $data->id, "data-value" => $data->status_id, "data-act" => "update-task-status"));
+            $status = js_anchor($data->status_key_name ? app_lang($data->status_key_name) : $data->status_title, array('title' => "", "class" => "badge $status_class", "data-id" => $data->id, "data-value" => $data->status_id, "data-act" => "update-task-status"));
         } else {
             //don't show clickable checkboxes/status to client
             if ($checkbox_class == "checkbox-blank") {
@@ -4243,12 +4280,12 @@ class Projects extends Security_Controller {
             $start_date,
             $data->deadline,
             $deadline_text,
-            $milestone_title,
             $type_ticket,
             $data->project_title,
             $assigned_to,
             $collaborators,
-            $status
+            $status,
+            convert_seconds_to_time_format($timesheet_info)
         );
         foreach ($custom_fields as $field) {
             $cf_id = "cfv_" . $field->id;

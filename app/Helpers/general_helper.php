@@ -2249,13 +2249,29 @@ if (!function_exists('prepare_proposal_view')) {
         if ($proposal_data) {
             $proposal_info = get_array_value($proposal_data, "proposal_info");
 
+            $proposal_items = get_array_value($proposal_data, "proposal_items");
+
             $parser_data = array();
+
+            $total_quantity = 0;
+            $total_amount = 0;
+            $currency_symbol = "";
+            $unit_type = "";
+
+            foreach ($proposal_items as $item) {
+                $total_quantity += $item->quantity + $item->quantity_gp;
+                $total_amount += $item->rate * ($item->quantity + $item->quantity_gp);
+                $currency_symbol = $item->currency_symbol;
+                $unit_type = $item->unit_type;
+            }
 
             $parser_data["PROPOSAL_ID"] = get_proposal_id($proposal_info->id);
             $parser_data["PROPOSAL_DATE"] = format_to_date($proposal_info->proposal_date, false);
             $parser_data["PROPOSAL_NAME"] = $proposal_info->name;
             $parser_data["PROPOSAL_EXPIRY_DATE"] = format_to_date($proposal_info->valid_until, false);
             $parser_data["PROPOSAL_ITEMS"] = view("proposals/proposal_parts/proposal_items_table", $proposal_data);
+            $parser_data["PROPOSAL_TOTAL_QUANTITY"] = $total_quantity . " " . $unit_type;
+            $parser_data["PROPOSAL_TOTAL_AMOUNT"] = to_currency($total_amount, $currency_symbol);
             $parser_data["PROPOSAL_NOTE"] = $proposal_info->note;
             $parser_data["APP_TITLE"] = get_setting("app_title");
 
@@ -2287,6 +2303,7 @@ if (!function_exists('prepare_proposal_view')) {
             $view_data["client_info"] = $client_info;
             $view_data["is_preview"] = true;
             $parser_data["PROPOSAL_TO_INFO"] = view("proposals/proposal_parts/proposal_to", $view_data);
+            $parser_data["PROPOSAL_TO_COMPANY_CNPJ"] = $client_info->company_cnpj;
             $parser_data["PROPOSAL_TO_COMPANY_NAME"] = $client_info->company_name;
             $parser_data["PROPOSAL_TO_ADDRESS"] = $client_info->address;
             $parser_data["PROPOSAL_TO_CITY"] = $client_info->city;
@@ -2340,6 +2357,7 @@ if (!function_exists('get_available_proposal_variables')) {
             /* proposal to info */
             "PROPOSAL_TO_INFO",
             "PROPOSAL_TO_COMPANY_NAME",
+            "PROPOSAL_TO_COMPANY_CNPJ",
             "PROPOSAL_TO_ADDRESS",
             "PROPOSAL_TO_CITY",
             "PROPOSAL_TO_STATE",

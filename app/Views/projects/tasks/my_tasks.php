@@ -101,16 +101,19 @@ foreach ($task_statuses as $status) {
                 {visible: false, searchable: false},
                 {title: '<?php echo app_lang("id") ?>', "class": idColumnClass, order_by: "id"},
                 {title: '<?php echo app_lang("title") ?>', "class": titleColumnClass, order_by: "title"},
+                {visible: false, searchable: false, order_by: "created_date"},
+                {title: '<?php echo app_lang("included_date") ?>', "iDataSort": 3, visible: showOption, order_by: "created_date"},
                 {visible: false, searchable: false, order_by: "start_date"},
                 {title: '<?php echo app_lang("start_date") ?>', "iDataSort": 3, visible: showOption, order_by: "start_date"},
                 {visible: false, searchable: false, order_by: "deadline"},
                 {title: '<?php echo app_lang("deadline") ?>', "iDataSort": 5, visible: showOption, order_by: "deadline"},
-                {title: '<?php echo app_lang("milestone") ?>', visible: showOption, order_by: "milestone"},
+                {visible: false, searchable: false, order_by: "deadline"},
                 {title: '<?php echo app_lang("is_ticket") ?>', "class": 'w5p', order_by: "is_ticket"},
                 {title: '<?php echo app_lang("project") ?>', visible: showOption, order_by: "project"},
                 {title: '<?php echo app_lang("assigned_to") ?>', "class": "min-w150", visible: showOption, order_by: "assigned_to"},
                 {title: '<?php echo app_lang("collaborators") ?>', visible: showOption},
-                {title: '<?php echo app_lang("status") ?>', visible: showOption, order_by: "status"}
+                {title: '<?php echo app_lang("status") ?>', visible: showOption, order_by: "status"},
+                {title: '<?php echo app_lang("timesheet_total") ?>', visible: showOption, order_by: "timesheet_total"}
                 <?php echo $custom_field_headers; ?>,
                 {visible: false, searchable: false}
             ],

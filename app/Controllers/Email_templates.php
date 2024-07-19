@@ -49,9 +49,9 @@ class Email_templates extends Security_Controller {
                 "contract_rejected" => array("CONTRACT_ID", "CONTRACT_URL", "PROJECT_TITLE", "SIGNATURE", "LOGO_URL", "RECIPIENTS_EMAIL_ADDRESS", "PUBLIC_CONTRACT_URL"),
             ),
             "proposal" => array(
-                "proposal_sent" => array("CONTACT_FIRST_NAME", "CONTACT_LAST_NAME", "PROPOSAL_ID", "PROPOSAL_URL", "PUBLIC_PROPOSAL_URL", "SIGNATURE", "LOGO_URL", "RECIPIENTS_EMAIL_ADDRESS"),
-                "proposal_accepted" => array("PROPOSAL_ID", "PROPOSAL_URL", "SIGNATURE", "LOGO_URL", "RECIPIENTS_EMAIL_ADDRESS", "PUBLIC_PROPOSAL_URL"),
-                "proposal_rejected" => array("PROPOSAL_ID", "PROPOSAL_URL", "SIGNATURE", "LOGO_URL", "RECIPIENTS_EMAIL_ADDRESS", "PUBLIC_PROPOSAL_URL"),
+                "proposal_sent" => array("CONTACT_FIRST_NAME", "CONTACT_LAST_NAME", "PROPOSAL_ID", "PROPOSAL_NAME", "PROPOSAL_URL", "PUBLIC_PROPOSAL_URL", "SIGNATURE", "LOGO_URL", "RECIPIENTS_EMAIL_ADDRESS"),
+                "proposal_accepted" => array("PROPOSAL_ID", "PROPOSAL_NAME", "PROPOSAL_URL", "SIGNATURE", "LOGO_URL", "RECIPIENTS_EMAIL_ADDRESS", "PUBLIC_PROPOSAL_URL"),
+                "proposal_rejected" => array("PROPOSAL_ID", "PROPOSAL_NAME", "PROPOSAL_URL", "SIGNATURE", "LOGO_URL", "RECIPIENTS_EMAIL_ADDRESS", "PUBLIC_PROPOSAL_URL"),
             ),
             "order" => array(
                 "new_order_received" => array("ORDER_ID", "CONTACT_FIRST_NAME", "CONTACT_LAST_NAME", "SIGNATURE", "ORDER_URL", "LOGO_URL", "RECIPIENTS_EMAIL_ADDRESS"),

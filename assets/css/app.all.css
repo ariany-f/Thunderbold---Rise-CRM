@@ -3984,6 +3984,12 @@ i.online {
 .bg-coral {
   background-color: #FD397A;
 }
+.bg-green {
+  background-color: #00B393;
+}
+.bg-purple {
+  background-color: #ad159e;
+}
 .bg-orange {
   background-color: #FFB822;
 }

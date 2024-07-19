@@ -73,26 +73,24 @@
             <!--        </div>-->
             <!--    </div>-->
             <!--</div>-->
-            
             <?php if ($login_user->user_type === "staff") { ?>
-                <div class="form-group">
-                    <div class="row">
-                        <label for="milestone_id" class=" col-md-3"><?php echo app_lang('milestone'); ?></label>
-                        <div class="col-md-9" id="dropdown-apploader-section">
-                            <?php
-                            echo form_input(array(
-                                "id" => "milestone_id",
-                                "name" => "milestone_id",
-                                "value" => $model_info->milestone_id,
-                                "class" => "form-control",
-                                "placeholder" => app_lang('milestone')
-                            ));
-                            ?>
-                        </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="milestone_id" class=" col-md-3"><?php echo app_lang('milestone'); ?></label>
+                    <div class="col-md-9" id="dropdown-apploader-section">
+                        <?php
+                        echo form_input(array(
+                            "id" => "milestone_id",
+                            "name" => "milestone_id",
+                            "value" => $model_info->milestone_id,
+                            "class" => "form-control",
+                            "placeholder" => app_lang('milestone')
+                        ));
+                        ?>
                     </div>
                 </div>
+            </div>
             <?php } ?>
-
             <?php if ($show_assign_to_dropdown) { ?>
                 <div class="form-group">
                     <div class="row">
@@ -180,23 +178,23 @@
             <!--        </div>-->
             <!--    </div>-->
             <!--</div>-->
-            <!--<div class="form-group">-->
-            <!--    <div class="row">-->
-            <!--        <label for="start_date" class=" col-md-3"><?php echo app_lang('start_date'); ?></label>-->
-            <!--        <div class=" col-md-9">-->
+            <div class="form-group">
+                <div class="row">
+                    <label for="start_date" class=" col-md-3"><?php echo app_lang('start_date'); ?></label>
+                    <div class=" col-md-9">
                         <?php
-                        // echo form_input(array(
-                        //     "id" => "start_date",
-                        //     "name" => "start_date",
-                        //     "autocomplete" => "off",
-                        //     "value" => is_date_exists($model_info->start_date) ? $model_info->start_date : "",
-                        //     "class" => "form-control",
-                        //     "placeholder" => "YYYY-MM-DD"
-                        // ));
+                        echo form_input(array(
+                            "id" => "start_date",
+                            "name" => "start_date",
+                            "autocomplete" => "off",
+                            "value" => is_date_exists($model_info->start_date) ? $model_info->start_date : "",
+                            "class" => "form-control",
+                            "placeholder" => "YYYY-MM-DD"
+                        ));
                         ?>
-            <!--        </div>-->
-            <!--    </div>-->
-            <!--</div>-->
+                    </div>
+                </div>
+            </div>
             <?php if ($login_user->user_type === "staff") { ?>
             <div class="form-group">
                 <div class="row">

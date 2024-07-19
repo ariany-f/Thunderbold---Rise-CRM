@@ -746,6 +746,7 @@ class Proposals extends Security_Controller {
             $email_template = $this->Email_templates_model->get_final_template("proposal_sent");
 
             $parser_data["PROPOSAL_ID"] = $proposal_info->id;
+            $parser_data["PROPOSAL_NAME"] = $proposal_info->name;
             $parser_data["CONTACT_FIRST_NAME"] = $contact_first_name;
             $parser_data["CONTACT_LAST_NAME"] = $contact_last_name;
             $parser_data["PROPOSAL_URL"] = get_uri("proposals/preview/" . $proposal_info->id);
