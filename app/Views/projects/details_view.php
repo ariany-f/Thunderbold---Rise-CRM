@@ -252,6 +252,7 @@ load_js(array(
     RELOAD_PROJECT_VIEW_AFTER_UPDATE = true;
 
     $(document).ready(function () {
+        var reload_onclick = false;
         setTimeout(function () {
             var tab = "<?php echo $tab; ?>";
             if (tab === "comment") {
@@ -269,8 +270,15 @@ load_js(array(
             } else if (tab === "milestones") {
                 $("[data-bs-target='#project-milestones-section']").trigger("click");
             }
+            reload_onclick = true;
         }, 210);
 
+        $("#project-tabs .nav-link").on('click', function() {
+            if(reload_onclick)
+            {
+                location.reload();
+            }
+        })
 
         //open task details modal automatically 
 

@@ -2062,6 +2062,8 @@ class Projects extends Security_Controller {
                 $start_time = convert_time_to_24hours_format($start_time);
                 $end_time = convert_time_to_24hours_format($end_time);
             }
+            
+            $end_time = round_up_time_interval($start_time, $end_time);
 
             //join date with time
             $start_date_time = $this->request->getPost('start_date') . " " . $start_time;
