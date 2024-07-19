@@ -26,7 +26,7 @@
 
         <input type="hidden" name="project_type" value="client_project" />
         <input type="hidden" name="is_ticket" value="1" />
-        <input type="hidden" name="status" value="hold" />
+        <input type="hidden" name="status" value="open" />
 
         <?php if ($client_id) { ?>
             <input type="hidden" name="client_id" value="<?php echo $client_id; ?>" />
