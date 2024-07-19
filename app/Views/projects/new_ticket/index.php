@@ -9,7 +9,7 @@
                         echo modal_anchor(get_uri("labels/modal_form"), "<i data-feather='tag' class='icon-16'></i> " . app_lang('manage_labels'), array("class" => "btn btn-default", "title" => app_lang('manage_labels'), "data-post-type" => "project"));
                     }
 
-                    echo modal_anchor(get_uri("projects/ticket_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_ticket'), array("class" => "btn btn-success", "title" => app_lang('add_ticket')));
+                    echo modal_anchor(get_uri("projects/ticket_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_category_ticket'), array("class" => "btn btn-success", "title" => app_lang('add_category_ticket')));
                 }
                 ?>
             </div>

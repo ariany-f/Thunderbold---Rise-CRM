@@ -481,6 +481,7 @@ $lang["yesterday_at"] = "Ontem às";
 /* tickets */
 
 $lang["add_ticket"] = "Add Chamado";
+$lang["add_category_ticket"] = "Add Categoria de Chamado";
 $lang["ticket"] = "Chamado";
 $lang["tickets"] = "Chamados";
 $lang["ticket_id"] = "ID do Chamado";
