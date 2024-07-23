@@ -119,6 +119,7 @@ foreach ($task_statuses as $status) {
             ],
             printColumns: combineCustomFieldsColumns([1, 2, 4, 6, 7, 8, 9, 10, 12], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([1, 2, 4, 6, 7, 8, 9, 10, 12], '<?php echo $custom_field_headers; ?>'),
+            summation: [{column: 15, dataType: 'time'}, {column: 16, dataType: 'time'}],
             rowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 $('td:eq(0)', nRow).attr("style", "border-left:5px solid " + aData[0] + " !important;");
 
