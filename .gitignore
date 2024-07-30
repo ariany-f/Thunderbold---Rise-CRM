@@ -1,7 +1,9 @@
-writable/logs/*
+writable/*
 app/Config/Database.php
 app/Config/Rise.php
 assets/css/app.all.css
 assets/css/color/d68910.css
 assets/scss/color/d68910.scss
 assets/css/custom-style.css
+.env
+files/system/*
