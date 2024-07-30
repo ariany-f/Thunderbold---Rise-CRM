@@ -63,6 +63,7 @@
                 </div>
             </div>
         </div>
+        <?php if ($login_user->user_type == "staff") { ?>
         <div class="form-group">
             <div class="row">
                 <label for="start_date" class=" col-md-3"><?php echo app_lang('start_date'); ?></label>
@@ -80,6 +81,7 @@
                 </div>
             </div>
         </div>
+        <?php } ?>
         <div class="form-group">
             <div class="row">
                 <label for="deadline" class=" col-md-3"><?php echo app_lang('deadline'); ?></label>
