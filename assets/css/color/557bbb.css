@@ -55,6 +55,10 @@
 a {
   color: #41609c;
 }
+
+.text-white a {
+  color: #fff;
+}
 a:hover, a:focus, a:active {
   color: #2e4577;
 }
