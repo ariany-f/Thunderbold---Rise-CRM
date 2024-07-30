@@ -25,10 +25,10 @@
                                 <li role="presentation"><?php echo ajax_anchor(get_uri("proposals/update_proposal_status/" . $proposal_info->id . "/draft"), "<i data-feather='file' class='icon-16'></i> " . app_lang('mark_as_draft'), array("data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
                             <?php } ?>
                         <?php } else if ($proposal_status == "accepted") { ?>
-                            <li role="presentation"><?php echo ajax_anchor(get_uri("proposals/update_proposal_status/" . $proposal_info->id . "/draft"), "<i data-feather='file' class='icon-16'></i> " . app_lang('mark_as_draft'), array("data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
+                             <li role="presentation"><?php echo ajax_anchor(get_uri("proposals/update_proposal_status/" . $proposal_info->id . "/draft"), "<i data-feather='file' class='icon-16'></i> " . app_lang('mark_as_draft'), array("data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
                             <li role="presentation"><?php echo ajax_anchor(get_uri("proposals/update_proposal_status/" . $proposal_info->id . "/declined"), "<i data-feather='x-circle' class='icon-16'></i> " . app_lang('mark_as_rejected'), array("data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
                         <?php } else if ($proposal_status == "declined") { ?>
-                            <li role="presentation"><?php echo ajax_anchor(get_uri("proposals/update_proposal_status/" . $proposal_info->id . "/draft"), "<i data-feather='file' class='icon-16'></i> " . app_lang('mark_as_draft'), array("data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
+                             <li role="presentation"><?php echo ajax_anchor(get_uri("proposals/update_proposal_status/" . $proposal_info->id . "/draft"), "<i data-feather='file' class='icon-16'></i> " . app_lang('mark_as_draft'), array("data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
                             <li role="presentation"><?php echo ajax_anchor(get_uri("proposals/update_proposal_status/" . $proposal_info->id . "/accepted"), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('mark_as_accepted'), array("data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
                         <?php } ?>
 
