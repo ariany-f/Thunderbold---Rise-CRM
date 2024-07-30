@@ -7,12 +7,12 @@
  */
 if (!function_exists('get_timezone_offset')) {
 
-    function get_timezone_offset($date = "now") {
+   function get_timezone_offset($date = "now") {
         $timeZone = new DateTimeZone(get_setting("timezone"));
         $dateTime = new DateTime($date, $timeZone);
         return $timeZone->getOffset($dateTime);
     }
-
+    
 }
 
 /**
@@ -122,6 +122,7 @@ if (!function_exists('convert_time_to_24hours_format')) {
 
 }
 
+
 /**
  * calculate new end_time by adding a time interval with start time
  * 01:00 AM will be converted as 13:00:00 
@@ -150,6 +151,39 @@ if (!function_exists('round_up_time_interval')) {
 
         // Update $end_time with the new rounded end time
         $end_time = $new_end_datetime->format('H:i:s');
+
+        return $end_time;
+    }
+
+}
+
+
+/**
+ * calculate new end_time by adding a time interval with start time
+ * 01:00 AM will be converted as 13:00:00 
+ * 
+ * @param string $time  required time format = 01:00 AM/PM
+ * @return 24hrs time
+ */
+if (!function_exists('round_up_time_interval')) {
+    function round_up_time_interval($start_time, $end_time) {
+         // Convert times to DateTime objects
+      //  $start_datetime = new DateTime(date('Y-m-d') . $start_time);
+        //$end_datetime = new DateTime(date('Y-m-d') . $end_time);
+    
+        // Calculate the interval in minutes
+       // $interval = $start_datetime->diff($end_datetime);
+        // $interval_minutes = ($interval->h * 60) + $interval->i + ($interval->s / 60);
+    
+        // // Round up to the nearest half-hour
+        // $rounded_minutes = ceil($interval_minutes / 30) * 30;
+    
+        // // Calculate the new end time
+        // $new_end_datetime = clone $start_datetime;
+        // $new_end_datetime->modify("+{$rounded_minutes} minutes");
+    
+        // // Update $end_time with the new rounded end time
+        // $end_time = $new_end_datetime->format('H:i');
 
         return $end_time;
     }

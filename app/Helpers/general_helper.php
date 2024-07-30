@@ -2345,6 +2345,8 @@ if (!function_exists('get_available_proposal_variables')) {
             "PROPOSAL_NAME",
             "PROPOSAL_EXPIRY_DATE",
             "PROPOSAL_ITEMS",
+            "PROPOSAL_TOTAL_QUANTITY",
+            "PROPOSAL_TOTAL_AMOUNT",
             "PROPOSAL_NOTE",
             "APP_TITLE",
             /* company info */
