@@ -8,8 +8,9 @@
                     if ($can_edit_projects) {
                         echo modal_anchor(get_uri("labels/modal_form"), "<i data-feather='tag' class='icon-16'></i> " . app_lang('manage_labels'), array("class" => "btn btn-default", "title" => app_lang('manage_labels'), "data-post-type" => "project"));
                     }
-
+                  
                     echo modal_anchor(get_uri("projects/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_project'), array("class" => "btn btn-success", "title" => app_lang('add_project')));
+                    
                 }
                 ?>
             </div>
