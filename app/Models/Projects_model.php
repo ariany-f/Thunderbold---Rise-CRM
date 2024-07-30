@@ -239,7 +239,7 @@ class Projects_model extends Crud_model {
                 LEFT JOIN $projects_table ON $projects_table.id= $tasks_table.project_id
                 $extra_join
         WHERE $tasks_table.deleted=0 $where $extra_where
-        ORDER BY $milestones_table.title ASC, $tasks_table.start_date DESC";
+        ORDER BY $tasks_table.start_date ASC";
         return $this->db->query($sql)->getResult();
     }
 
