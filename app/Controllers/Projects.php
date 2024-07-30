@@ -460,7 +460,7 @@ class Projects extends Security_Controller {
 
     function save() {
 
-        $id = $this->request->getPost('id');
+         $id = $this->request->getPost('id');
 
         if ($id) {
             if (!$this->can_edit_projects($id)) {
@@ -561,7 +561,10 @@ class Projects extends Security_Controller {
 
                 log_notification("project_created", array("project_id" => $save_id));
             }
-            unset($save_id['client_name']);
+            if(isset($save_id['client_name']))
+            {
+                unset($save_id['client_name']);
+            }
             echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
@@ -2886,14 +2889,30 @@ class Projects extends Security_Controller {
                 }
             }
         }
+        
+        $assigned_to_dropdown = array(array("id" => "", "text" => "- " . app_lang("assigned_to") . " -"));
+        $assigned_to_list = $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id", array("deleted" => 0, "user_type" => "staff"));
+        foreach ($assigned_to_list as $key => $value) {
+
+            if (($status_id || $priority_id) && $type != "my_tasks_overview") {
+                $assigned_to_dropdown[] = array("id" => $key, "text" => $value);
+            } else {
+                if ($key == $this->login_user->id) {
+                    $assigned_to_dropdown[] = array("id" => $key, "text" => $value, "isSelected" => true);
+                } else {
+                    $assigned_to_dropdown[] = array("id" => $key, "text" => $value);
+                }
+            }
+        }
 
         $view_data['tab'] = $tab;
         $view_data['selected_status_id'] = $status_id;
 
         $view_data['team_members_dropdown'] = json_encode($team_members_dropdown);
+        $view_data['assigned_to_dropdown'] = json_encode($assigned_to_dropdown);
         $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("tasks", $this->login_user->is_admin, $this->login_user->user_type);
         $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("tasks", $this->login_user->is_admin, $this->login_user->user_type);
-
+        
         $view_data['task_statuses'] = $this->Task_status_model->get_details()->getResult();
 
         $view_data['projects_dropdown'] = json_encode($projects_dropdown);
@@ -3487,12 +3506,12 @@ class Projects extends Security_Controller {
             if (get_setting("client_can_assign_tasks")) {
                 $data["assigned_to"] = $assigned_to;
             } else if (!$id) { //it's new data to save
-                $data["assigned_to"] = 0;
+                $data["assigned_to"] = 43;
             }
 
             $data["collaborators"] = "";
         } else {
-            $data["assigned_to"] = $assigned_to;
+            $data["assigned_to"] = $assigned_to ?? 43;
             $data["collaborators"] = $collaborators;
         }
 
@@ -3990,7 +4009,7 @@ class Projects extends Security_Controller {
 
         $result_data = array();
         foreach ($list_data as $data) {
-             
+            
             $options = array("project_id" => $data->project_id, "task_id" => $data->id);
 
             $timesheet_info = $this->Timesheets_model->count_total_time($options)->timesheet_total;
@@ -4085,7 +4104,7 @@ class Projects extends Security_Controller {
         $options = array("id" => $id, "custom_fields" => $custom_fields);
         $data = $this->Tasks_model->get_details($options)->getRow();
         $this->init_project_permission_checker($data->project_id);
-
+        
         $options = array("project_id" => $data->project_id, "task_id" => $id);
 
         $timesheet_info = $this->Timesheets_model->count_total_time($options)->timesheet_total;
@@ -4171,7 +4190,7 @@ class Projects extends Security_Controller {
         if ($data->status_key_name === "done") {
             $checkbox_class = "checkbox-checked";
         }
-          
+        
         $status_class = "";
         
         if(app_lang($data->status_key_name) == 'Esperando')
@@ -4194,6 +4213,7 @@ class Projects extends Security_Controller {
         {
             $status_class = 'bg-green';
         }
+        
 
         if (($this->login_user->user_type == "staff" && can_edit_this_task_status($data->assigned_to)) || ($this->login_user->user_type == "client" && $this->can_edit_tasks())) {
             //show changeable status checkbox and link to team members
@@ -4219,7 +4239,12 @@ class Projects extends Security_Controller {
                 $deadline_text = "<span class='text-warning'>" . $deadline_text . "</span> ";
             }
         }
+        
 
+        $start_date_text = "-";
+        if ($data->deadline && is_date_exists($data->start_date)) {
+            $start_date_text = format_to_date($data->start_date, false);
+        }
         
         
         $start_date = "-";
@@ -4280,8 +4305,11 @@ class Projects extends Security_Controller {
             $title,
             $data->created_date,
             $start_date,
+            $data->start_date,
+            $start_date_text,
             $data->deadline,
             $deadline_text,
+            $milestone_title,
             $type_ticket,
             $data->project_title,
             $assigned_to,
