@@ -17,30 +17,30 @@ $total_after_discount_row = '<tr>
 
 <table class="table-responsive" style="width: 100%; color: #444;">            
     <tr style="font-weight: bold; background-color: <?php echo $color; ?>; color: #fff;  ">
-        <th colspan="2" style="width: 65%; border-right: 1px solid #eee;"> <?php echo app_lang("item"); ?> </th>
-        <!--<th style="text-align: right;  width: 20%; border-right: 1px solid #eee;"> <?php //echo app_lang("rate"); ?></th>-->
-        <th style="text-align: center;  width: 10%; border-right: 1px solid #eee;"> <?php echo app_lang("quantity"); ?></th>
+        <th style="width: 65%; border-right: 1px solid #eee;"> <?php echo app_lang("item"); ?> </th>
+        <!--<th style="text-align: right;  width: 20%; border-right: 1px solid #eee;"> <?php echo app_lang("rate"); ?></th>-->
+        <th colspan="2" style="text-align: center;  width: 10%; border-right: 1px solid #eee;"> <?php echo app_lang("quantity"); ?></th>
         <th style="text-align: right;  width: 15%; "> <?php echo app_lang("total"); ?></th>
     </tr>
     <?php
     foreach ($proposal_items as $item) {
         ?>
         <tr style="background-color: #f4f4f4; ">
-            <td colspan="2" style="width: 65%; border: 1px solid #fff; padding: 10px;"><?php echo $item->title; ?>
+            <td style="width: 65%; border: 1px solid #fff; padding: 10px;"><?php echo $item->title; ?>
                 <br />
                 <span style="color: #888; font-size: 90%;"><?php echo nl2br($item->description ? process_images_from_content($item->description) : ""); ?></span>
             </td>
             <!--<td style="text-align: right; width: 20%; border: 1px solid #fff;"> <?php echo to_currency($item->rate, $item->currency_symbol); ?></td>-->
-            <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity + $item->quantity_gp  . " " . $item->unit_type; ?></td>
+            <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity + $item->quantity_gp  . " " . $item->unit_type; ?></td>
             <td style="text-align: right; width: 15%; border: 1px solid #fff;"> <?php echo to_currency($item->total, $item->currency_symbol); ?></td>
         </tr>
     <?php } ?>
     <tr>
-        <td colspan="2" style="text-align: right;"><?php echo app_lang("sub_total"); ?></td>
-        <td style="text-align: center; width: 10%; border: 1px solid #fff; background-color: #f4f4f4;">
-            <?php echo $proposal_total_summary->proposal_sum_total_quantity; ?>
+        <td style="text-align: right;"><?php echo app_lang("sub_total"); ?></td>
+        <td style="text-align: center; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
+            <?php echo $proposal_total_summary->proposal_total_sum_quantity; ?>
         </td>
-        <td style="text-align: right; width: 15%; border: 1px solid #fff; background-color: #f4f4f4;">
+        <td colspan="2" style="text-align: right; width: 15%; border: 1px solid #fff; background-color: #f4f4f4;">
             <?php echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?>
         </td>
     </tr>
@@ -72,7 +72,7 @@ $total_after_discount_row = '<tr>
     ?> 
     <tr>
         <td colspan="2" style="text-align: right;"><?php echo app_lang("total"); ?></td>
-        <td colspan="2" style="text-align: right; width: 20%; background-color: <?php echo $color; ?>; color: #fff;">
+        <td colspan="2" style="text-align: right; width: 15%; background-color: <?php echo $color; ?>; color: #fff;">
             <?php echo to_currency($proposal_total_summary->proposal_total, $proposal_total_summary->currency_symbol); ?>
         </td>
     </tr>
