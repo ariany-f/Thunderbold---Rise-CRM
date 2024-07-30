@@ -272,13 +272,14 @@ load_js(array(
             }
             reload_onclick = true;
         }, 210);
-
+        
         $("#project-tabs .nav-link").on('click', function() {
             if(reload_onclick)
             {
                 location.reload();
             }
         })
+
 
         //open task details modal automatically 
 
