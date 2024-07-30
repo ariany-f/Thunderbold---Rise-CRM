@@ -64,7 +64,7 @@
   font-size: 100% !important;
 }
 .print-invoice .invoice-preview-container {
-  /* border: 1px solid #dadada; */
+  border: 1px solid #dadada;
 }
 .print-invoice .ribbon {
   width: 105px;
