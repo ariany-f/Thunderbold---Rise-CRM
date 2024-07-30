@@ -113,7 +113,7 @@ foreach ($task_statuses as $status) {
                 {title: '<?php echo app_lang("assigned_to") ?>', "class": "min-w150", visible: showOption, order_by: "assigned_to"},
                 {title: '<?php echo app_lang("collaborators") ?>', visible: showOption},
                 {title: '<?php echo app_lang("status") ?>', visible: showOption, order_by: "status"},
-                {title: '<?php echo app_lang("timesheet_total") ?>', visible: showOption, order_by: "timesheet_total"}
+                {title: '<?php echo app_lang("timesheet_total") ?>', 'class': 'text-center', visible: showOption, order_by: "timesheet_total"}
                 <?php echo $custom_field_headers; ?>,
                 {visible: false, searchable: false}
             ],

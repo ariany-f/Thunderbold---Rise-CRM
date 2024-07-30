@@ -92,7 +92,7 @@ foreach ($task_statuses as $status) {
             {title: '<?php echo app_lang("id") ?>', "class": idColumnClass, order_by: "id"},
             {title: '<?php echo app_lang("title") ?>', "class": titleColumnClass, order_by: "title"},
             {visible: false, searchable: false, order_by: "created_date"},
-            {title: '<?php echo app_lang("created_date") ?>', "iDataSort": 3, visible: showResponsiveOption, order_by: "created_date"},
+            {title: '<?php echo app_lang("included_date") ?>', "iDataSort": 3, visible: showResponsiveOption, order_by: "created_date"},
             {visible: false, searchable: false, order_by: "start_date"},
             {title: '<?php echo app_lang("start_date") ?>', "iDataSort": 3, visible: showResponsiveOption, order_by: "start_date"},
             {visible: false, searchable: false, order_by: "deadline"},
@@ -103,12 +103,13 @@ foreach ($task_statuses as $status) {
             {visible: false, searchable: false},
             {visible: false, searchable: false},
             {title: '<?php echo app_lang("status") ?>', visible: showResponsiveOption, order_by: "status"},
-            {title: '<?php echo app_lang("timesheet_total") ?>', visible: showResponsiveOption}
+            {title: '<?php echo app_lang("timesheet_total") ?>', 'class': 'text-center', visible: showResponsiveOption}
 <?php echo $custom_field_headers; ?>,
             {title: '<i data-feather="menu" class="icon-16"></i>', visible: optionVisibility, "class": "text-center option " + optionColumnClass}
             ],
             printColumns: combineCustomFieldsColumns([1, 2, 4, 6, 7, 12], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([1, 2, 4, 6, 7, 12], '<?php echo $custom_field_headers; ?>'),
+            summation: [{column: 15, dataType: 'time'}, {column: 16, dataType: 'time'}],
             rowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             $('td:eq(0)', nRow).attr("style", "border-left:5px solid " + aData[0] + " !important;");
             //add activated sub task filter class
@@ -165,12 +166,13 @@ foreach ($task_statuses as $status) {
             {title: '<?php echo app_lang("assigned_to") ?>', "class": "min-w150", visible: showResponsiveOption, order_by: "assigned_to"},
             {title: '<?php echo app_lang("collaborators") ?>', visible: showResponsiveOption},
             {title: '<?php echo app_lang("status") ?>', visible: showResponsiveOption, order_by: "status"},
-            {title: '<?php echo app_lang("timesheet_total") ?>', visible: showResponsiveOption}
+            {title: '<?php echo app_lang("timesheet_total") ?>', 'class': 'text-center', visible: showResponsiveOption}
             <?php echo $custom_field_headers; ?>,
             {title: '<i data-feather="menu" class="icon-16"></i>', visible: optionVisibility, "class": "text-center option " + optionColumnClass}
             ],
             printColumns: combineCustomFieldsColumns([1, 2, 4, 6, 7, 10, 12], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([1, 2, 4, 6, 7, 10, 12], '<?php echo $custom_field_headers; ?>'),
+            summation: [{column: 15, dataType: 'time'}, {column: 16, dataType: 'time'}],
             rowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             $('td:eq(0)', nRow).attr("style", "border-left:5px solid " + aData[0] + " !important;");
             //add activated sub task filter class

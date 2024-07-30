@@ -125,7 +125,7 @@ class Custom_fields_model extends Crud_model {
 
         $json_string = "";
         foreach ($custom_fields_for_table as $column) {
-            $json_string .= ',' . '{"title":"' . $column->title . '"}';
+            $json_string .= ',' . '{"title":"' . $column->title . '", "class": "text-center"}';
         }
 
         return $json_string;
