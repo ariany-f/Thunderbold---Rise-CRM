@@ -12,7 +12,6 @@ if (!function_exists('get_timezone_offset')) {
         $dateTime = new DateTime($date, $timeZone);
         return $timeZone->getOffset($dateTime);
     }
-    
 }
 
 /**
