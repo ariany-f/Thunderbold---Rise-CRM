@@ -16,6 +16,12 @@
                 </li>
             <?php } ?>
 
+            <?php if ($show_groups_list) { ?>
+                <li class="box-content" id="chat-groups-tab-button">
+                    <a role="presentation"  href="<?php echo_uri("messages/groups_list"); ?>" data-bs-toggle="tab" data-bs-target="#chat-groups-tab"> <i data-feather="group" class="icon-18"></i></a>
+                </li>
+            <?php } ?>
+
             <?php if ($show_clients_list) { ?>
                 <li class="box-content" id="chat-clients-tab-button">
                     <a role="presentation"  href="<?php echo_uri("messages/users_list/client"); ?>" data-bs-toggle="tab" data-bs-target="#chat-clients-tab"><i data-feather="briefcase" class="icon-16"></i></a>
@@ -34,6 +40,7 @@
             <?php echo view("messages/chat/chat_list", array("messages" => $messages)); ?>
         </div>
         <div role="tabpanel" class="tab-pane fade" id="chat-users-tab"></div>
+        <div role="tabpanel" class="tab-pane fade" id="chat-groups-tab"></div>
         <div role="tabpanel" class="tab-pane fade" id="chat-clients-tab"></div>
     </div>
 </div>
