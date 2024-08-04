@@ -1,5 +1,5 @@
-<div class="card bg-white mb15">
-    <div class="card-header text-center">
+<div class="card bg-primary mb15">
+    <div class="card-header bg-primary text-center">
         <?php if (get_setting("show_logo_in_signin_page") === "yes") { ?>
             <img class="p20 mw100p" src="<?php echo get_logo_url(); ?>" />
         <?php } else { ?>
@@ -58,13 +58,13 @@
 
         <?php echo view("signin/re_captcha"); ?>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit"><?php echo app_lang('signin'); ?></button>
+        <button class="w-100 btn btn-lg btn-light" type="submit"><?php echo app_lang('signin'); ?></button>
 
         <?php echo form_close(); ?>
-        <div class="mt5"><?php echo anchor("signin/request_reset_password", app_lang("forgot_password")); ?></div>
+        <div class="mt5 text-white"><?php echo anchor("signin/request_reset_password", app_lang("forgot_password")); ?></div>
 
         <?php if (!get_setting("disable_client_signup")) { ?>
-            <div class="mt20"><?php echo app_lang("you_dont_have_an_account") ?> &nbsp; <?php echo anchor("signup", app_lang("signup")); ?></div>
+            <div class="mt20 text-white"><?php echo app_lang("you_dont_have_an_account") ?> &nbsp; <?php echo anchor("signup", app_lang("signup")); ?></div>
         <?php } ?>
 
         <?php

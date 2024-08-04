@@ -64,7 +64,6 @@ class Messages extends Security_Controller {
     }
 
     /* show inbox */
-
     function inbox($auto_select_index = "") {
         $this->check_message_user_permission();
         $this->check_module_availability("module_message");
@@ -414,6 +413,7 @@ class Messages extends Security_Controller {
     function chat_list() {
         $this->check_message_user_permission();
 
+        $view_data['show_groups_list'] = false;
         $view_data['show_users_list'] = false;
         $view_data['show_clients_list'] = false;
 

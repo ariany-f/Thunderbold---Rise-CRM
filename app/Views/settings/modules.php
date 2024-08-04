@@ -68,6 +68,16 @@
                     </div>
                     <div class="form-group">
                         <div class="row">
+                            <label for="module_message_group" class="col-md-2 col-xs-8 col-sm-4"><?php echo app_lang('message'); ?></label>
+                            <div class="col-md-10 col-xs-4 col-sm-8">
+                                <?php
+                                echo form_checkbox("module_message_group", "1", get_setting("module_message_group") ? true : false, "id='module_message_group' class='form-check-input ml15'");
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
                             <label for="module_chat" class="col-md-2 col-xs-8 col-sm-4"><?php echo app_lang('chat'); ?></label>
                             <div class="col-md-10 col-xs-4 col-sm-8">
                                 <?php
