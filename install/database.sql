@@ -928,6 +928,7 @@ INSERT INTO `settings` (`setting_name`, `setting_value`, `deleted`) VALUES
 ('module_lead', '1', 0),
 ('module_leave', '1', 0),
 ('module_message', '1', 0),
+('module_message_group', '1', 0),
 ('module_chat', '1', 0),
 ('module_note', '1', 0),
 ('module_estimate', '1', 0),
