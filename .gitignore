@@ -1,4 +1,3 @@
-writable/.htaccess
 writable/*
 app/Config/Database.php
 app/Config/Rise.php
