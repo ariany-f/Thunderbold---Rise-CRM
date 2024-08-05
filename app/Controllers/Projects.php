@@ -5111,7 +5111,7 @@ class Projects extends Security_Controller {
             $status_dropdown = array();
 
             foreach ($statuses as $status) {
-                $status_dropdown[] = array("id" => $status->id, "text" => ( $status->key_name ? app_lang($status->key_name) : $status->title));
+                $status_dropdown[] = array("id" => $status->id, "text" => ( $status->key_name ? app_lang($status->key_name) : $status->title), "isChecked" => true);
             }
 
             $view_data['status_dropdown'] = json_encode($status_dropdown);
