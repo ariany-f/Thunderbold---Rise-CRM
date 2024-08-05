@@ -9,3 +9,5 @@ assets/css/custom-style.css
 .env
 files/system/*
 files/profile_images/*
+files/timeline_files/*
+files/project_files/*
