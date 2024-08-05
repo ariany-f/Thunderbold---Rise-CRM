@@ -254,6 +254,8 @@
         $("#task_id").select2({data: <?php echo $tasks_dropdown; ?>});
 
         setDatePicker("#start_date, #end_date, #date");
+        $("#start_time").mask('00:00');
+        $("#end_time").mask('00:00');
         //setTimePicker("#start_time, #end_time");
 
         $('[data-bs-toggle="tooltip"]').tooltip();
