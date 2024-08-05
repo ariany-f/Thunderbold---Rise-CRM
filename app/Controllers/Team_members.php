@@ -456,7 +456,7 @@ class Team_members extends Security_Controller {
 
                 $hide_send_message_button = true;
                 $this->init_permission_checker("message_permission");
-                if ($this->check_access_on_messages_for_this_user() && $this->validate_sending_message($id)) {
+                if ($this->check_access_on_messages_for_this_user() && $this->validate_sending_message($id, 0)) {
                     $hide_send_message_button = false;
                 }
                 $view_data['hide_send_message_button'] = $hide_send_message_button;
