@@ -479,6 +479,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `created_at` datetime NOT NULL,
   `from_user_id` int(11) NOT NULL,
   `to_user_id` int(11) NOT NULL,
+  `to_group_id` int(11) NOT NULL,
   `status` enum('unread','read') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unread',
   `message_id` int(11) NOT NULL DEFAULT '0',
   `deleted` int(1) NOT NULL DEFAULT '0',
