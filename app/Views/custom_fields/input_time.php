@@ -25,6 +25,7 @@ echo form_input(array(
 
 <script type="text/javascript">
     $(document).ready(function () {
-        setTimePicker("#<?php echo "custom_field_" . $field_info->id . $uid; ?>");
+        //setTimePicker("#<?php //echo "custom_field_" . $field_info->id . $uid; ?>");
+        $("#<?php echo "custom_field_" . $field_info->id . $uid; ?>").mask('00:00');
     });
 </script>
