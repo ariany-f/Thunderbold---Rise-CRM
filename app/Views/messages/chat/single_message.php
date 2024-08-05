@@ -18,7 +18,7 @@ if ($reply_info->from_user_id === $login_user->id) {
     <div class="chat-me <?php echo $message_class; ?>">
         <div class="row">
             <div class="col-md-12">
-                <div class="chat-msg js-chat-msg"  data-message_id="<?php echo $reply_info->id; ?>"><?php
+                <div class="chat-msg js-chat-msg" data-message_id="<?php echo $reply_info->id; ?>"><?php
                     echo nl2br(link_it(process_images_from_content($reply_info->message)));
                     if ($download_caption) {
                         echo view("includes/timeline_preview", array("files" => $files, "is_message_row" => true));
@@ -46,6 +46,11 @@ if ($reply_info->from_user_id === $login_user->id) {
                 </div>
                 <div class="chat-msg js-chat-msg"  data-message_id="<?php echo $reply_info->id ?>">
                     <?php
+                    
+                    if ($reply_info->another_user_id !== $login_user->id) {
+                        echo "<small><b>" . $reply_info->user_name. "</b></small><br/>";
+                    } 
+
                     echo nl2br(link_it(process_images_from_content($reply_info->message)));
                     if ($download_caption) {
                         echo view("includes/timeline_preview", array("files" => $files, "is_message_row" => true));

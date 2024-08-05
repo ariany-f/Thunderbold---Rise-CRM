@@ -138,6 +138,10 @@ if (get_setting("module_chat") && $can_chat) {
                 getChatlistOfUser($(this).attr("data-id"), "team_members");
             });
 
+            $('body #js-rise-chat-wrapper').on('click', '.js-message-row-of-groups-tab', function () {
+                getChatListOfGroup($(this).attr("data-id"), 'groups');
+            });
+
             $('body #js-rise-chat-wrapper').on('click', '.js-message-row-of-clients-tab', function () {
                 getChatlistOfUser($(this).attr("data-id"), "clients");
             });
@@ -146,7 +150,7 @@ if (get_setting("module_chat") && $can_chat) {
         });
 
         function getChatlistOfUser(user_id, tab_type) {
-
+            
             setChatIcon("close"); //show close icon
 
             appLoader.show({container: "#js-rise-chat-wrapper", css: "bottom: 40%; right: 35%;"});
@@ -161,8 +165,24 @@ if (get_setting("module_chat") && $can_chat) {
             });
         }
 
-        function loadChatTabs(trigger_from_user_chat) {
+        function getChatListOfGroup(group_id, tab_type) {
+            
+            setChatIcon("close"); //show close icon
 
+            appLoader.show({container: "#js-rise-chat-wrapper", css: "bottom: 40%; right: 35%;"});
+            $.ajax({
+                url: "<?php echo get_uri("messages/get_chatlist_of_group"); ?>",
+                type: "POST",
+                data: {group_id: group_id, tab_type: tab_type},
+                success: function (response) {
+                    $("#js-rise-chat-wrapper").html(response);
+                    appLoader.hide();
+                }
+            });
+        }
+
+
+        function loadChatTabs(trigger_from_user_chat) {
             setChatIcon("close"); //show close icon
 
             setCookie("active_chat_id", "");
@@ -179,6 +199,8 @@ if (get_setting("module_chat") && $can_chat) {
                         $("#chat-inbox-tab-button a").trigger("click");
                     } else if (trigger_from_user_chat === "team_members") {
                         $("#chat-users-tab-button").find("a").trigger("click");
+                    }  else if (trigger_from_user_chat === "groups") {
+                        $("#chat-groups-tab-button").find("a").trigger("click");
                     } else if (trigger_from_user_chat === "clients") {
                         $("#chat-clients-tab-button").find("a").trigger("click");
                     }
@@ -200,6 +222,7 @@ if (get_setting("module_chat") && $can_chat) {
                     message_id: message_id
                 },
                 success: function (response) {
+                    console.log(response);
                     $("#js-rise-chat-wrapper").html(response);
                     appLoader.hide();
                     setCookie("active_chat_id", message_id);
