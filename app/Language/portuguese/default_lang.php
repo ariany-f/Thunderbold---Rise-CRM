@@ -1126,6 +1126,7 @@ $lang["enable_email_notification"] = "Habilitar notificação por e-mail";
 $lang["show_in_estimate"] = "Mostrar na estimativa";
 $lang["mentioned_members"] = "Membros mencionados";
 $lang["all"] = "Todos";
+$lang["message_group"] = "Grupos de Mensagens";
 
 $lang["confirmed"] = "Confirmada";
 $lang["confirm"] = "confirme";
