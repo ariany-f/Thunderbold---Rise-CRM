@@ -66,7 +66,7 @@
                 {title: '<?php echo app_lang("id") ?>', "class": "all w50"},
                 {title: '<?php echo app_lang("title") ?>', "class": "all"},
                 {title: '<?php echo app_lang("client") ?>', "class": "w10p"},
-                {visible: optionVisibility, title: '<?php echo app_lang("price") ?>', "class": "w10p"},
+                {visible: false, searchable: false},
                 {visible: false, searchable: false},
                 {title: '<?php echo app_lang("start_date") ?>', "class": "w10p", "iDataSort": 4},
                 {visible: false, searchable: false},
