@@ -5145,7 +5145,7 @@ class Projects extends Security_Controller {
         );
 
         if (!$status) {
-            $options["exclude_status"] = 3; //don't show completed tasks by default
+           // $options["exclude_status"] = 3; //don't show completed tasks by default
         }
 
         $options["project_id"] = $project_id;
