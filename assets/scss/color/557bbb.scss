@@ -1,6 +1,7 @@
 $white: #FFF;
 $theme-color: #557bbb;
 $theme-color-focus: #41609c;
+$theme-color-success: green;
 $theme-color-dark: #2e4577;
 
 .sidebar-scroll, #timeline .post-content .post-date span {
@@ -87,7 +88,7 @@ $theme-color-dark: #2e4577;
 }
 
 .bg-success {
-    background-color: $theme-color-focus !important;
+    background-color: $theme-color-success !important;
 }
 
 a {
