@@ -13,7 +13,7 @@ class Outlook_imap {
         $this->ci = new App_Controller();
         $this->client_id = get_setting("outlook_imap_client_id");
         $this->client_secret = get_setting('outlook_imap_client_secret');
-        $this->login_url = "https://login.microsoftonline.com/common/oauth2/v2.0";
+        $this->login_url = "https://login.microsoftonline.com/fd964c49-1c31-49a5-9e59-b98a28fb16d1/oauth2/v2.0";
         $this->graph_url = "https://graph.microsoft.com/beta/me/";
         $this->redirect_uri = get_uri("microsoft_api/save_outlook_imap_access_token");
 
