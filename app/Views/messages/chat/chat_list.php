@@ -17,6 +17,10 @@ if ($messages) {
             $status = "unread";
         }
         ?>
+        <?php 
+            if(get_setting('module_message_group') || $message->group_name == "")
+            { 
+        ?>
         <div class='js-message-row message-row <?php echo $status; ?>' data-id='<?php echo $message->id; ?>' data-index='<?php echo $message->id; ?>'>
             <div class="d-flex">
                 <div class='flex-shrink-0'>
@@ -27,14 +31,18 @@ if ($messages) {
                 </div>
                 <div class='w-100 ps-2'>
                     <div class='mb5'>
-                        <strong><?php echo $message->user_name; ?></strong>
-                        <?php echo $message->group_name; ?>
+                        <?php if($message->group_name) { ?>
+                            <strong><?php echo $message->group_name; ?></strong>
+                        <?php } else { ?>
+                            <strong><?php echo $message->user_name; ?></strong>
+                        <?php } ?>
                         <span class='text-off float-end time'><?php echo format_to_relative_time($message->message_time); ?></span>
                     </div>
                     <?php echo $message->subject; ?>
                 </div>
             </div>
         </div>
+        <?php } ?>
 
         <?php
     }

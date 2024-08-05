@@ -523,12 +523,18 @@ class Messages extends Security_Controller {
         if ($message_info->id) {
             //check, where we have to send this message
             $to_user_id = 0;
-            if ($message_info->from_user_id === $this->login_user->id) {
-                $to_user_id = $message_info->to_user_id;
+            $to_group_id = 0;
+            if($message_info->to_group_id)
+            {
                 $to_group_id = $message_info->to_group_id;
-            } else {
-                $to_user_id = $message_info->from_user_id;
-                $to_group_id = $message_info->to_group_id;
+            }
+            else
+            {
+                if ($message_info->from_user_id === $this->login_user->id) {
+                    $to_user_id = $message_info->to_user_id;
+                } else {
+                    $to_user_id = $message_info->from_user_id;
+                }
             }
 
             $this->check_validate_sending_message($to_user_id, $to_group_id);
@@ -541,6 +547,7 @@ class Messages extends Security_Controller {
             $message_data = array(
                 "from_user_id" => $this->login_user->id,
                 "to_user_id" => $to_user_id,
+                "to_group_id" => $to_group_id,
                 "message_id" => $message_id,
                 "subject" => "",
                 "message" => $message,
@@ -556,11 +563,26 @@ class Messages extends Security_Controller {
 
             if ($save_id) {
 
-                //if chat via pusher is enabled, then send message data to pusher
-                if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
-                    send_message_via_pusher($to_user_id, $message_data, $message_id);
+                if($to_group_id !== 0)
+                {
+                    $group_members_info = $this->Message_group_members_model->get_details(array('message_group_id' => $to_group_id));
+                    foreach ($group_members_info->getResult() as $member) {
+                        $pusher_to_user_id = $member->user_id;
+    
+                        if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
+                            send_message_via_pusher($pusher_to_user_id, $message_data, $message_id);
+                        }
+                    }
+    
                 }
-
+                else
+                {
+                    //if chat via pusher is enabled, then send message data to pusher
+                    if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
+                        send_message_via_pusher($to_user_id, $message_data, $message_id);
+                    }
+    
+                }
                 //we'll not send notification, if the user is online
 
                 if ($this->request->getPost("is_user_online") !== "1") {
@@ -867,16 +889,33 @@ class Messages extends Security_Controller {
         if ($message_info->id) {
             //check, where we have to send this message
             $to_user_id = 0;
-            if ($message_info->from_user_id === $this->login_user->id) {
-                $to_user_id = $message_info->to_user_id;
-            } else {
-                $to_user_id = $message_info->from_user_id;
+            $to_group_id = 0;
+            if($message_info->to_group_id)
+            {
+                $to_group_id = $message_info->to_group_id;
+                $group_members_info = $this->Message_group_members_model->get_details(array('message_group_id' => $to_group_id));
+                foreach ($group_members_info->getResult() as $member) {
+                    $pusher_to_user_id = $member->user_id;
+                    $this->check_validate_sending_message($pusher_to_user_id, $to_group_id);
+
+                    if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
+                        send_message_via_pusher($pusher_to_user_id, "", $message_id, "typing");
+                    }
+                }
             }
+            else
+            {
+                if ($message_info->from_user_id === $this->login_user->id) {
+                    $to_user_id = $message_info->to_user_id;
+                } else {
+                    $to_user_id = $message_info->from_user_id;
+                }
 
-            $this->check_validate_sending_message($to_user_id, 0);
-
-            if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
-                send_message_via_pusher($to_user_id, "", $message_id, "typing");
+                $this->check_validate_sending_message($to_user_id, $to_group_id);
+    
+                if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
+                    send_message_via_pusher($to_user_id, "", $message_id, "typing");
+                }
             }
         } else {
             show_404();

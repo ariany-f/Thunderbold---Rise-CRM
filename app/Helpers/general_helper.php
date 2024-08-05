@@ -1827,7 +1827,7 @@ if (!function_exists('send_message_via_pusher')) {
             $data = array(
                 "message" => $message_data
             );
-
+            
             if ($pusher->trigger('user_' . $to_user_id . '_message_id_' . $message_id . '_channel', 'rise-chat-event', $data)) {
                 return true;
             }
@@ -1849,7 +1849,7 @@ if (!function_exists('send_message_via_pusher')) {
                             </div>
                         </div>"
             );
-
+           
             if ($pusher->trigger('user_' . $to_user_id . '_message_id_' . $message_id . '_channel', 'rise-chat-typing-event', $message_data)) {
                 return true;
             }

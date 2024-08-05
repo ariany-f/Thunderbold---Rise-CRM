@@ -1,7 +1,17 @@
 <?php
 
 foreach ($replies as $reply_info) {
-    echo view("messages/chat/single_message", array("reply_info" => $reply_info));
+    if(get_setting('module_message_group'))
+    {
+        echo view("messages/chat/single_message", array("reply_info" => $reply_info));
+    }
+    else
+    {
+        if($reply_info->group_name == "")
+        {
+            echo view("messages/chat/single_message", array("reply_info" => $reply_info));
+        }
+    }
 }
 
 if ($is_online) {

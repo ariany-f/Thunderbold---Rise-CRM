@@ -72,8 +72,9 @@ class Messages_model extends Crud_model {
         LEFT JOIN $users_table AS another_user ON another_user.id=$join_another
         LEFT JOIN $message_groups_table ON $message_groups_table.id=$messages_table.to_group_id
         LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
+        LEFT JOIN $users_table AS group_user ON group_user.id=$message_group_members_table.user_id
         WHERE $messages_table.deleted=0 $where
-        ORDER BY $messages_table.id DESC  LIMIT $offset, $limit) new_message ORDER BY id ASC";
+        GROUP BY $messages_table.id ORDER BY $messages_table.id DESC LIMIT $offset, $limit) new_message ORDER BY id ASC";
 
         $query = $this->db->query($sql);
 
