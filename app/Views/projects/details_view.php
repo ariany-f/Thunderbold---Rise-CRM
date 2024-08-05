@@ -64,7 +64,7 @@ if (!function_exists("make_project_tabs_data")) {
                                     <span title="<?php echo app_lang("canceled"); ?>"><i data-feather="x-circle" class='icon'></i></span>
                                 <?php } ?>
 
-                                <?php echo $project_info->title; ?>
+                                <?php echo "#$project_info->id - $project_info->title"; ?>
 
                                 <?php if (!(get_setting("disable_access_favorite_project_option_for_clients") && $login_user->user_type == "client")) { ?>
                                     <span id="star-mark">
