@@ -27,6 +27,8 @@ class App_Controller extends Controller {
     public $Events_model;
     public $Announcements_model;
     public $Messages_model;
+    public $Message_groups_model;
+    public $Message_group_members_model;
     public $Clients_model;
     public $Projects_model;
     public $Milestones_model;
@@ -131,6 +133,8 @@ class App_Controller extends Controller {
             'Events_model',
             'Announcements_model',
             'Messages_model',
+            'Message_groups_model',
+            'Message_group_members_model',
             'Clients_model',
             'Projects_model',
             'Milestones_model',

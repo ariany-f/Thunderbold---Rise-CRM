@@ -1115,6 +1115,8 @@ $lang["save_and_show"] = "Salvar & Visualizar";
 $lang["total_leave_yearly"] = "Total de Licenças (Anual)";
 
 $lang["new_conversation"] = "Nova conversa";
+$lang["new_group"] = "Novo grupo";
+$lang["no_groups_found"] = "Não há grupos encontrados";
 
 $lang["enable_web_notification"] = "Habilitar notificação web";
 $lang["enable_email_notification"] = "Habilitar notificação por e-mail";
@@ -1124,6 +1126,7 @@ $lang["enable_email_notification"] = "Habilitar notificação por e-mail";
 $lang["show_in_estimate"] = "Mostrar na estimativa";
 $lang["mentioned_members"] = "Membros mencionados";
 $lang["all"] = "Todos";
+$lang["message_group"] = "Grupos de Mensagens";
 
 $lang["confirmed"] = "Confirmada";
 $lang["confirm"] = "confirme";

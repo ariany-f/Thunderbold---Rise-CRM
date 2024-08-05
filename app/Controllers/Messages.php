@@ -10,7 +10,11 @@ class Messages extends Security_Controller {
     }
 
     private function is_my_message($message_info) {
-        if ($message_info->from_user_id == $this->login_user->id || $message_info->to_user_id == $this->login_user->id) {
+        $options = ['user_id' => $this->login_user->id];
+        $groups = $this->Message_groups_model->get_groups_for_messaging($options)->getResult();
+        $groups = json_decode(json_encode($groups), true); //convert to array
+
+        if ($message_info->from_user_id == $this->login_user->id || $message_info->to_user_id == $this->login_user->id || in_array($message_info->to_group_id, array_column($groups, "id"))) {
             return true;
         }
     }
@@ -21,8 +25,8 @@ class Messages extends Security_Controller {
         }
     }
 
-    private function check_validate_sending_message($to_user_id) {
-        if (!$this->validate_sending_message($to_user_id)) {
+    private function check_validate_sending_message($to_user_id, $to_group_id) {
+        if (!$this->validate_sending_message($to_user_id, $to_group_id)) {
             echo json_encode(array("success" => false, 'message' => app_lang("message_sending_error_message")));
             exit;
         }
@@ -33,8 +37,216 @@ class Messages extends Security_Controller {
         app_redirect("messages/inbox");
     }
 
-    /* show new message modal */
+    function message_group_member_modal_form($message_group_id = 0) {
+        
+        if($message_group_id === 0) {
+            $message_group_id = $this->request->getPost('id');
+        }
+        $view_data['model_info'] = $this->Message_groups_model->get_one($message_group_id );
+      
+        $message_group_id = $this->request->getPost('message_group_id') ? $this->request->getPost('message_group_id') : $view_data['model_info']->id;
 
+        $view_data['message_group_id'] = $message_group_id;
+
+        $view_data["view_type"] = $this->request->getPost("view_type") ?? 'groups';
+
+        $add_user_type = $this->request->getPost("add_user_type");
+
+        $users = $this->Message_group_members_model->get_rest_team_members_for_a_group($message_group_id)->getResult();
+        
+        foreach ($users as $user) {
+            $users_dropdown[$user->id] = $user->member_name . " - " . app_lang($user->user_type);
+        }
+
+        $view_data["users_dropdown"] = $users_dropdown;
+        $view_data["add_user_type"] = $add_user_type;
+        //echo '<pre>';print_r($view_data);die;
+        return $this->template->view('messages/group_members/modal_form', $view_data);
+    }
+
+    /* add a message group members  */
+    function save_message_group_member() {
+        $message_group_id = $this->request->getPost('message_group_id');
+
+        $this->validate_submitted_data(array(
+            "user_id.*" => "required"
+        ));
+
+        $user_ids = $this->request->getPost('user_id');
+
+        $save_ids = array();
+        $already_exists = false;
+
+        if ($user_ids) {
+            foreach ($user_ids as $user_id) {
+                if ($user_id) {
+                    $data = array(
+                        "message_group_id" => $message_group_id,
+                        "user_id" => $user_id
+                    );
+
+                    $save_id = $this->Message_group_members_model->save_member($data);
+                    if ($save_id && $save_id != "exists") {
+                        $save_ids[] = $save_id;
+                        log_notification("message_group_member_added", array("message_group_id" => $message_group_id, "to_user_id" => $user_id));
+                    } else if ($save_id === "exists") {
+                        $already_exists = true;
+                    }
+                }
+            }
+        }
+
+
+        if (!count($save_ids) && $already_exists) {
+            //this member already exists.
+            echo json_encode(array("success" => true, 'id' => "exists"));
+        } else if (count($save_ids)) {
+            $project_member_row = array();
+            foreach ($save_ids as $id) {
+                $project_member_row[] = $this->_message_group_member_row_data($id);
+            }
+            echo json_encode(array("success" => true, "data" => $project_member_row, 'id' => $save_id, 'message' => app_lang('record_saved')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
+    
+    private function _message_group_member_row_data($id) {
+        $options = array("id" => $id);
+        $data = $this->Message_group_members_model->get_details($options)->getRow();
+        return $this->_make_message_group_member_row($data);
+    }
+
+    private function _make_message_group_member_row($data) {
+        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image) . "' alt='...'></span> ";
+
+        if ($data->user_type == "staff") {
+            $member = get_team_member_profile_link($data->user_id, $member_image);
+            $member_name = get_team_member_profile_link($data->user_id, $data->member_name, array("class" => "dark strong"));
+        } else {
+            $member = get_client_contact_profile_link($data->user_id, $member_image);
+            $member_name = get_client_contact_profile_link($data->user_id, $data->member_name, array("class" => "dark strong"));
+        }
+
+        $link = "";
+
+        if ($this->can_add_remove_message_group_members()) {
+            $delete_link = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_member'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("projects/delete_project_member"), "data-action" => "delete"));
+
+            if (!$this->can_manage_all_projects() && ($this->login_user->id === $data->user_id)) {
+                $delete_link = "";
+            }
+            $link .= $delete_link;
+        }
+
+        $member = '<div class="d-flex"><div class="p-2 flex-shrink-1">' . $member . '</div><div class="p-2 w-100"><div>' . $member_name . '</div><label class="text-off">' . $data->job_title . '</label></div></div>';
+
+        return array($member, $link);
+    }
+
+    
+    private function can_add_remove_message_group_members() {
+        if ($this->login_user->user_type == "staff") {
+            if ($this->login_user->is_admin) {
+                return true;
+            } else {
+                if (get_array_value($this->login_user->permissions, "show_assigned_tasks_only") !== "1") {
+                    if ($this->can_manage_all_projects()) {
+                        return true;
+                    } else if (get_array_value($this->login_user->permissions, "can_add_remove_message_group_members") == "1") {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    /* return a row of message group list  table */
+
+    private function _group_row_data($id) {
+      
+        $options = array(
+            "id" => $id
+        );
+
+        $data = $this->Message_groups_model->get_details($options)->getRow();
+        return $this->_group_make_row($data);
+    }
+
+      /* prepare a row of project list table */
+
+      private function _group_make_row($data) {
+
+        $optoins = "";
+        if ($this->can_edit_projects($data->id)) {
+            $optoins .= modal_anchor(get_uri("messages/groups_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_project'), "data-post-id" => $data->id));
+        }
+
+        // if ($this->can_delete_projects($data->id)) {
+        //     $optoins .= js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_project'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("messages/delete_group"), "data-action" => "delete-confirmation"));
+        // }
+
+        $row_data = array(
+            $data->group_name,
+        );
+
+        $row_data[] = $optoins;
+
+        return $row_data;
+    }
+    
+    function save_group() {
+
+        $id = $this->request->getPost('id');
+
+       $this->validate_submitted_data(array(
+           "group_name" => "required"
+       ));
+
+      
+       $data = array(
+           "group_name" => $this->request->getPost('group_name')
+       );
+
+       if (!$id) {
+           $data["created_date"] = get_current_utc_time();
+           $data["created_by"] = $this->login_user->id;
+       }
+
+       $data = clean_data($data);
+  
+       $save_id = $this->Message_groups_model->ci_save($data, $id);
+       if ($save_id) {
+           if (!$id) {
+               if ($this->login_user->user_type === "staff") {
+                   //this is a new project and created by team members
+                   //add default project member after project creation
+                   $data = array(
+                       "message_group_id" => $save_id,
+                       "user_id" => $this->login_user->id
+                   );
+                   $this->Message_group_members_model->save_member($data);
+               }
+
+               log_notification("message_group_created", array("message_group_id" => $save_id));
+           }
+
+           echo json_encode(array("success" => true, "data" => $this->_group_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
+       } else {
+           echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+       }
+   }
+
+    function groups_modal_form() {
+        $message_group_id = $this->request->getPost('id');
+
+        $view_data['model_info'] = $this->Projects_model->get_one($message_group_id);
+
+        return $this->template->view('messages/group_modal_form', $view_data);
+    }
+
+    /* show new message modal */
     function modal_form($user_id = 0) {
         validate_numeric_value($user_id);
         $this->check_message_user_permission();
@@ -61,6 +273,18 @@ class Messages extends Security_Controller {
         }
 
         return $this->template->view('messages/modal_form', $view_data);
+    }
+
+    /* show new message modal for group message*/
+    function to_group_modal_form($group_id = 0) {
+        validate_numeric_value($group_id);
+        $this->check_message_user_permission();
+
+        if ($group_id) {
+            $view_data['model_info'] = $this->Message_groups_model->get_one($group_id);
+        }
+
+        return $this->template->view('messages/to_group_modal_form', $view_data);
     }
 
     /* show inbox */
@@ -211,7 +435,7 @@ class Messages extends Security_Controller {
         //team member can send message to any team member
         //client can send messages to only allowed members
 
-        $this->check_validate_sending_message($to_user_id);
+        $this->check_validate_sending_message($to_user_id, 0);
 
         $target_path = get_setting("timeline_file_path");
         $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
@@ -239,6 +463,45 @@ class Messages extends Security_Controller {
         }
     }
 
+    /* send new message to group*/
+
+    function send_message_to_group() {
+    
+        $this->validate_submitted_data(array(
+            "message" => "required",
+            "to_group_id" => "required|numeric"
+        ));
+
+        $to_group_id = $this->request->getPost('to_group_id');
+
+
+        $target_path = get_setting("timeline_file_path");
+        $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
+
+        $message_data = array(
+            "from_user_id" => $this->login_user->id,
+            "to_group_id" => $to_group_id,
+            "subject" => $this->request->getPost('subject'),
+            "message" => $this->request->getPost('message'),
+            "created_at" => get_current_utc_time(),
+            "deleted_by_users" => "",
+        );
+
+        $message_data = clean_data($message_data);
+
+        $message_data["files"] = $files_data; //don't clean serilized data
+
+        $save_id = $this->Messages_model->ci_save($message_data);
+
+        if ($save_id) {
+            log_notification("new_message_sent", array("actual_message_id" => $save_id));
+            echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), "id" => $save_id));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
+
     /* reply to an existing message */
 
     function reply($is_chat = 0) {
@@ -260,13 +523,21 @@ class Messages extends Security_Controller {
         if ($message_info->id) {
             //check, where we have to send this message
             $to_user_id = 0;
-            if ($message_info->from_user_id === $this->login_user->id) {
-                $to_user_id = $message_info->to_user_id;
-            } else {
-                $to_user_id = $message_info->from_user_id;
+            $to_group_id = 0;
+            if($message_info->to_group_id)
+            {
+                $to_group_id = $message_info->to_group_id;
+            }
+            else
+            {
+                if ($message_info->from_user_id === $this->login_user->id) {
+                    $to_user_id = $message_info->to_user_id;
+                } else {
+                    $to_user_id = $message_info->from_user_id;
+                }
             }
 
-            $this->check_validate_sending_message($to_user_id);
+            $this->check_validate_sending_message($to_user_id, $to_group_id);
 
             $target_path = get_setting("timeline_file_path");
             $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
@@ -276,6 +547,7 @@ class Messages extends Security_Controller {
             $message_data = array(
                 "from_user_id" => $this->login_user->id,
                 "to_user_id" => $to_user_id,
+                "to_group_id" => $to_group_id,
                 "message_id" => $message_id,
                 "subject" => "",
                 "message" => $message,
@@ -291,11 +563,26 @@ class Messages extends Security_Controller {
 
             if ($save_id) {
 
-                //if chat via pusher is enabled, then send message data to pusher
-                if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
-                    send_message_via_pusher($to_user_id, $message_data, $message_id);
+                if($to_group_id !== 0)
+                {
+                    $group_members_info = $this->Message_group_members_model->get_details(array('message_group_id' => $to_group_id));
+                    foreach ($group_members_info->getResult() as $member) {
+                        $pusher_to_user_id = $member->user_id;
+    
+                        if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
+                            send_message_via_pusher($pusher_to_user_id, $message_data, $message_id);
+                        }
+                    }
+    
                 }
-
+                else
+                {
+                    //if chat via pusher is enabled, then send message data to pusher
+                    if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
+                        send_message_via_pusher($to_user_id, $message_data, $message_id);
+                    }
+    
+                }
                 //we'll not send notification, if the user is online
 
                 if ($this->request->getPost("is_user_online") !== "1") {
@@ -430,6 +717,10 @@ class Messages extends Security_Controller {
                 //user can send message to team members
                 $view_data['show_users_list'] = true;
             }
+
+             if (get_setting("module_message_group")) {
+                $view_data['show_groups_list'] = true;
+            }
         } else {
             //user is a client contact and can send messages
             if ($client_message_users) {
@@ -462,6 +753,13 @@ class Messages extends Security_Controller {
         $view_data["page_type"] = $page_type;
 
         return $this->template->view("messages/chat/team_members", $view_data);
+    }
+
+    function groups_list() {
+        $options = ['user_id' => $this->login_user->id];
+        $view_data["groups"] = $this->Message_groups_model->get_groups_for_messaging($options)->getResult();
+        $view_data["page_type"] = "groups-tab";
+        return $this->template->view("messages/chat/groups", $view_data);
     }
 
     //load messages in chat view
@@ -520,6 +818,7 @@ class Messages extends Security_Controller {
         $message_id = $this->request->getPost("message_id");
 
         $options = array("id" => $message_id, "user_id" => $this->login_user->id);
+
         $view_data["message_info"] = $this->Messages_model->get_details($options)->row;
 
         if (!$this->is_my_message($view_data["message_info"])) {
@@ -554,6 +853,28 @@ class Messages extends Security_Controller {
         return $this->template->view("messages/chat/get_chatlist_of_user", $view_data);
     }
 
+    function get_chatlist_of_group() {
+
+        $this->check_message_user_permission();
+
+        $this->validate_submitted_data(array(
+            "group_id" => "required|numeric"
+        ));
+
+        $group_id = $this->request->getPost("group_id");
+
+        $options = array("group_id" => $group_id, "login_user_id" => $this->login_user->id);
+        $view_data["messages"] = $this->Messages_model->get_chat_list($options)->getResult();
+
+        $group_info = $this->Message_groups_model->get_one_where(array("id" => $group_id, "deleted" => "0"));
+        $view_data["group_name"] = $group_info->group_name;
+        $view_data["group_id"] = $group_info->id;
+        $view_data["tab_type"] = $this->request->getPost("tab_type");
+
+        return $this->template->view("messages/chat/get_chatlist_of_group", $view_data);
+    }
+
+
     function send_typing_indicator_to_pusher() {
         $message_id = $this->request->getPost("message_id");
         if (!$message_id) {
@@ -568,16 +889,33 @@ class Messages extends Security_Controller {
         if ($message_info->id) {
             //check, where we have to send this message
             $to_user_id = 0;
-            if ($message_info->from_user_id === $this->login_user->id) {
-                $to_user_id = $message_info->to_user_id;
-            } else {
-                $to_user_id = $message_info->from_user_id;
+            $to_group_id = 0;
+            if($message_info->to_group_id)
+            {
+                $to_group_id = $message_info->to_group_id;
+                $group_members_info = $this->Message_group_members_model->get_details(array('message_group_id' => $to_group_id));
+                foreach ($group_members_info->getResult() as $member) {
+                    $pusher_to_user_id = $member->user_id;
+                    $this->check_validate_sending_message($pusher_to_user_id, $to_group_id);
+
+                    if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
+                        send_message_via_pusher($pusher_to_user_id, "", $message_id, "typing");
+                    }
+                }
             }
+            else
+            {
+                if ($message_info->from_user_id === $this->login_user->id) {
+                    $to_user_id = $message_info->to_user_id;
+                } else {
+                    $to_user_id = $message_info->from_user_id;
+                }
 
-            $this->check_validate_sending_message($to_user_id);
-
-            if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
-                send_message_via_pusher($to_user_id, "", $message_id, "typing");
+                $this->check_validate_sending_message($to_user_id, $to_group_id);
+    
+                if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
+                    send_message_via_pusher($to_user_id, "", $message_id, "typing");
+                }
             }
         } else {
             show_404();
