@@ -1115,6 +1115,8 @@ $lang["save_and_show"] = "Salvar & Visualizar";
 $lang["total_leave_yearly"] = "Total de Licenças (Anual)";
 
 $lang["new_conversation"] = "Nova conversa";
+$lang["new_group"] = "Novo grupo";
+$lang["no_groups_found"] = "Não há grupos encontrados";
 
 $lang["enable_web_notification"] = "Habilitar notificação web";
 $lang["enable_email_notification"] = "Habilitar notificação por e-mail";

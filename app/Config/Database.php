@@ -72,14 +72,14 @@ class Database extends Config
 		$this->host = $_ENV['DB_HOST'];
 		$this->username = $_ENV['DB_USERNAME'];
 		$this->password = $_ENV['DB_PASSWORD'];
-		$this->datebase = $_ENV['DB_DATABASE'];
+		$this->database = $_ENV['DB_DATABASE'];
 
 		$this->default = [
 			'DSN'      => '',
 			'hostname' => $this->host,
 			'username' => $this->username,
 			'password' => $this->password,
-			'database' => $this->datebase,
+			'database' => $this->database,
 			'DBDriver' => 'MySQLi',
 			'DBPrefix' => 'rise_',
 			'pConnect' => false,

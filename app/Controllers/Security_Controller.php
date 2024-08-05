@@ -600,11 +600,15 @@ class Security_Controller extends App_Controller {
         }
     }
 
-    protected function validate_sending_message($to_user_id) {
+    protected function validate_sending_message($to_user_id, $to_group_id) {
         $users = $this->Messages_model->get_users_for_messaging($this->get_user_options_for_query())->getResult();
         $users = json_decode(json_encode($users), true); //convert to array
         if (!$this->check_access_on_messages_for_this_user() || !in_array($to_user_id, array_column($users, "id"))) {
-            return false;
+            $groups = $this->Message_groups_model->get_groups_for_messaging()->getResult();
+            $groups = json_decode(json_encode($groups), true); //convert to array
+            if (!$this->check_access_on_messages_for_this_user() || !in_array($to_group_id, array_column($groups, "id"))) {
+                return false;
+            }
         }
 
         //so the sender could send message to the receiver

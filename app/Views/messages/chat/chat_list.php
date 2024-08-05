@@ -28,6 +28,7 @@ if ($messages) {
                 <div class='w-100 ps-2'>
                     <div class='mb5'>
                         <strong><?php echo $message->user_name; ?></strong>
+                        <?php echo $message->group_name; ?>
                         <span class='text-off float-end time'><?php echo format_to_relative_time($message->message_time); ?></span>
                     </div>
                     <?php echo $message->subject; ?>
@@ -52,11 +53,11 @@ if ($messages) {
         //trigger the users/clients list tab if there is no messages
 <?php if (!$messages) { ?>
             setTimeout(function () {
-                if ($("#chat-users-tab-button").length) {
-                    $("#chat-users-tab-button a").trigger("click");
-                } else {
-                    $("#chat-clients-tab-button a").trigger("click");
-                }
+                // if ($("#chat-users-tab-button").length) {
+                //     $("#chat-users-tab-button a").trigger("click");
+                // } else {
+                //     $("#chat-clients-tab-button a").trigger("click");
+                // }
             }, 500);
 <?php } ?>
     });

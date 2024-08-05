@@ -357,7 +357,7 @@ class Projects extends Security_Controller {
     function modal_form() {
         $project_id = $this->request->getPost('id');
         $client_id = $this->request->getPost('client_id');
-
+      
         if ($project_id) {
             if (!$this->can_edit_projects($project_id)) {
                 app_redirect("forbidden");

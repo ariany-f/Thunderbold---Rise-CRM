@@ -25,6 +25,11 @@
             } else {
                 echo $message_info->another_user_name;
             }
+
+            if($message_info->group_name)
+            {
+                echo $message_info->group_name;
+            }
             ?>
         </div>
     </div>

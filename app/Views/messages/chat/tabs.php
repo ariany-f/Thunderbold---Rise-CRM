@@ -18,7 +18,7 @@
 
             <?php if ($show_groups_list) { ?>
                 <li class="box-content" id="chat-groups-tab-button">
-                    <a role="presentation"  href="<?php echo_uri("messages/groups_list"); ?>" data-bs-toggle="tab" data-bs-target="#chat-groups-tab"> <i data-feather="group" class="icon-18"></i></a>
+                    <a role="presentation"  href="<?php echo_uri("messages/groups_list"); ?>" data-bs-toggle="tab" data-bs-target="#chat-groups-tab"> <i data-feather="users" class="icon-18"></i></a>
                 </li>
             <?php } ?>
 
