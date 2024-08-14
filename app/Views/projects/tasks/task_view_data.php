@@ -189,7 +189,7 @@ if ($total_sub_tasks) {
                         </div>
                     <?php } ?>
 
-                    <?php if($login_user->user_type === 'staff') { ?>
+                    <?php if($login_user->user_type === 'staff' && get_setting("module_message_group")) { ?>
                         <div class="col-md-6 mb15">
                             <strong><?php echo app_lang('project') . ": "; ?> </strong> <?php echo anchor(get_uri("projects/view/" . $model_info->project_id), $model_info->project_title); ?>
                         </div>

@@ -484,6 +484,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `message_id` int(11) NOT NULL DEFAULT '0',
   `deleted` int(1) NOT NULL DEFAULT '0',
   `files` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `task_id` int(11) NOT NULL DEFAULT '0',
   `deleted_by_users` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `message_from` (`from_user_id`),
@@ -494,6 +495,9 @@ CREATE TABLE IF NOT EXISTS `messages` (
 CREATE TABLE IF NOT EXISTS `message_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Untitled',
+  `created_by` int(11) NOT NULL DEFAULT '1',
+  `created_date` DATE NOT NULL,
+  `project_id` int(11) NOT NULL DEFAULT '0',
   `deleted` TINYINT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
