@@ -50,6 +50,10 @@ class Proposals_model extends Crud_model {
             - $discount_amount
            )";
 
+        $proposal_quantity_calculation = "(IFNULL(items_table.proposal_quantity_total,0))";
+
+        $proposal_quantity_gp_calculation = "(IFNULL(items_table.proposal_quantity_gp_total,0))";
+
         $status = $this->_get_clean_value($options, "status");
         if ($status) {
             $where .= " AND $proposals_table.status='$status'";
@@ -71,13 +75,13 @@ class Proposals_model extends Crud_model {
 
         $sql = "SELECT $proposals_table.*, $clients_table.currency, $clients_table.currency_symbol, $clients_table.company_name, $clients_table.is_lead,
            CONCAT($users_table.first_name, ' ',$users_table.last_name) AS signer_name, $users_table.email AS signer_email,
-           $proposal_value_calculation AS proposal_value, tax_table.percentage AS tax_percentage, tax_table2.percentage AS tax_percentage2 $select_custom_fieds
+           $proposal_value_calculation AS proposal_value, (IFNULL(items_table.unit_type, '')) AS unit_type, $proposal_quantity_calculation AS proposal_quantity, $proposal_quantity_gp_calculation AS proposal_quantity_gp, tax_table.percentage AS tax_percentage, tax_table2.percentage AS tax_percentage2 $select_custom_fieds
         FROM $proposals_table
         LEFT JOIN $clients_table ON $clients_table.id= $proposals_table.client_id
         LEFT JOIN $users_table ON $users_table.id= $proposals_table.accepted_by
         LEFT JOIN (SELECT $taxes_table.* FROM $taxes_table) AS tax_table ON tax_table.id = $proposals_table.tax_id
         LEFT JOIN (SELECT $taxes_table.* FROM $taxes_table) AS tax_table2 ON tax_table2.id = $proposals_table.tax_id2 
-        LEFT JOIN (SELECT proposal_id, SUM(total) AS proposal_value FROM $proposal_items_table WHERE deleted=0 GROUP BY proposal_id) AS items_table ON items_table.proposal_id = $proposals_table.id 
+        LEFT JOIN (SELECT proposal_id, unit_type, SUM(total) AS proposal_value, SUM(quantity) AS proposal_quantity_total, SUM(quantity_gp) AS proposal_quantity_gp_total FROM $proposal_items_table WHERE deleted=0 GROUP BY proposal_id) AS items_table ON items_table.proposal_id = $proposals_table.id 
         $join_custom_fieds
         WHERE $proposals_table.deleted=0 $where $custom_fields_where";
         return $this->db->query($sql);

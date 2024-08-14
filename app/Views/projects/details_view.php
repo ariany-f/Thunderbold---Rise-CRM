@@ -64,7 +64,15 @@ if (!function_exists("make_project_tabs_data")) {
                                     <span title="<?php echo app_lang("canceled"); ?>"><i data-feather="x-circle" class='icon'></i></span>
                                 <?php } ?>
 
-                                <?php echo $project_info->title; ?>
+                                <?php echo "#$project_info->id - $project_info->title"; ?>
+
+                                <?php if((!empty($message_group)) && $message_group->id) { ?>
+                                    
+                                <?php } else { ?>
+                                    <?php if($login_user->user_type === 'staff' && get_setting("module_message_group")) { ?>
+                                        <?php echo ajax_anchor(get_uri("projects/create_group/" . $project_info->id . ""), "<i data-feather='plus' class='icon-16'></i> " . app_lang('create_group'), array("class" => "btn btn-primary", "id" => "create_group", "title" => app_lang('create_group'), "data-reload-on-success" => "1")); ?>
+                                    <?php } ?>
+                                <?php } ?>
 
                                 <?php if (!(get_setting("disable_access_favorite_project_option_for_clients") && $login_user->user_type == "client")) { ?>
                                     <span id="star-mark">

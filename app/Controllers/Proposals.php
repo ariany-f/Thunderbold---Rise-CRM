@@ -345,6 +345,8 @@ class Proposals extends Security_Controller {
             $data->valid_until,
             format_to_date($data->valid_until, false),
             to_currency($data->proposal_value, $data->currency_symbol),
+            $data->proposal_quantity . ' ' . $data->unit_type,
+            $data->proposal_quantity_gp . ' ' . $data->unit_type,
             $this->_get_proposal_status_label($data),
         );
 
