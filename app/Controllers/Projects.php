@@ -1395,6 +1395,12 @@ class Projects extends Security_Controller {
         $access_info = $this->get_access_info("invoice");
         $view_data["show_invoice_info"] = (get_setting("module_invoice") && $this->can_view_invoices()) ? true : false;
 
+        $options = array(
+            "project_id" => $project_id,
+        );
+
+        $view_data['message_group'] = $this->Message_groups_model->get_one_where($options);
+
         $expense_access_info = $this->get_access_info("expense");
         $view_data["show_expense_info"] = (get_setting("module_expense") && $expense_access_info->access_type == "all") ? true : false;
 
@@ -1908,6 +1914,93 @@ class Projects extends Security_Controller {
             }
         } else {
             echo json_encode(array("success" => true));
+        }
+    }
+
+    function create_group($project_id) {
+        
+        validate_numeric_value($project_id);
+        $this->access_only_team_members();
+
+        $project_data = $this->_get_project_info_data($project_id);
+
+        $project_members = $this->Project_members_model->get_project_members_dropdown_list($project_id)->getResult();   
+       
+        $data = array(
+            "group_name" => $project_data['project_info']->title,
+            'project_id' => $project_id
+        );
+ 
+        $data["created_date"] = get_current_utc_time();
+        $data["created_by"] = $this->login_user->id;
+    
+        $data = clean_data($data);
+   
+        $save_id = $this->Message_groups_model->ci_save($data);
+
+        if ($save_id) {
+
+            $member_ids = array_column($project_members, 'user_id'); // Extrai os IDs dos membros para um array
+
+            // Adiciona membros
+            foreach ($project_members as $member) {
+                $data = array(
+                    "message_group_id" => $save_id,
+                    "user_id" => $member->user_id
+                );
+                $this->Message_group_members_model->save_member($data);
+            }
+
+            // Verifica se o usuário logado está entre os membros
+            if (!in_array($this->login_user->id, $member_ids)) {
+                // Se o usuário logado não estiver na lista, cria um registro para ele
+                $data = array(
+                    "message_group_id" => $save_id,
+                    "user_id" => $this->login_user->id
+                );
+                $this->Message_group_members_model->save_member($data);
+            }
+ 
+            log_notification("message_group_created", array("message_group_id" => $save_id));
+        
+            echo json_encode(array("success" => true, 'id' => $save_id, 'message' => app_lang('record_saved')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
+    function create_conversation($project_id, $task_id, $group_id) {
+        
+        validate_numeric_value($project_id);
+        validate_numeric_value($task_id);
+        $this->access_only_team_members();
+
+        $task_data = $this->Tasks_model->get_one_where(array('id' => $task_id));
+        
+        $target_path = get_setting("timeline_file_path");
+        $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
+
+        $message_data = array(
+            "from_user_id" => $this->login_user->id,
+            "to_group_id" => $group_id,
+            "subject" => $task_data->title,
+            "message" => $task_data->description,
+            "created_at" => get_current_utc_time(),
+            "deleted_by_users" => "",
+            "task_id" => $task_id
+        );
+
+        $message_data = clean_data($message_data);
+
+        $message_data["files"] = $files_data; //don't clean serilized data
+
+        $save_id = $this->Messages_model->ci_save($message_data);
+
+        if ($save_id) {
+            log_notification("new_message_sent", array("actual_message_id" => $save_id));
+            echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), "id" => $save_id));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
     }
 
@@ -3160,8 +3253,20 @@ class Projects extends Security_Controller {
         $view_data = $this->_initialize_all_related_data_of_project($model_info->project_id, $model_info->collaborators, $model_info->labels);
 
         $view_data['show_assign_to_dropdown'] = true;
+
         if ($this->login_user->user_type == "client" && !get_setting("client_can_assign_tasks")) {
             $view_data['show_assign_to_dropdown'] = false;
+        }
+       
+        if($model_info->project_id)
+        {
+            $options = array("project_id" => $model_info->project_id);
+    
+            $view_data['message_group'] = $this->Message_groups_model->get_one_where($options);
+
+            $options = array("task_id" => $model_info->id);
+    
+            $view_data['messages'] = $this->Messages_model->get_one_where($options);
         }
 
         $view_data['can_edit_tasks'] = $this->can_edit_tasks();
@@ -3245,7 +3350,7 @@ class Projects extends Security_Controller {
         $info = $this->Timesheets_model->count_total_time($timesheet_options);
         $view_data["total_task_hours"] = convert_seconds_to_time_format($info->timesheet_total);
         $view_data["show_timesheet_info"] = $this->can_view_timesheet($model_info->project_id);
-
+       
         if ($view_type == "details") {
             return $this->template->rander('projects/tasks/view', $view_data);
         } else {
