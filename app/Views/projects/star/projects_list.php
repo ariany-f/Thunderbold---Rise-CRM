@@ -4,6 +4,10 @@
         foreach ($projects as $project) {
 
             $icon = "grid";
+            if($project->is_ticket)
+            {
+                $icon = "tag";
+            }
             if ($project->status == "completed") {
                 $icon = "check-circle";
             } else if ($project->status == "canceled") {
