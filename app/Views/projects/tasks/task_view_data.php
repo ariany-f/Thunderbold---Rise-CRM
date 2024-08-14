@@ -189,19 +189,26 @@ if ($total_sub_tasks) {
                         </div>
                     <?php } ?>
 
-                    <div class="col-md-6 mb15">
-                        <strong><?php echo app_lang('project') . ": "; ?> </strong> <?php echo anchor(get_uri("projects/view/" . $model_info->project_id), $model_info->project_title); ?>
-                    </div>
+                    <?php if($login_user->user_type === 'staff') { ?>
+                        <div class="col-md-6 mb15">
+                            <strong><?php echo app_lang('project') . ": "; ?> </strong> <?php echo anchor(get_uri("projects/view/" . $model_info->project_id), $model_info->project_title); ?>
+                        </div>
 
-                    <div class="col-md-6 mb15">
-                        <?php if((!empty($message_group)) && $message_group->id) { ?>
-                            <?php if((!empty($messages)) && $messages->id) { ?>
+                        <div class="col-md-6 mb15">
+                            <?php if((!empty($message_group)) && $message_group->id) { ?>
+                                <?php if((!empty($messages)) && $messages->id) { ?>
 
-                            <?php }else{ ?>
-                                <?php echo ajax_anchor(get_uri("projects/create_conversation/" . $model_info->project_id . "/" . $model_info->id . "/" . $message_group->id . ""), "<i data-feather='plus' class='icon-16'></i> " . app_lang('create_conversation'), array("class" => "btn btn-primary", "id" => "create_conversation", "title" => app_lang('create_conversation'), "data-reload-on-success" => "1")); ?>            
-                            <?php } ?>
-                        <?php } ?>   
-                    </div>
+                                <?php }else{ ?>
+                                    <?php echo ajax_anchor(get_uri("projects/create_conversation/" . $model_info->project_id . "/" . $model_info->id . "/" . $message_group->id . ""), "<i data-feather='plus' class='icon-16'></i> " . app_lang('create_conversation'), array("class" => "btn btn-primary", "id" => "create_conversation", "title" => app_lang('create_conversation'), "data-reload-on-success" => "1")); ?>            
+                                <?php } ?>
+                            <?php } ?>   
+                        </div>
+                    <?php } else { ?>
+                        <div class="col-md-12 mb15">
+                            <strong><?php echo app_lang('project') . ": "; ?> </strong> <?php echo anchor(get_uri("projects/view/" . $model_info->project_id), $model_info->project_title); ?>
+                        </div>
+                    <?php } ?>
+                   
 
                     <?php
                     if (count($custom_fields_list)) {
