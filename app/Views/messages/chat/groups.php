@@ -3,7 +3,7 @@
         <?php
         foreach ($groups as $group) {
             ?>
-            <div class="message-row js-message-row-of-<?php echo $page_type; ?>" data-id="<?php echo $group->id; ?>" data-index="1" data-reply="">
+            <div class="message-row js-message-row-of-<?php echo $page_type; ?>" data-id="<?php echo $group->id; ?>" data-index="1" data-reply="" title="<?= ($group->project_id) ? (($group->is_ticket) ? 'Chamados' : 'Projetos') : 'Grupo'?>">
                 <div class="d-flex">
                     <div class="flex-shrink-0">
                         <?php if($group->project_id) { ?>
