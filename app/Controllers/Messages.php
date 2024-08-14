@@ -262,7 +262,7 @@ class Messages extends Security_Controller {
 
                 if ($user->user_type === "client" && $user->company_name) { //user is a client contact
                     if ($this->login_user->user_type == "staff") {
-                        $user_name .= " - " . app_lang("client") . ": " . $user->company_name . "";
+                        $user_name .= " - " . app_lang("member") . ": " . $user->company_name . "";
                     } else {
                         $user_name = app_lang("contact") . ": " . $user_name;
                     }
