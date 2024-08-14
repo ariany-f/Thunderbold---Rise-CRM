@@ -10,7 +10,7 @@
             <?php if ($is_clone) { ?>
                 <input type="hidden" name="is_clone" value="1" />
             <?php } ?>
-            <input type="hidden" name="status_id" value="1" />
+            <input type="hidden" name="status_id" value="<?php echo $model_info->status_id ?? 1?>" />
 
             <div class="form-group">
                 <div class="row">
