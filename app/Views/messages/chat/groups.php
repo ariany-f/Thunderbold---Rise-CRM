@@ -34,7 +34,9 @@
     </div>
 <?php } ?>
 
+<?php if($login_user->user_type === 'staff') { ?>
 <div class='clearfix p10 b-b'>
     <?php echo modal_anchor(get_uri("messages/groups_modal_form/"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("new_group"), array("class" => "btn btn-default col-md-12 col-sm-12 col-xs-12", "title" => app_lang('new_group'))); ?>
 </div>
+<?php } ?>
 
