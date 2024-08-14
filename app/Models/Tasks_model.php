@@ -827,20 +827,24 @@ class Tasks_model extends Crud_model {
         return true;
     }
     
-    function get_next_sort_value($project_id=0, $status_id=1) {
+    function get_next_sort_value($project_id = 0, $status_id = 1) {
         $tasks_table = $this->db->prefixTable('tasks');
-
-        $sql = "SELECT $tasks_table.sort
-        FROM $tasks_table
-        WHERE $tasks_table.deleted=0 AND $tasks_table.project_id = $project_id AND $tasks_table.status_id = $status_id
-        ORDER BY $tasks_table.sort DESC LIMIT 1";
-        
-        $row = $this->db->query($sql)->getRow();
-        
-        if($row){
+    
+        $sql = "SELECT {$tasks_table}.sort
+                FROM {$tasks_table}
+                WHERE {$tasks_table}.deleted = 0 
+                AND {$tasks_table}.project_id = ? 
+                AND {$tasks_table}.status_id = ?
+                ORDER BY {$tasks_table}.sort DESC LIMIT 1";
+    
+        // Usar prepared statements para evitar problemas de SQL injection
+        $query = $this->db->query($sql, [$project_id, $status_id]);
+        $row = $query->getRow();
+    
+        if ($row) {
             return $row->sort + 1;
-        }else{
-            return 1000; //could be any positive value
+        } else {
+            return 1000; // pode ser qualquer valor positivo
         }
     }
     

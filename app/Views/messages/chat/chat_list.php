@@ -19,7 +19,7 @@ if ($messages) {
         ?>
         <?php 
             if(get_setting('module_message_group') || $message->group_name == "")
-            { 
+            {
         ?>
         <div class='js-message-row message-row <?php echo $status; ?>' data-id='<?php echo $message->id; ?>' data-index='<?php echo $message->id; ?>'>
             <div class="d-flex">
