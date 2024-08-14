@@ -107,7 +107,7 @@ class Message_groups_model extends Crud_model {
         FROM $groups_table 
         LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id = $groups_table.id
         LEFT JOIN $projects_table ON $projects_table.id = $groups_table.project_id
-        WHERE $where 
+        WHERE $where AND $users_table.deleted=0
         GROUP BY $groups_table.id ORDER BY $groups_table.id ASC";
 
         return $this->db->query($sql);
