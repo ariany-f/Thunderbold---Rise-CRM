@@ -9,7 +9,7 @@
             if($login_user->user_type === 'staff')
             {
                 echo "<div class='text-right mb15'>";
-                echo ajax_anchor(get_uri("messages/create_task/" . $first_message->id . ""), "<i data-feather='plus' class='icon-16'></i> " . app_lang('convert_task'), array("class" => "btn btn-warning", "id" => "convert_task", "title" => app_lang('convert_task'), "data-reload-on-success" => "1"));
+                echo ajax_anchor(get_uri("messages/create_task/" . $first_message->id . ""), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('convert_task'), array("class" => "btn btn-warning", "id" => "convert_task", "title" => app_lang('create_task'), "data-reload-on-success" => "1"));
                 echo "</div>";
             }
         }

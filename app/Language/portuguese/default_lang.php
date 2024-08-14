@@ -362,6 +362,7 @@ $lang["delete_member"] = "Deletar membro";
 $lang["start_timer"] = "Início";
 $lang["stop_timer"] = "Fim";
 $lang["create_group"] = "Criar Grupo (Chat)";
+$lang["create_task"] = "Criar Tarefa";
 $lang["staff"] = "Usuário do sistema";
 $lang["group_name"] = "Nome do Grupo";
 $lang["create_conversation"] = "Criar Assunto no Grupo";
