@@ -420,6 +420,161 @@ class Messages extends Security_Controller {
         }
     }
 
+    function create_task($message_id)
+    {
+        $message_info = $this->Messages_model->get_one($message_id);
+
+        $other_messages = $this->Messages_model->get_all_where(array("message_id" => $message_id))->getResult();
+
+        $group_id = $message_info->to_group_id;
+
+        $group_info = $this->Message_groups_model->get_one($group_id);
+        
+        $group_members_info = $this->Message_group_members_model->get_all_where(array("message_group_id" => $group_id))->getResult();
+        
+        $member_ids = array_column($group_members_info, 'user_id'); // Extrai os IDs dos membros para um array
+
+        // Passo 2: Converter os IDs em uma string separada por vírgulas
+        $collaborators = implode(',', $member_ids);
+
+        $data = array(
+            "title" => $message_info->subject,
+            "project_id" => $group_info->project_id,
+            "milestone_id" => 0,
+            "parent_task_id" => 0,
+            "collaborators" => $collaborators,
+            "status_id" => 1,
+            "created_date" => get_current_utc_time()
+        );
+
+        //don't get assign to id if login user is client
+        $data["assigned_to"] = 1;
+
+        $data = clean_data($data);
+       
+        $data["sort"] = $this->Tasks_model->get_next_sort_value($group_info->project_id, $data['status_id']);
+        
+        $save_id = $this->Tasks_model->ci_save($data);
+
+        if ($save_id) {
+
+            log_notification("project_task_created", array("project_id" => $group_info->project_id, "task_id" => $save_id));
+
+            $target_path = get_setting("timeline_file_path");
+            $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "project_comment");
+            $data = array(
+                "created_by" => $message_info->from_user_id,
+                "created_at" => get_current_utc_time(),
+                "project_id" => $group_info->project_id,
+                "file_id" => 0,
+                "task_id" => $save_id ? $save_id : 0,
+                "customer_feedback_id" => 0,
+                "comment_id" => 0,
+                "description" => $message_info->message
+            );
+    
+            $data = clean_data($data);
+    
+            $data["files"] = $files_data; //don't clean serilized data
+    
+            $save_comment_id = $this->Project_comments_model->save_comment($data, $save_id);
+            if ($save_comment_id) {
+                $response_data = "";
+                $options = array("id" => $save_comment_id, "login_user_id" => $this->login_user->id);
+    
+    
+                $comment_info = $this->Project_comments_model->get_one($save_comment_id);
+    
+                $notification_options = array("project_id" => $comment_info->project_id, "project_comment_id" => $save_comment_id);
+    
+                if ($comment_info->file_id) { //file comment
+                    $notification_options["project_file_id"] = $comment_info->file_id;
+                    log_notification("project_file_commented", $notification_options);
+                } else if ($comment_info->task_id) { //task comment
+                    $notification_options["task_id"] = $comment_info->task_id;
+                    log_notification("project_task_commented", $notification_options);
+                } else if ($comment_info->customer_feedback_id) {  //customer feedback comment
+                    if ($comment_id) {
+                        log_notification("project_customer_feedback_replied", $notification_options);
+                    } else {
+                        log_notification("project_customer_feedback_added", $notification_options);
+                    }
+                } else {  //project comment
+                    if ($comment_id) {
+                        log_notification("project_comment_replied", $notification_options);
+                    } else {
+                        log_notification("project_comment_added", $notification_options);
+                    }
+                }
+            } else {
+                echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+            }
+
+            foreach($other_messages as $message)
+            {
+                $target_path = get_setting("timeline_file_path");
+                $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "project_comment");
+                $data = array(
+                    "created_by" => $message->from_user_id,
+                    "created_at" => get_current_utc_time(),
+                    "project_id" => $group_info->project_id,
+                    "file_id" => 0,
+                    "task_id" => $save_id ? $save_id : 0,
+                    "customer_feedback_id" => 0,
+                    "comment_id" => 0,
+                    "description" => $message->message
+                );
+        
+                $data = clean_data($data);
+        
+                $data["files"] = $files_data; //don't clean serilized data
+        
+                $save_comment_id = $this->Project_comments_model->save_comment($data, $save_id);
+                if ($save_comment_id) {
+                    $response_data = "";
+                    $options = array("id" => $save_comment_id, "login_user_id" => $this->login_user->id);
+        
+        
+                    $comment_info = $this->Project_comments_model->get_one($save_comment_id);
+        
+                    $notification_options = array("project_id" => $comment_info->project_id, "project_comment_id" => $save_comment_id);
+        
+                    if ($comment_info->file_id) { //file comment
+                        $notification_options["project_file_id"] = $comment_info->file_id;
+                        log_notification("project_file_commented", $notification_options);
+                    } else if ($comment_info->task_id) { //task comment
+                        $notification_options["task_id"] = $comment_info->task_id;
+                        log_notification("project_task_commented", $notification_options);
+                    } else if ($comment_info->customer_feedback_id) {  //customer feedback comment
+                        if ($comment_id) {
+                            log_notification("project_customer_feedback_replied", $notification_options);
+                        } else {
+                            log_notification("project_customer_feedback_added", $notification_options);
+                        }
+                    } else {  //project comment
+                        if ($comment_id) {
+                            log_notification("project_comment_replied", $notification_options);
+                        } else {
+                            log_notification("project_comment_added", $notification_options);
+                        }
+                    }
+                } else {
+                    echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+                }
+            }
+
+            $options = array(
+                'task_id' => $save_id
+            );
+            $salvar_message_com_task = $this->Messages_model->ci_save($options, $message_id);
+           
+
+            echo json_encode(array("success" => true, 'id' => $save_id, 'message' => app_lang('record_saved')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
     /* send new message */
 
     function send_message() {

@@ -66,6 +66,12 @@ if (!function_exists("make_project_tabs_data")) {
 
                                 <?php echo "#$project_info->id - $project_info->title"; ?>
 
+                                <?php if((!empty($message_group)) && $message_group->id) { ?>
+                                    
+                                <?php } else { ?>
+                                    <?php echo ajax_anchor(get_uri("projects/create_group/" . $project_info->id . ""), "<i data-feather='plus' class='icon-16'></i> " . app_lang('create_group'), array("class" => "btn btn-primary", "id" => "create_group", "title" => app_lang('create_group'), "data-reload-on-success" => "1")); ?>
+                                <?php } ?>
+
                                 <?php if (!(get_setting("disable_access_favorite_project_option_for_clients") && $login_user->user_type == "client")) { ?>
                                     <span id="star-mark">
                                         <?php
