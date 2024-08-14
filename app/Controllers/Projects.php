@@ -1856,8 +1856,7 @@ class Projects extends Security_Controller {
         }
 
         $options = array(
-            "project_id" => $project_id,
-            "show_assigned_tasks_only_user_id" => $show_assigned_tasks_only_user_id
+            "project_id" => $project_id
         );
 
         $tasks = $this->Tasks_model->get_details($options)->getResult();
