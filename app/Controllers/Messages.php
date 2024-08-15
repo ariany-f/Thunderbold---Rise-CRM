@@ -14,8 +14,11 @@ class Messages extends Security_Controller {
         $groups = $this->Message_groups_model->get_groups_for_messaging($options)->getResult();
         $groups = json_decode(json_encode($groups), true); //convert to array
 
-        if ($message_info->from_user_id == $this->login_user->id || $message_info->to_user_id == $this->login_user->id || in_array($message_info->to_group_id, array_column($groups, "id"))) {
-            return true;
+        if(isset($message_info->from_user_id))
+        {
+            if ($message_info->from_user_id == $this->login_user->id || $message_info->to_user_id == $this->login_user->id || in_array($message_info->to_group_id, array_column($groups, "id"))) {
+                return true;
+            }
         }
     }
 
