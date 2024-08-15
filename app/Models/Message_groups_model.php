@@ -35,9 +35,10 @@ class Message_groups_model extends Crud_model {
     /*
      * prepare details info of a message
      */
-
     function get_details($options = array()) {
+        $messages_table = $this->db->prefixTable('messages');
         $message_groups_table = $this->db->prefixTable('message_groups');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
         $users_table = $this->db->prefixTable('users');
      
         $where = "1=1";
@@ -45,6 +46,11 @@ class Message_groups_model extends Crud_model {
         $id = $this->_get_clean_value($options, "id");
         if ($id) {
             $where .= " AND $message_groups_table.id=$id";
+        }
+
+        $user_id = $this->_get_clean_value($options, "user_id");
+        if ($user_id) {
+            $where .= " AND ($messages_table.from_user_id=$user_id OR $messages_table.to_user_id=$user_id OR $message_group_members_table.user_id=$user_id) ";
         }
 
         $order = "";
@@ -76,6 +82,8 @@ class Message_groups_model extends Crud_model {
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS $message_groups_table.*
         FROM $message_groups_table
+        LEFT JOIN $messages_table ON $messages_table.to_group_id = $message_groups_table.id
+        LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id = $message_groups_table.id
         WHERE $where 
         $order";
 

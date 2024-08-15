@@ -14,8 +14,11 @@ class Messages extends Security_Controller {
         $groups = $this->Message_groups_model->get_groups_for_messaging($options)->getResult();
         $groups = json_decode(json_encode($groups), true); //convert to array
 
-        if ($message_info->from_user_id == $this->login_user->id || $message_info->to_user_id == $this->login_user->id || in_array($message_info->to_group_id, array_column($groups, "id"))) {
-            return true;
+        if(isset($message_info->from_user_id))
+        {
+            if ($message_info->from_user_id == $this->login_user->id || $message_info->to_user_id == $this->login_user->id || in_array($message_info->to_group_id, array_column($groups, "id"))) {
+                return true;
+            }
         }
     }
 
@@ -987,7 +990,10 @@ class Messages extends Security_Controller {
             app_redirect("forbidden");
         }
 
-        $this->Messages_model->set_message_status_as_read($view_data["message_info"]->id, $this->login_user->id);
+        if($view_data["message_info"]->id)
+        {
+            $this->Messages_model->set_message_status_as_read($view_data["message_info"]->id, $this->login_user->id);
+        }
 
         $view_data["tab_type"] = ((!empty($view_data["message_info"]->group_name)) ? 'groups' : '');
 
