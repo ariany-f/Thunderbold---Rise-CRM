@@ -91,25 +91,36 @@ class Message_groups_model extends Crud_model {
     function get_groups_for_messaging($options = array()) {
         $groups_table = $this->db->prefixTable('message_groups');
         $message_group_members_table = $this->db->prefixTable('message_group_members');
-        $users_table = $this->db->prefixTable('users');
-        $clients_table = $this->db->prefixTable('clients');
         $projects_table = $this->db->prefixTable('projects');
-
+    
         $where = "1=1";
-
+    
         $user_id = $this->_get_clean_value($options, "user_id");
         if ($user_id) {
             $where .= " AND $message_group_members_table.user_id=$user_id";
         }
-
-
-        $sql = "SELECT $groups_table.id, $groups_table.group_name, $groups_table.project_id, $projects_table.is_ticket as is_ticket
-        FROM $groups_table 
-        LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id = $groups_table.id
-        LEFT JOIN $projects_table ON $projects_table.id = $groups_table.project_id
-        WHERE $where 
-        GROUP BY $groups_table.id ORDER BY $groups_table.id ASC";
-
+    
+        $sql = "SELECT 
+                    $groups_table.id, 
+                    $groups_table.group_name, 
+                    $groups_table.project_id, 
+                    $projects_table.is_ticket as is_ticket,
+                    (SELECT COUNT(*) FROM $message_group_members_table WHERE $message_group_members_table.message_group_id = $groups_table.id) as member_count
+                FROM 
+                    $groups_table
+                LEFT JOIN 
+                    $message_group_members_table 
+                    ON $message_group_members_table.message_group_id = $groups_table.id
+                LEFT JOIN 
+                    $projects_table 
+                    ON $projects_table.id = $groups_table.project_id
+                WHERE 
+                    $where 
+                GROUP BY 
+                    $groups_table.id 
+                ORDER BY 
+                    $groups_table.id ASC";
+    
         return $this->db->query($sql);
     }
 }
