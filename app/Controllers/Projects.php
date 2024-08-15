@@ -3259,10 +3259,13 @@ class Projects extends Security_Controller {
         }
        
         if($model_info->project_id)
-        {
-            $options = array("project_id" => $model_info->project_id);
+        {    
+            $options = array(
+                "project_id" => $model_info->project_id,
+                "user_id" => $this->login_user->id
+            );
     
-            $view_data['message_group'] = $this->Message_groups_model->get_one_where($options);
+            $view_data['message_group'] = $this->Message_groups_model->get_details($options)->getRow();
 
             $options = array("task_id" => $model_info->id);
     
