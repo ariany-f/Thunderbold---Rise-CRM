@@ -1397,9 +1397,10 @@ class Projects extends Security_Controller {
 
         $options = array(
             "project_id" => $project_id,
+            "user_id" => $this->login_user->id
         );
 
-        $view_data['message_group'] = $this->Message_groups_model->get_one_where($options);
+        $view_data['message_group'] = $this->Message_groups_model->get_details($options)->getRow();
 
         $expense_access_info = $this->get_access_info("expense");
         $view_data["show_expense_info"] = (get_setting("module_expense") && $expense_access_info->access_type == "all") ? true : false;
