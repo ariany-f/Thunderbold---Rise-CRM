@@ -128,8 +128,6 @@ if (get_setting("module_chat") && $can_chat) {
             }
 
 
-
-
             $('body #js-rise-chat-wrapper').on('click', '.js-message-row', function () {
                 getActiveChat($(this).attr("data-id"));
             });
