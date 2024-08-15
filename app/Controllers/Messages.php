@@ -980,7 +980,9 @@ class Messages extends Security_Controller {
             app_redirect("forbidden");
         }
 
-        //$this->Messages_model->set_message_status_as_read($view_data["message_info"]->id, $this->login_user->id);
+        $this->Messages_model->set_message_status_as_read($view_data["message_info"]->id, $this->login_user->id);
+
+        $view_data["tab_type"] = ((!empty($view_data["message_info"]->group_name)) ? 'groups' : '');
 
         $view_data["message_id"] = $message_id;
         return $this->template->view("messages/chat/active_chat", $view_data);
