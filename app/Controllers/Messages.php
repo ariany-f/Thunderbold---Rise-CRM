@@ -990,7 +990,10 @@ class Messages extends Security_Controller {
             app_redirect("forbidden");
         }
 
-        $this->Messages_model->set_message_status_as_read($view_data["message_info"]->id, $this->login_user->id);
+        if($view_data["message_info"]->id)
+        {
+            $this->Messages_model->set_message_status_as_read($view_data["message_info"]->id, $this->login_user->id);
+        }
 
         $view_data["tab_type"] = ((!empty($view_data["message_info"]->group_name)) ? 'groups' : '');
 
