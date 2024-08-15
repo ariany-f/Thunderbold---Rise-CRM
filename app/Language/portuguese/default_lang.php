@@ -1458,6 +1458,7 @@ $lang["calendar_ids_help_message"] = "Você sempre terá seus próprios eventos 
 
 $lang["google_client_id"] = "ID do Cliente";
 $lang["google_client_secret"] = "Segredo do cliente";
+$lang["google_client_resource_id"] = "ID do recurso do cliente";
 $lang["integrate_with_google_calendar"] = "Integrar com o calendário do Google";
 $lang["google_calendar_event"] = "Evento do Google Agenda";
 

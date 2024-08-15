@@ -215,6 +215,25 @@
 
                         <div class="form-group">
                             <div class="row">
+                                <label for="outlook_smtp_client_resource_id" class=" col-md-2"><?php echo app_lang('google_client_resource_id'); ?></label>
+                                <div class=" col-md-10">
+                                    <?php
+                                    echo form_input(array(
+                                        "id" => "outlook_smtp_client_resource_id",
+                                        "name" => "outlook_smtp_client_resource_id",
+                                        "value" => get_setting('outlook_smtp_client_resource_id'),
+                                        "class" => "form-control",
+                                        "placeholder" => app_lang('google_client_resource_id'),
+                                        "data-rule-required" => true,
+                                        "data-msg-required" => app_lang("field_required"),
+                                    ));
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
                                 <label for="redirect_uri" class=" col-md-2"><i data-feather="alert-triangle" class="icon-16 text-warning"></i> <?php echo app_lang('remember_to_add_this_url_in_authorized_redirect_uri'); ?></label>
                                 <div class=" col-md-10">
                                     <?php

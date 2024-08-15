@@ -119,7 +119,7 @@ class Settings extends Security_Controller {
     }
 
     function save_email_settings() {
-        $settings = array("email_sent_from_address", "email_sent_from_name", "email_protocol", "email_smtp_host", "email_smtp_port", "email_smtp_user", "email_smtp_pass", "email_smtp_security_type", "outlook_smtp_client_id", "outlook_smtp_client_secret");
+        $settings = array("email_sent_from_address", "email_sent_from_name", "email_protocol", "email_smtp_host", "email_smtp_port", "email_smtp_user", "email_smtp_pass", "email_smtp_security_type", "outlook_smtp_client_id", "outlook_smtp_client_secret", "outlook_smtp_client_resource_id");
 
         foreach ($settings as $setting) {
             $value = $this->request->getPost($setting);
@@ -709,7 +709,7 @@ class Settings extends Security_Controller {
     /* save imap settings */
 
     function save_imap_settings() {
-        $settings = array("enable_email_piping", "create_tickets_only_by_registered_emails", "imap_encryption", "imap_host", "imap_port", "imap_email", "imap_password", "imap_type", "outlook_imap_client_id", "outlook_imap_client_secret");
+        $settings = array("enable_email_piping", "create_tickets_only_by_registered_emails", "imap_encryption", "imap_host", "imap_port", "imap_email", "imap_password", "imap_type", "outlook_imap_client_id", "outlook_imap_client_secret", "outlook_imap_client_resource_id");
 
         $enable_email_piping = $this->request->getPost("enable_email_piping");
 
