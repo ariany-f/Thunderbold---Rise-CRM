@@ -276,12 +276,18 @@ class Messages extends Security_Controller {
     }
 
     /* show new message modal for group message*/
-    function to_group_modal_form($group_id = 0) {
+    function to_group_modal_form($group_id = 0, $task_id = 0) {
         validate_numeric_value($group_id);
         $this->check_message_user_permission();
 
         if ($group_id) {
             $view_data['model_info'] = $this->Message_groups_model->get_one($group_id);
+        }
+
+        if($task_id != 0)
+        {
+            $view_data['task_info'] = $this->Tasks_model->get_one($task_id);
+
         }
 
         return $this->template->view('messages/to_group_modal_form', $view_data);
@@ -637,6 +643,7 @@ class Messages extends Security_Controller {
             "from_user_id" => $this->login_user->id,
             "to_group_id" => $to_group_id,
             "subject" => $this->request->getPost('subject'),
+            "task_id" => $this->request->getPost('task_id'),
             "message" => $this->request->getPost('message'),
             "created_at" => get_current_utc_time(),
             "deleted_by_users" => "",

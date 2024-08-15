@@ -199,7 +199,9 @@ if ($total_sub_tasks) {
                                 <?php if((!empty($messages)) && $messages->id) { ?>
 
                                 <?php }else{ ?>
-                                    <?php echo ajax_anchor(get_uri("projects/create_conversation/" . $model_info->project_id . "/" . $model_info->id . "/" . $message_group->id . ""), "<i data-feather='plus' class='icon-16'></i> " . app_lang('create_conversation'), array("class" => "btn btn-primary", "id" => "create_conversation", "title" => app_lang('create_conversation'), "data-reload-on-success" => "1")); ?>            
+                                    <?php 
+                                        echo modal_anchor(get_uri("messages/to_group_modal_form/" . $message_group->id . "/" . $model_info->id), "<i data-feather='mail' class='icon-16'></i> " . app_lang('create_conversation'), array("class" => "btn btn-primary btn-sm", "title" => app_lang('create_conversation')));
+                                    ?>
                                 <?php } ?>
                             <?php } ?>   
                         </div>

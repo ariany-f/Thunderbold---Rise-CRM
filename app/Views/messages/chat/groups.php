@@ -20,6 +20,7 @@
                         <div class="mb5">
                             <strong> <?php echo $group->group_name; ?></strong>
                         </div>
+                        <?php echo $group->member_count . ' membro(s)'; ?>
                     </div>
                 </div>
             </div>

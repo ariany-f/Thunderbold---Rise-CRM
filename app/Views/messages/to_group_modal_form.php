@@ -3,6 +3,7 @@
     <div class="modal-body clearfix">
         <div class="container-fluid">
             <input type="hidden" name="to_group_id" value="<?php echo $model_info->id; ?>" />
+            <input type="hidden" name="task_id" value="<?php echo $task_info->id ?? 0; ?>" />
             <div class="form-group">
                 <div class="row">
                     <label for="subject" class=" col-md-2"><?php echo app_lang('subject'); ?></label>
@@ -10,6 +11,7 @@
                         <?php
                         echo form_input(array(
                             "id" => "subject",
+                            "value" => $task_info->title ?? "",
                             "name" => "subject",
                             "class" => "form-control",
                             "placeholder" => app_lang('subject'),
@@ -26,6 +28,7 @@
                     echo form_textarea(array(
                         "id" => "message",
                         "name" => "message",
+                        "value" => $task_info->description ?? "",
                         "class" => "form-control",
                         "placeholder" => app_lang('write_a_message'),
                         "data-rule-required" => true,
