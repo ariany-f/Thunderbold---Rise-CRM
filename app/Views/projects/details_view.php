@@ -67,7 +67,7 @@ if (!function_exists("make_project_tabs_data")) {
                                 <?php echo "#$project_info->id - $project_info->title"; ?>
 
                                 <?php if((!empty($message_group)) && $message_group->id) { ?>
-                                    
+                                    <div class="btn btn-primary btn-sm js-message-row-of-groups" data-id="<?= $message_group->id ?>"><i data-feather="list" class="icon-16"></i> <?= app_lang('enter_group') ?></div>
                                 <?php } else { ?>
                                     <?php if($login_user->user_type === 'staff' && get_setting("module_message_group")) { ?>
                                         <?php echo ajax_anchor(get_uri("projects/create_group/" . $project_info->id . ""), "<i data-feather='plus' class='icon-16'></i> " . app_lang('create_group'), array("class" => "btn btn-primary", "id" => "create_group", "title" => app_lang('create_group'), "data-reload-on-success" => "1")); ?>
@@ -296,6 +296,14 @@ load_js(array(
         }
 
     });
+
+    
+  
+    $('body').on('click', '.js-message-row-of-groups', function () {
+        getChatListOfGroup($(this).attr("data-id"), 'groups');
+    });
+
+  
 </script>
 
 <?php echo view("projects/tasks/batch_update/batch_update_script"); ?>
