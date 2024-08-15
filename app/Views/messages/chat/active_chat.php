@@ -6,8 +6,11 @@
         <div><?php
             $hide_online_icon = " hide";
 
-            if (is_online_user($message_info->another_user_last_online)) {
-                $hide_online_icon = "";
+            if(isset($message_info->another_user_last_online))
+            {
+                if (is_online_user($message_info->another_user_last_online)) {
+                    $hide_online_icon = "";
+                }
             }
 
 
