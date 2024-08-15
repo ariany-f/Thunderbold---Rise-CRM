@@ -133,7 +133,7 @@
         }, 200);
 
         $("#js-back-to-chat-tabs").click(function () {
-            loadChatTabs(); // this method should be loaded when chat box loaded
+            loadChatTabs("<?php echo $tab_type; ?>"); // this method should be loaded when chat box loaded
 
             //reset the previous interval timer
             if (window.activeChatChecker) {

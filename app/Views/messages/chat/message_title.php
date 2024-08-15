@@ -4,7 +4,7 @@
     $task_id = $first_message->task_id;
     if(get_setting('module_message_group'))
     {
-        if(!$task_id) {
+        if((!$task_id) and $first_message->group_name != "") {
             echo "<strong class='p10 block chat-message-title'>" . app_lang("subject") . ": " . $first_message->subject . "</strong>";
             if($login_user->user_type === 'staff')
             {
