@@ -31,9 +31,12 @@ class Announcements_model extends Crud_model {
             } else {
                 $client_groups_where = "";
 
-                $client_group_ids = explode(',', $client_group_ids);
-                foreach ($client_group_ids as $group_id) {
-                    $client_groups_where .= " OR FIND_IN_SET('cg:$group_id', $announcements_table.share_with)";
+                if($client_group_ids)
+                {
+                    $client_group_ids = explode(',', $client_group_ids);
+                    foreach ($client_group_ids as $group_id) {
+                        $client_groups_where .= " OR FIND_IN_SET('cg:$group_id', $announcements_table.share_with)";
+                    }
                 }
 
                 $where = " AND (FIND_IN_SET('all_clients', $announcements_table.share_with) $client_groups_where )";
