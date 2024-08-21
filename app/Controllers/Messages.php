@@ -408,8 +408,18 @@ class Messages extends Security_Controller {
         $status = "";
         $attachment_icon = "";
         $subject = $data->subject;
-        if ($mode == "inbox" || $mode = "list_groups") {
+        if ($mode == "inbox") {
             $status = $data->status;
+        } else if($mode === "list_groups") {
+
+            $array = explode(" ", $data->read_by);
+
+            // Verificar se o usuário logado está presente no array
+            if (in_array((string)$this->login_user->id, $array)) {
+                $status = 'read';
+            } else {
+                $status = 'unread';
+            }
         }
 
         if ($data->reply_subject) {
