@@ -29,15 +29,18 @@
                             <?php
                             $message_user_id = $message_info->from_user_id;
                             if ($mode === "sent_items" && $is_reply != "1" || $mode === "inbox" && $is_reply == "1") {
-                                $message_user_id = $message_info->to_user_id;
+                                if(!empty($message_info->to_user_id)) {
+                                    
+                                    $message_user_id = $message_info->to_user_id;
+                                }
                                 ?>
                                 <label class="badge bg-success"><?php echo app_lang("to"); ?></label>
                             <?php } ?>
                             <?php
                             if ($message_info->user_type == "client") {
-                                echo get_client_contact_profile_link($message_user_id, $message_info->user_name, array("class" => "dark strong"));
+                                echo get_client_contact_profile_link($message_user_id, ($message_info->user_name ?? $message_info->another_user_name), array("class" => "dark strong"));
                             } else {
-                                echo get_team_member_profile_link($message_user_id, $message_info->user_name, array("class" => "dark strong"));
+                                echo get_team_member_profile_link($message_user_id, ($message_info->user_name ?? $message_info->another_user_name), array("class" => "dark strong"));
                             }
                             ?>
                             <span class="text-off float-end"><?php echo format_to_relative_time($message_info->created_at); ?></span>
@@ -52,7 +55,7 @@
                             </span>
                         </div>
                         <p class="pt10 pb10 b-b">
-                            <?php echo app_lang("subject"); ?>:  <?php echo $message_info->subject; ?>  
+                            <?php echo app_lang("subject"); ?>:  <?php echo $message_info->subject; ?>
                         </p>
 
                         <p>
