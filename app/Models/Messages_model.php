@@ -231,26 +231,29 @@ class Messages_model extends Crud_model {
         $message_group_members_table = $this->db->prefixTable('message_group_members');
         
         // Obter o valor atual da coluna read_by
-        $query = $this->db->query("SELECT read_by FROM $messages_table WHERE (message_id = $message_id OR id = $message_id) AND (FIND_IN_SET($user_id, read_by) = 0 OR status = 'unread')");
+        $query = $this->db->query("SELECT read_by FROM $messages_table WHERE (message_id = $message_id OR id = $message_id) AND (FIND_IN_SET($user_id, $messages_table.read_by) = 0 OR status = 'unread')");
         $row = $query->getRow();
         
         // Se a coluna read_by já tiver valores, concatenar o novo user_id
-        $current_read_by = $row->read_by;
-        if ($current_read_by) {
-            $new_read_by = $current_read_by . ',' . $user_id;
-        } else {
-            $new_read_by = $user_id;
-        }
-    
-        // Atualizar a coluna read_by e status
-        $sql = "UPDATE $messages_table 
-                SET status = 'read', 
-                    read_by = '$new_read_by' 
-                WHERE (to_user_id = $user_id
-                OR to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id))
-                AND (message_id = $message_id OR id = $message_id)";
+        if($row)
+        {
+            $current_read_by = $row->read_by;
+            if ($current_read_by) {
+                $new_read_by = $current_read_by . ',' . $user_id;
+            } else {
+                $new_read_by = $user_id;
+            }
         
-        return $this->db->query($sql);
+            // Atualizar a coluna read_by e status
+            $sql = "UPDATE $messages_table 
+                    SET status = 'read', 
+                        read_by = '$new_read_by' 
+                    WHERE (to_user_id = $user_id
+                    OR to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id))
+                    AND (message_id = $message_id OR id = $message_id)";
+            
+            return $this->db->query($sql);
+        }
     }    
 
     function count_unread_message($user_id = 0, $user_ids = "") {
