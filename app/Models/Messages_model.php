@@ -142,7 +142,7 @@ class Messages_model extends Crud_model {
     
         if($mode != 'list_groups')
         {
-            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.status, $messages_table.created_at, $messages_table.files,
+            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files,
                         CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.last_online
                     FROM (
                         SELECT max(x.id) as id, main_message_id, subject, 
@@ -167,7 +167,7 @@ class Messages_model extends Crud_model {
         else
         {
             $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COUNT(DISTINCT $message_group_members_table.user_id) AS count_members,  COALESCE($message_groups_table.group_name, '') AS group_name, 
-                        $messages_table.status, $messages_table.created_at, $messages_table.files, $messages_table.from_user_id,
+                        $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files, $messages_table.from_user_id,
                         CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, 
                         another_user.image AS another_user_image,
                         another_user.id AS another_user_id, 
@@ -194,7 +194,7 @@ class Messages_model extends Crud_model {
                     LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
                     LEFT JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
                     WHERE $where_group
-                    GROUP BY $message_groups_table.id 
+                    GROUP BY y.main_message_id 
                     $notification_sql";
         }
     
@@ -310,6 +310,7 @@ class Messages_model extends Crud_model {
     function count_unread_group_message($user_id = 0, $user_ids = "") {
         $messages_table = $this->db->prefixTable('messages');
         $message_group_members_table = $this->db->prefixTable('message_group_members');
+        $message_groups_table = $this->db->prefixTable('message_groups');
 
         $where = "";
         if ($user_ids) {
@@ -318,7 +319,16 @@ class Messages_model extends Crud_model {
 
         $sql = "SELECT COUNT($messages_table.id) as total
         FROM $messages_table
-        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
+        WHERE 
+            $messages_table.deleted=0 AND 
+            $messages_table.from_user_id <> $user_id AND 
+            (
+                $messages_table.status='unread' OR 
+                FIND_IN_SET($user_id, $messages_table.read_by) = 0
+            ) AND 
+            (
+                $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table INNER JOIN $message_groups_table ON $message_group_members_table.message_group_id = $message_groups_table.id  WHERE $message_groups_table.deleted = 0 AND $message_group_members_table.user_id = $user_id)
+            ) $where";
         return $this->db->query($sql)->getRow()->total;
     }
 
@@ -347,7 +357,7 @@ class Messages_model extends Crud_model {
             $where .= " AND ($messages_table.to_user_id IN($user_ids) OR $messages_table.from_user_id IN($user_ids) OR $messages_table.to_group_id IN(SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id IN ($user_ids))) ";
         }
 
-        $sql = "SELECT COUNT($messages_table.id) as total
+        $sql = "SELECT COUNT(DISTINCT $messages_table.id) as total
         FROM $messages_table
         WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_user_id = $user_id OR $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
         return $this->db->query($sql)->getRow()->total;
