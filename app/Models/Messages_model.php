@@ -310,6 +310,7 @@ class Messages_model extends Crud_model {
     function count_unread_group_message($user_id = 0, $user_ids = "") {
         $messages_table = $this->db->prefixTable('messages');
         $message_group_members_table = $this->db->prefixTable('message_group_members');
+        $message_groups_table = $this->db->prefixTable('message_groups');
 
         $where = "";
         if ($user_ids) {
