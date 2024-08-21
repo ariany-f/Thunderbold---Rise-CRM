@@ -347,9 +347,9 @@ class Messages_model extends Crud_model {
             $where .= " AND ($messages_table.to_user_id IN($user_ids) OR $messages_table.from_user_id IN($user_ids) OR $messages_table.to_group_id IN(SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id IN ($user_ids))) ";
         }
 
-        $sql = "SELECT COUNT($messages_table.id) as total
+        $sql = "SELECT COUNT(DISTINCT $messages_table.id) as total
         FROM $messages_table
-        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_user_id = $user_id OR $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where GROUP BY $messages_table.id";
+        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_user_id = $user_id OR $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
         return $this->db->query($sql)->getRow()->total;
     }
 
