@@ -270,7 +270,7 @@ class Messages_model extends Crud_model {
         $message_group_members_table = $this->db->prefixTable('message_group_members');
         
         // Obter o valor atual da coluna read_by
-        $query = $this->db->query("SELECT read_by FROM $messages_table WHERE (message_id = $message_id OR id = $message_id) AND (FIND_IN_SET($user_id, $messages_table.read_by) = 0 OR status = 'unread')");
+        $query = $this->db->query("SELECT read_by FROM $messages_table WHERE $messages_table.from_user_id <> $user_id AND (message_id = $message_id OR id = $message_id) AND (FIND_IN_SET($user_id, $messages_table.read_by) = 0 OR status = 'unread')");
         $row = $query->getRow();
         
         // Se a coluna read_by já tiver valores, concatenar o novo user_id
