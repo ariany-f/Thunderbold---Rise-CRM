@@ -306,6 +306,18 @@ class Messages extends Security_Controller {
         return $this->template->rander("messages/index", $view_data);
     }
 
+    
+    /* show sent items */
+
+    function list_groups($auto_select_index = "") {
+        $this->check_message_user_permission();
+        $this->check_module_availability("module_message");
+
+        $view_data['mode'] = "list_groups";
+        $view_data['auto_select_index'] = clean_data($auto_select_index);
+        return $this->template->rander("messages/index", $view_data);
+    }
+
     /* show sent items */
 
     function sent_items($auto_select_index = "") {
@@ -321,7 +333,7 @@ class Messages extends Security_Controller {
 
     function list_data($mode = "inbox") {
         $this->check_message_user_permission();
-        if ($mode !== "inbox") {
+        if ($mode !== "inbox" and $mode !== "list_groups") {
             $mode = "sent_items";
         }
 
@@ -403,6 +415,11 @@ class Messages extends Security_Controller {
             $online = "<i class='online'></i>";
         }
 
+
+        $ticket_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>';
+        $project_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid icon"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>';
+        $group_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-coffee icon-18 me-2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>';
+
         $message = "<div class='message-row $status' data-id='$message_id' data-index='$data->main_message_id' data-reply='$reply'><div class='d-flex'><div class='flex-shrink-0'>
                         <span class='avatar avatar-xs'>
                             <img src='$image_url' />
@@ -412,6 +429,7 @@ class Messages extends Security_Controller {
                     <div class='w-100 ps-3'>
                         <div class='mb5'>
                             <strong> $data->user_name</strong>
+                                <small>" . (!empty($data->group_name) ? ' ' . ($data->project_id ? ($data->is_ticket ? $ticket_icon : $project_icon) : $group_icon) . $data->group_name : '') . "</small>
                                   <span class='text-off float-end time'>$attachment_icon $created_at</span>
                         </div>
                         $label $subject
