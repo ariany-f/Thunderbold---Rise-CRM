@@ -428,7 +428,7 @@ class Messages extends Security_Controller {
             $subject = $data->reply_subject;
         }
 
-        if (isset($data->task_id) && $data->task_id !== 0) {
+        if (isset($data->task_id) && $data->task_id) {
             $subject = '#' . $data->task_id . ' - ' . $data->subject;
         }
 
