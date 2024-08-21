@@ -17,7 +17,15 @@
         if ($is_reply) {
             $user_image = $login_user->image;
         } else {
-            $user_image = $message_info->user_image;
+            if(isset($message_info->another_user_image))
+            {
+
+                $user_image = $message_info->another_user_image;
+            }
+            else
+            {
+                $user_image = $message_info->user_image;
+            }
         }
     }
     ?>
