@@ -394,7 +394,7 @@ class Messages extends Security_Controller {
         $status = "";
         $attachment_icon = "";
         $subject = $data->subject;
-        if ($mode == "inbox") {
+        if ($mode == "inbox" || $mode = "list_groups") {
             $status = $data->status;
         }
 

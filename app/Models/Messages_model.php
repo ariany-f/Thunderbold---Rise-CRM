@@ -241,6 +241,7 @@ class Messages_model extends Crud_model {
 
     function count_notifications($user_id, $last_message_checke_at = "0", $active_message_id = 0, $user_ids = "") {
         $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
 
         $where = "";
         if ($active_message_id) {
@@ -253,7 +254,12 @@ class Messages_model extends Crud_model {
 
         $sql = "SELECT COUNT($messages_table.id) AS total_notifications
         FROM $messages_table
-        WHERE $messages_table.deleted=0 AND $messages_table.status='unread' AND $messages_table.to_user_id = $user_id 
+        WHERE $messages_table.deleted=0 AND $messages_table.status='unread' 
+        AND (
+                $messages_table.to_user_id = $user_id 
+            OR 
+                $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)
+        )
         AND timestamp($messages_table.created_at)>timestamp('$last_message_checke_at') $where
         ORDER BY timestamp($messages_table.created_at) DESC";
 
@@ -293,7 +299,38 @@ class Messages_model extends Crud_model {
             
             return $this->db->query($sql);
         }
-    }    
+    }
+
+    function count_unread_group_message($user_id = 0, $user_ids = "") {
+        $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+
+        $where = "";
+        if ($user_ids) {
+            $where .= " AND ($messages_table.to_group_id IN(SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id IN ($user_ids))) ";
+        }
+
+        $sql = "SELECT COUNT($messages_table.id) as total
+        FROM $messages_table
+        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
+        return $this->db->query($sql)->getRow()->total;
+    }
+
+
+    function count_unread_inbox_message($user_id = 0, $user_ids = "") {
+        $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+
+        $where = "";
+        if ($user_ids) {
+            $where .= " AND ($messages_table.to_user_id IN($user_ids) OR $messages_table.from_user_id IN($user_ids)) ";
+        }
+
+        $sql = "SELECT COUNT($messages_table.id) as total
+        FROM $messages_table
+        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND $messages_table.to_user_id = $user_id $where";
+        return $this->db->query($sql)->getRow()->total;
+    }
 
     function count_unread_message($user_id = 0, $user_ids = "") {
         $messages_table = $this->db->prefixTable('messages');
