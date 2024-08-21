@@ -1441,6 +1441,8 @@ class Projects extends Security_Controller {
         $view_data['can_edit_slack_settings'] = $this->can_edit_slack_settings();
         $view_data["can_create_projects"] = $this->can_create_projects();
 
+        $view_data["is_user_a_project_member"] = $this->Project_members_model->is_user_a_project_member($project_id, $this->login_user->id);
+
         $ticket_access_info = $this->get_access_info("ticket");
         $view_data["show_ticket_info"] = (get_setting("module_ticket") && get_setting("project_reference_in_tickets") && $ticket_access_info->access_type == "all") ? true : false;
 
