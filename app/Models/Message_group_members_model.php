@@ -123,4 +123,41 @@ class Message_group_members_model extends Crud_model {
 
         return $this->db->query($sql);
     }
+
+    function get_message_statistics($options = array()) {
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+        $users_table = $this->db->prefixTable('users');
+
+        $info = new \stdClass();
+
+        $where = "";
+        $offset = convert_seconds_to_time_format(get_timezone_offset());
+
+        $user_id = $this->_get_clean_value($options, "user_id");
+        if ($user_id) {
+            $where .= " AND $message_group_members_table.user_id=$user_id";
+        }
+
+        $group_id = $this->_get_clean_value($options, "group_id");
+        if ($group_id) {
+            $where .= " AND $message_group_members_table.message_group_id=$group_id";
+        }
+
+        //ignor sql mode here 
+        try {
+            $this->db->query("SET sql_mode = ''");
+        } catch (\Exception $e) {
+            
+        }
+
+        $group_users_data = "SELECT CONCAT($users_table.first_name, ' ',$users_table.last_name) AS user_name, $users_table.image as user_avatar
+                FROM $message_group_members_table 
+                LEFT JOIN $users_table ON $users_table.id = $message_group_members_table.user_id
+                WHERE $message_group_members_table.deleted=0 $where
+                GROUP BY $message_group_members_table.user_id";
+
+        $info->group_users_data = $this->db->query($group_users_data)->getResult();
+        return $info;
+    }
+
 }
