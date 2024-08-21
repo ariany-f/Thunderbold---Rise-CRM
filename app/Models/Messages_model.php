@@ -194,7 +194,7 @@ class Messages_model extends Crud_model {
                     LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
                     LEFT JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
                     WHERE $where_group
-                    GROUP BY $message_groups_table.id 
+                    GROUP BY y.main_message_id 
                     $notification_sql";
         }
     
