@@ -7,11 +7,11 @@
                 <ul class="list-group ">
                     <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?> 
 
-                    <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge badge-light">' . count_unread_inbox_message() . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+                    <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge bg-danger">' . count_unread_inbox_message() . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
 
                     <?php echo anchor(get_uri("messages/sent_items"), app_lang('sent_items'), array("class" => "list-group-item")); ?>
 
-                    <?php echo get_setting('module_message_group') ? anchor(get_uri("messages/list_groups"), app_lang('groups') . ' <span class="badge badge-light">' . count_unread_group_message() . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")) : ''; ?>
+                    <?php echo get_setting('module_message_group') ? anchor(get_uri("messages/list_groups"), app_lang('groups') . ' <span class="badge bg-danger">' . count_unread_group_message() . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")) : ''; ?>
                 </ul>
             </div>
 
