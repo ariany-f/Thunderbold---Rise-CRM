@@ -388,23 +388,31 @@ if (!function_exists('format_to_time')) {
 
         if (!$date_time) {
             return "";
-        } else {
-            //check the date string format is correct
-            $date_parts = explode(":", $date_time);
-             if (!preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $date_time)) {
-                return "";
-            }
         }
-
+    
+        // Verifica se o formato está correto
+        if (!preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $date_time)) {
+            return "";
+        }
+    
         if ($convert_to_local) {
             $date_time = convert_date_utc_to_local($date_time);
         }
-        $target_date = new DateTime($date_time);
-
+    
+        // Quebra a string de tempo em partes
+        list($hours, $minutes, $seconds) = array_pad(explode(':', $date_time), 3, '00');
+    
         if (get_setting("time_format") == "24_hours") {
-            return $target_date->format("H:i");
+            // Se estiver no formato 24 horas, apenas retorna o valor original
+            return sprintf('%02d:%02d', $hours, $minutes);
         } else {
-            return convert_time_to_12hours_format($target_date->format("H:i:s"));
+            // Converte para o formato de 12 horas
+            $hours = (int) $hours;
+            $suffix = $hours >= 12 ? 'PM' : 'AM';
+            $hours = $hours % 12;
+            $hours = $hours ? $hours : 12; // Se horas for 0, muda para 12
+    
+            return sprintf('%02d:%02d %s', $hours, $minutes, $suffix);
         }
     }
 
