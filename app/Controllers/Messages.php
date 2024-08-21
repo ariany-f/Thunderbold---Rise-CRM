@@ -386,7 +386,8 @@ class Messages extends Security_Controller {
     /* prepare a row of message list table */
 
     private function _make_row($data, $mode = "", $return_only_message = false, $online_status = false) {
-        $image_url = get_avatar($data->user_image);
+        $image = (isset($data->another_user_name) ? $data->another_user_image : $data->user_image);
+        $image_url = get_avatar($image);
         $created_at = format_to_relative_time($data->created_at);
         $message_id = $data->main_message_id;
         $label = "";
@@ -411,8 +412,17 @@ class Messages extends Security_Controller {
 
         //prepare online status
         $online = "";
-        if ($online_status && is_online_user($data->last_online)) {
-            $online = "<i class='online'></i>";
+        if(isset($data->another_user_last_online))
+        {
+            if ($online_status && is_online_user($data->another_user_last_online)) {
+                $online = "<i class='online'></i>";
+            }
+        }
+        else
+        {
+            if ($online_status && is_online_user($data->last_online)) {
+                $online = "<i class='online'></i>";
+            }
         }
 
 
@@ -455,7 +465,7 @@ class Messages extends Security_Controller {
                     </div>
                     <div class='w-100 ps-3'>
                         <div class='mb5'>
-                            <strong> $data->user_name</strong>
+                            <strong> " . (isset($data->another_user_name) ? $data->another_user_name : $data->user_name) ." </strong>
                                 <small>" . $group_name . "</small>
                                 <span class='text-off float-end time'>$attachment_icon $created_at</span>
                         </div>

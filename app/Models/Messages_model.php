@@ -167,9 +167,14 @@ class Messages_model extends Crud_model {
         else
         {
             $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, 
-                        $messages_table.status, $messages_table.created_at, $messages_table.files,
+                        $messages_table.status, $messages_table.created_at, $messages_table.files, $messages_table.from_user_id,
+                        CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, 
+                        another_user.image AS another_user_image,
+                        another_user.id AS another_user_id, 
+                        another_user.last_online AS another_user_last_online,
                         CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, 
-                        $users_table.image AS user_image, $users_table.last_online
+                        $users_table.image AS user_image, 
+                        $users_table.last_online
                     FROM (
                         SELECT max(x.id) as id, main_message_id, subject, 
                             IF(subject='', (SELECT subject FROM $messages_table WHERE id=main_message_id), '') as reply_subject, 
@@ -184,6 +189,7 @@ class Messages_model extends Crud_model {
                     ) y
                     LEFT JOIN $users_table ON $users_table.id = y.$select_user
                     LEFT JOIN $messages_table ON $messages_table.id = y.id 
+                    LEFT JOIN $users_table AS another_user ON another_user.id = $messages_table.$select_user
                     RIGHT JOIN $message_groups_table ON $message_groups_table.id=$messages_table.to_group_id
                     LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
                     LEFT JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
