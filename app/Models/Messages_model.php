@@ -228,21 +228,43 @@ class Messages_model extends Crud_model {
 
     function set_message_status_as_read($message_id, $user_id = 0) {
         $messages_table = $this->db->prefixTable('messages');
-        $sql = "UPDATE $messages_table SET status='read' WHERE $messages_table.to_user_id=$user_id AND ($messages_table.message_id=$message_id OR $messages_table.id=$message_id)";
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+        
+        // Obter o valor atual da coluna read_by
+        $query = $this->db->query("SELECT read_by FROM $messages_table WHERE message_id = $message_id OR id = $message_id");
+        $row = $query->getRow();
+        
+        // Se a coluna read_by já tiver valores, concatenar o novo user_id
+        $current_read_by = $row->read_by;
+        if ($current_read_by) {
+            $new_read_by = $current_read_by . ',' . $user_id;
+        } else {
+            $new_read_by = $user_id;
+        }
+    
+        // Atualizar a coluna read_by e status
+        $sql = "UPDATE $messages_table 
+                SET status = 'read', 
+                    read_by = '$new_read_by' 
+                WHERE (to_user_id = $user_id
+                OR to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id))
+                AND (message_id = $message_id OR id = $message_id)";
+        
         return $this->db->query($sql);
-    }
+    }    
 
     function count_unread_message($user_id = 0, $user_ids = "") {
         $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
 
         $where = "";
         if ($user_ids) {
-            $where .= " AND ($messages_table.to_user_id IN($user_ids) OR $messages_table.from_user_id IN($user_ids)) ";
+            $where .= " AND ($messages_table.to_user_id IN($user_ids) OR $messages_table.from_user_id IN($user_ids) OR $messages_table.to_group_id IN(SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id IN ($user_ids))) ";
         }
 
         $sql = "SELECT COUNT($messages_table.id) as total
         FROM $messages_table
-        WHERE $messages_table.deleted=0 AND $messages_table.status='unread'  AND $messages_table.to_user_id = $user_id $where";
+        WHERE $messages_table.deleted=0 AND $messages_table.status='unread' AND ($messages_table.to_user_id = $user_id OR $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
         return $this->db->query($sql)->getRow()->total;
     }
 
