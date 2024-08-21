@@ -97,6 +97,7 @@ class Messages_model extends Crud_model {
      function get_list($options = array()) {
         $messages_table = $this->db->prefixTable('messages');
         $users_table = $this->db->prefixTable('users');
+        $projects_table = $this->db->prefixTable('projects');
         $message_groups_table = $this->db->prefixTable('message_groups');
         $message_group_members_table = $this->db->prefixTable('message_group_members');
     
@@ -105,18 +106,22 @@ class Messages_model extends Crud_model {
     
         if ($user_id && $mode === "inbox") {
             $where_user = "to_user_id = $user_id";
-            $where_group = "OR to_group_id IN (
+            $select_user = "from_user_id";
+            $where_group = "";  // Não precisa de verificação de grupo no modo "inbox"
+        } else if ($user_id && $mode === "sent_items") {
+            $where_user = "from_user_id = $user_id";
+            $select_user = "to_user_id";
+            $where_group = "";  // Não precisa de verificação de grupo no modo "sent_items"
+        } else if ($user_id && $mode === "list_groups") {
+            $where_user = "";
+            $select_user = "from_user_id";
+            $where_group = "to_group_id IN (
                 SELECT $message_groups_table.id 
                 FROM $message_groups_table 
                 INNER JOIN $message_group_members_table 
                 ON $message_group_members_table.message_group_id = $message_groups_table.id 
                 WHERE $message_group_members_table.user_id = $user_id
             )";
-            $select_user = "from_user_id";
-        } else if ($user_id && $mode === "sent_items") {
-            $where_user = "from_user_id = $user_id";
-            $select_user = "to_user_id";
-            $where_group = "";  // Não precisa de verificação de grupo no modo "sent_items"
         }
     
         $where = "$where_user $where_group";
@@ -135,23 +140,57 @@ class Messages_model extends Crud_model {
         // Ignorar sql mode aqui 
         $this->db->query("SET sql_mode = ''");
     
-        $sql = "SELECT y.*, $messages_table.status, $messages_table.created_at, $messages_table.files,
-                    CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.last_online
-                FROM (
-                    SELECT max(x.id) as id, main_message_id, subject, 
-                           IF(subject='', (SELECT subject FROM $messages_table WHERE id=main_message_id), '') as reply_subject, 
-                           $select_user
+        if($mode != 'list_groups')
+        {
+            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.status, $messages_table.created_at, $messages_table.files,
+                        CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.last_online
                     FROM (
-                        SELECT id, IF(message_id=0, id, message_id) as main_message_id, subject, $select_user 
-                        FROM $messages_table
-                        WHERE deleted=0 AND ($where) 
-                        AND FIND_IN_SET($user_id, $messages_table.deleted_by_users) = 0
-                    ) x
-                    GROUP BY main_message_id
-                ) y
-                LEFT JOIN $users_table ON $users_table.id = y.$select_user
-                LEFT JOIN $messages_table ON $messages_table.id = y.id 
-                $notification_sql";
+                        SELECT max(x.id) as id, main_message_id, subject, 
+                            IF(subject='', (SELECT subject FROM $messages_table WHERE id=main_message_id), '') as reply_subject, 
+                            $select_user
+                        FROM (
+                            SELECT id, IF(message_id=0, id, message_id) as main_message_id, subject, $select_user 
+                            FROM $messages_table
+                            WHERE deleted=0 AND ($where) 
+                            AND FIND_IN_SET($user_id, $messages_table.deleted_by_users) = 0
+                        ) x
+                        GROUP BY main_message_id
+                    ) y
+                    LEFT JOIN $users_table ON $users_table.id = y.$select_user
+                    LEFT JOIN $messages_table ON $messages_table.id = y.id 
+                    LEFT JOIN $message_groups_table ON $message_groups_table.id=$messages_table.to_group_id
+                    LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
+                    LEFT JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
+                    GROUP BY $messages_table.id 
+                    $notification_sql";
+        }
+        else
+        {
+            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, 
+                        $messages_table.status, $messages_table.created_at, $messages_table.files,
+                        CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, 
+                        $users_table.image AS user_image, $users_table.last_online
+                    FROM (
+                        SELECT max(x.id) as id, main_message_id, subject, 
+                            IF(subject='', (SELECT subject FROM $messages_table WHERE id=main_message_id), '') as reply_subject, 
+                            $select_user
+                        FROM (
+                            SELECT id, IF(message_id=0, id, message_id) as main_message_id, subject, $select_user 
+                            FROM $messages_table
+                            WHERE deleted=0
+                            AND FIND_IN_SET($user_id, $messages_table.deleted_by_users) = 0
+                        ) x
+                        GROUP BY main_message_id
+                    ) y
+                    LEFT JOIN $users_table ON $users_table.id = y.$select_user
+                    LEFT JOIN $messages_table ON $messages_table.id = y.id 
+                    RIGHT JOIN $message_groups_table ON $message_groups_table.id=$messages_table.to_group_id
+                    LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
+                    LEFT JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
+                    WHERE $where_group
+                    GROUP BY $message_groups_table.id 
+                    $notification_sql";
+        }
     
         return $this->db->query($sql);
     }

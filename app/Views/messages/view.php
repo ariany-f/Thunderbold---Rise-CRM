@@ -13,6 +13,13 @@
             $user_image = $login_user->image;
         }
     }
+    if ($mode === "list_groups") {
+        if ($is_reply) {
+            $user_image = $login_user->image;
+        } else {
+            $user_image = $message_info->user_image;
+        }
+    }
     ?>
 
     <div class="b-b p15 m0 bg-white">
@@ -28,7 +35,7 @@
                         <div class="clearfix">
                             <?php
                             $message_user_id = $message_info->from_user_id;
-                            if ($mode === "sent_items" && $is_reply != "1" || $mode === "inbox" && $is_reply == "1") {
+                            if ($mode === "list_groups" && $is_reply != "1" || $mode === "sent_items" && $is_reply != "1" || $mode === "inbox" && $is_reply == "1") {
                                 if(!empty($message_info->to_user_id)) {
                                     
                                     $message_user_id = $message_info->to_user_id;

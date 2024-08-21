@@ -10,6 +10,8 @@
                     <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'), array("class" => "list-group-item")); ?>
 
                     <?php echo anchor(get_uri("messages/sent_items"), app_lang('sent_items'), array("class" => "list-group-item")); ?>
+
+                    <?php echo get_setting('module_message_group') ? anchor(get_uri("messages/list_groups"), app_lang('groups'), array("class" => "list-group-item")) : ''; ?>
                 </ul>
             </div>
 
@@ -25,6 +27,8 @@
                                         echo "<i data-feather='inbox' class='icon-16'></i> " . app_lang('inbox');
                                     } else if ($mode === "sent_items") {
                                         echo "<i data-feather='send' class='icon-16'></i> " . app_lang('sent_items');
+                                    } else if ($mode === "list_groups") {
+                                        echo "<i data-feather='users' class='icon-16'></i> " . app_lang('groups');
                                     }
                                     ?>
                                 </div>
