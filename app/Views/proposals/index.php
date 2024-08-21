@@ -29,7 +29,7 @@
             source: '<?php echo_uri("proposals/list_data") ?>',
             order: [[0, "desc"]],
             dateRangeType: dateRange,
-            filterDropdown: [{name: "status", class: "w150", options: <?php echo view("proposals/proposal_statuses_dropdown"); ?>}, <?php echo $custom_field_filters; ?>],
+            filterDropdown: [{name: "client_id", class: "w150", options: <?php echo $clients_dropdown; ?>},{name: "status", class: "w150", options: <?php echo view("proposals/proposal_statuses_dropdown"); ?>}, <?php echo $custom_field_filters; ?>],
             columns: [
                 {title: "<?php echo app_lang("proposal") ?> ", "class": "w5p all"},
                 {title: "<?php echo app_lang("name") ?>", "class": "w15p"},

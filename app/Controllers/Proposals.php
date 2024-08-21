@@ -15,7 +15,20 @@ class Proposals extends Security_Controller {
         $this->check_module_availability("module_proposal");
         $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("proposals", $this->login_user->is_admin, $this->login_user->user_type);
         $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("proposals", $this->login_user->is_admin, $this->login_user->user_type);
+        
+        $clients_dropdown =  array(array("id" => "", "text" => "- " . app_lang("client") . " -"));
 
+        // Obtenha os dados da função get_clients_and_leads_dropdown
+        $additional_clients = $this->get_clients_and_leads_dropdown(true);
+
+        // Remova o primeiro item do array que vem vazio
+       array_shift($additional_clients);
+
+        // Mescle os arrays
+        $clients_dropdown = array_merge($clients_dropdown, $additional_clients);
+
+        $view_data["clients_dropdown"] = json_encode($clients_dropdown);
+       
         if ($this->login_user->user_type === "staff") {
             $this->access_only_allowed_members();
 
@@ -261,6 +274,7 @@ class Proposals extends Security_Controller {
 
         $options = array(
             "status" => $this->request->getPost("status"),
+            "client_id" => $this->request->getPost("client_id"),
             "start_date" => $this->request->getPost("start_date"),
             "end_date" => $this->request->getPost("end_date"),
             "custom_fields" => $custom_fields,
