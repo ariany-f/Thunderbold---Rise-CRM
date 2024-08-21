@@ -327,7 +327,7 @@ class Messages_model extends Crud_model {
                 FIND_IN_SET($user_id, $messages_table.read_by) = 0
             ) AND 
             (
-                $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id INNER JOIN $message_groups_table ON $message_group_members_table.message_group_id = $message_groups_table.id FROM $message_group_members_table WHERE $message_groups_table.deleted = 0 AND $message_group_members_table.user_id = $user_id)
+                $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table INNER JOIN $message_groups_table ON $message_group_members_table.message_group_id = $message_groups_table.id  WHERE $message_groups_table.deleted = 0 AND $message_group_members_table.user_id = $user_id)
             ) $where";
         return $this->db->query($sql)->getRow()->total;
     }
