@@ -357,7 +357,8 @@ class Left_menu {
             }
 
             if (get_setting("module_message") == "1" && $access_messages) {
-                $sidebar_menu["messages"] = array("name" => "messages", "url" => "messages", "class" => "message-circle", "badge" => count_unread_message(), "badge_class" => "bg-primary");
+                $count_unread = count_unread_message();
+                $sidebar_menu["messages"] = array("name" => "messages", "url" => "messages", "class" => "message-circle", "badge" => $count_unread, "badge_class" => ($count_unread > 0 ? "bg-danger" : "bg-primary"));
             }
 
 
