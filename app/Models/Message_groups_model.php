@@ -53,6 +53,11 @@ class Message_groups_model extends Crud_model {
             $where .= " AND ($messages_table.from_user_id=$user_id OR $messages_table.to_user_id=$user_id OR $message_group_members_table.user_id=$user_id) ";
         }
 
+        $project_id = $this->_get_clean_value($options, "project_id");
+        if ($project_id) {
+            $where .= " AND ($message_groups_table.project_id=$project_id) ";
+        }
+
         $order = "";
         $sort_by_group_name = $this->_get_clean_value($options, "sort_by_group_name");
         if ($sort_by_group_name) {
