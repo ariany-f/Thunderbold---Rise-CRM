@@ -420,6 +420,33 @@ class Messages extends Security_Controller {
         $project_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid icon"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>';
         $group_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-coffee icon-18 me-2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>';
 
+
+        $link = null;
+        $group_name = "";
+        if($data->project_id)
+        {
+            if($data->is_ticket)
+            {
+                $link =  anchor(get_uri("projects/view/" . $data->project_id . "/ticket"), $ticket_icon . $data->group_name);
+            }
+            else
+            {
+                $link = anchor(get_uri("projects/view/" . $data->project_id), $project_icon . $data->group_name);
+            }
+        }
+        
+        if($link)
+        {
+            $group_name = $link;
+        }
+        else
+        {
+            if($data->group_name)
+            {
+                $group_name = $group_icon . $data->group_name;
+            }
+        }
+
         $message = "<div class='message-row $status' data-id='$message_id' data-index='$data->main_message_id' data-reply='$reply'><div class='d-flex'><div class='flex-shrink-0'>
                         <span class='avatar avatar-xs'>
                             <img src='$image_url' />
@@ -429,8 +456,8 @@ class Messages extends Security_Controller {
                     <div class='w-100 ps-3'>
                         <div class='mb5'>
                             <strong> $data->user_name</strong>
-                                <small>" . (!empty($data->group_name) ? ' ' . ($data->project_id ? ($data->is_ticket ? $ticket_icon : $project_icon) : $group_icon) . $data->group_name : '') . "</small>
-                                  <span class='text-off float-end time'>$attachment_icon $created_at</span>
+                                <small>" . $group_name . "</small>
+                                <span class='text-off float-end time'>$attachment_icon $created_at</span>
                         </div>
                         $label $subject
                     </div></div></div>
@@ -1008,6 +1035,13 @@ class Messages extends Security_Controller {
             app_redirect("forbidden");
         }
 
+        $project_id = $view_data["message_info"]->project_id;
+        $project_info = array();
+        if($project_id)
+        {
+            $project_info = $this->Projects_model->get_one_where(array("id" => $project_id, "deleted" => "0"));
+        }
+
         if($view_data["message_info"]->id)
         {
             $this->Messages_model->set_message_status_as_read($view_data["message_info"]->id, $this->login_user->id);
@@ -1015,6 +1049,7 @@ class Messages extends Security_Controller {
 
         $view_data["tab_type"] = ((!empty($view_data["message_info"]->group_name)) ? 'groups' : '');
 
+        $view_data["project_info"] = $project_info;
         $view_data["message_id"] = $message_id;
         return $this->template->view("messages/chat/active_chat", $view_data);
     }
@@ -1055,7 +1090,17 @@ class Messages extends Security_Controller {
         $view_data["messages"] = $this->Messages_model->get_chat_list($options)->getResult();
 
         $group_info = $this->Message_groups_model->get_one_where(array("id" => $group_id, "deleted" => "0"));
+
+        $project_id = $group_info->project_id;
+        $project_info = array();
+        if($project_id)
+        {
+            $project_info = $this->Projects_model->get_one_where(array("id" => $project_id, "deleted" => "0"));
+        }
+
         $view_data["group_name"] = $group_info->group_name;
+        $view_data["group_info"] = $group_info;
+        $view_data["project_info"] = $project_info;
         $view_data["group_id"] = $group_info->id;
         $view_data["tab_type"] = $this->request->getPost("tab_type");
 
