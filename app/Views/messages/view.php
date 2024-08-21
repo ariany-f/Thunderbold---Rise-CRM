@@ -67,7 +67,7 @@
                      }
                      
                     ?>
-                    <div class="b-b pt-15 mb-5">
+                    <div class="d-flex justify-content-between b-b pt-15 mb-3">
                         <b><?php echo $group_name; ?></b>
                         <?php if(isset($message_users_result )) { ?>
                         <div id="all-timesheet-users-summary" class="avatar-group">
