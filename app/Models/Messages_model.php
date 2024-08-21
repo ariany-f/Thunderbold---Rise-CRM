@@ -66,7 +66,7 @@ class Messages_model extends Crud_model {
         $offset = $this->_get_clean_value($options, "offset");
         $offset = $offset ? $offset : "0";
 
-        $sql = "SELECT * FROM (SELECT 0 AS reply_message_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.user_type, CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, another_user.id AS another_user_id, another_user.last_online AS another_user_last_online
+        $sql = "SELECT * FROM (SELECT 0 AS reply_message_id, COALESCE($message_groups_table.group_name, '') AS group_name, COALESCE($message_groups_table.project_id, '') AS project_id, $messages_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.user_type, CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, another_user.id AS another_user_id, another_user.last_online AS another_user_last_online
         FROM $messages_table
         LEFT JOIN $users_table ON $users_table.id=$join_with
         LEFT JOIN $users_table AS another_user ON another_user.id=$join_another
@@ -97,6 +97,7 @@ class Messages_model extends Crud_model {
      function get_list($options = array()) {
         $messages_table = $this->db->prefixTable('messages');
         $users_table = $this->db->prefixTable('users');
+        $projects_table = $this->db->prefixTable('projects');
         $message_groups_table = $this->db->prefixTable('message_groups');
         $message_group_members_table = $this->db->prefixTable('message_group_members');
     
@@ -105,18 +106,22 @@ class Messages_model extends Crud_model {
     
         if ($user_id && $mode === "inbox") {
             $where_user = "to_user_id = $user_id";
-            $where_group = "OR to_group_id IN (
+            $select_user = "from_user_id";
+            $where_group = "";  // Não precisa de verificação de grupo no modo "inbox"
+        } else if ($user_id && $mode === "sent_items") {
+            $where_user = "from_user_id = $user_id";
+            $select_user = "to_user_id";
+            $where_group = "";  // Não precisa de verificação de grupo no modo "sent_items"
+        } else if ($user_id && $mode === "list_groups") {
+            $where_user = "";
+            $select_user = "from_user_id";
+            $where_group = "to_group_id IN (
                 SELECT $message_groups_table.id 
                 FROM $message_groups_table 
                 INNER JOIN $message_group_members_table 
                 ON $message_group_members_table.message_group_id = $message_groups_table.id 
                 WHERE $message_group_members_table.user_id = $user_id
             )";
-            $select_user = "from_user_id";
-        } else if ($user_id && $mode === "sent_items") {
-            $where_user = "from_user_id = $user_id";
-            $select_user = "to_user_id";
-            $where_group = "";  // Não precisa de verificação de grupo no modo "sent_items"
         }
     
         $where = "$where_user $where_group";
@@ -135,23 +140,63 @@ class Messages_model extends Crud_model {
         // Ignorar sql mode aqui 
         $this->db->query("SET sql_mode = ''");
     
-        $sql = "SELECT y.*, $messages_table.status, $messages_table.created_at, $messages_table.files,
-                    CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.last_online
-                FROM (
-                    SELECT max(x.id) as id, main_message_id, subject, 
-                           IF(subject='', (SELECT subject FROM $messages_table WHERE id=main_message_id), '') as reply_subject, 
-                           $select_user
+        if($mode != 'list_groups')
+        {
+            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.status, $messages_table.created_at, $messages_table.files,
+                        CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.last_online
                     FROM (
-                        SELECT id, IF(message_id=0, id, message_id) as main_message_id, subject, $select_user 
-                        FROM $messages_table
-                        WHERE deleted=0 AND ($where) 
-                        AND FIND_IN_SET($user_id, $messages_table.deleted_by_users) = 0
-                    ) x
-                    GROUP BY main_message_id
-                ) y
-                LEFT JOIN $users_table ON $users_table.id = y.$select_user
-                LEFT JOIN $messages_table ON $messages_table.id = y.id 
-                $notification_sql";
+                        SELECT max(x.id) as id, main_message_id, subject, 
+                            IF(subject='', (SELECT subject FROM $messages_table WHERE id=main_message_id), '') as reply_subject, 
+                            $select_user
+                        FROM (
+                            SELECT id, IF(message_id=0, id, message_id) as main_message_id, subject, $select_user 
+                            FROM $messages_table
+                            WHERE deleted=0 AND ($where) 
+                            AND FIND_IN_SET($user_id, $messages_table.deleted_by_users) = 0
+                        ) x
+                        GROUP BY main_message_id
+                    ) y
+                    LEFT JOIN $users_table ON $users_table.id = y.$select_user
+                    LEFT JOIN $messages_table ON $messages_table.id = y.id 
+                    LEFT JOIN $message_groups_table ON $message_groups_table.id=$messages_table.to_group_id
+                    LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
+                    LEFT JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
+                    GROUP BY $messages_table.id 
+                    $notification_sql";
+        }
+        else
+        {
+            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COUNT(DISTINCT $message_group_members_table.user_id) AS count_members,  COALESCE($message_groups_table.group_name, '') AS group_name, 
+                        $messages_table.status, $messages_table.created_at, $messages_table.files, $messages_table.from_user_id,
+                        CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, 
+                        another_user.image AS another_user_image,
+                        another_user.id AS another_user_id, 
+                        another_user.last_online AS another_user_last_online,
+                        CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, 
+                        $users_table.image AS user_image, 
+                        $users_table.last_online
+                    FROM (
+                        SELECT max(x.id) as id, main_message_id, subject, task_id, 
+                            IF(subject='', (SELECT subject FROM $messages_table WHERE id=main_message_id), '') as reply_subject, 
+                            $select_user
+                        FROM (
+                            SELECT id, IF(message_id=0, id, message_id) as main_message_id, task_id, subject, $select_user 
+                            FROM $messages_table
+                            WHERE deleted=0
+                            AND FIND_IN_SET($user_id, $messages_table.deleted_by_users) = 0
+                        ) x
+                        GROUP BY main_message_id
+                    ) y
+                    LEFT JOIN $users_table ON $users_table.id = y.$select_user
+                    LEFT JOIN $messages_table ON $messages_table.id = y.id 
+                    LEFT JOIN $users_table AS another_user ON another_user.id = $messages_table.$select_user
+                    RIGHT JOIN $message_groups_table ON $message_groups_table.id=$messages_table.to_group_id
+                    LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
+                    LEFT JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
+                    WHERE $where_group
+                    GROUP BY $message_groups_table.id 
+                    $notification_sql";
+        }
     
         return $this->db->query($sql);
     }
@@ -202,6 +247,7 @@ class Messages_model extends Crud_model {
 
     function count_notifications($user_id, $last_message_checke_at = "0", $active_message_id = 0, $user_ids = "") {
         $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
 
         $where = "";
         if ($active_message_id) {
@@ -214,7 +260,12 @@ class Messages_model extends Crud_model {
 
         $sql = "SELECT COUNT($messages_table.id) AS total_notifications
         FROM $messages_table
-        WHERE $messages_table.deleted=0 AND $messages_table.status='unread'  AND $messages_table.to_user_id = $user_id
+        WHERE $messages_table.deleted=0 AND $messages_table.status='unread' 
+        AND (
+                $messages_table.to_user_id = $user_id 
+            OR 
+                $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)
+        )
         AND timestamp($messages_table.created_at)>timestamp('$last_message_checke_at') $where
         ORDER BY timestamp($messages_table.created_at) DESC";
 
@@ -228,12 +279,53 @@ class Messages_model extends Crud_model {
 
     function set_message_status_as_read($message_id, $user_id = 0) {
         $messages_table = $this->db->prefixTable('messages');
-        $sql = "UPDATE $messages_table SET status='read' WHERE $messages_table.to_user_id=$user_id AND ($messages_table.message_id=$message_id OR $messages_table.id=$message_id)";
-        return $this->db->query($sql);
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+        
+        // Obter o valor atual da coluna read_by
+        $query = $this->db->query("SELECT read_by FROM $messages_table WHERE (message_id = $message_id OR id = $message_id) AND (FIND_IN_SET($user_id, $messages_table.read_by) = 0 OR status = 'unread')");
+        $row = $query->getRow();
+        
+        // Se a coluna read_by já tiver valores, concatenar o novo user_id
+        if($row)
+        {
+            $current_read_by = $row->read_by;
+            if ($current_read_by) {
+                $new_read_by = $current_read_by . ',' . $user_id;
+            } else {
+                $new_read_by = $user_id;
+            }
+        
+            // Atualizar a coluna read_by e status
+            $sql = "UPDATE $messages_table 
+                    SET status = 'read', 
+                        read_by = '$new_read_by' 
+                    WHERE (to_user_id = $user_id
+                    OR to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id))
+                    AND (message_id = $message_id OR id = $message_id)";
+            
+            return $this->db->query($sql);
+        }
     }
 
-    function count_unread_message($user_id = 0, $user_ids = "") {
+    function count_unread_group_message($user_id = 0, $user_ids = "") {
         $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+
+        $where = "";
+        if ($user_ids) {
+            $where .= " AND ($messages_table.to_group_id IN(SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id IN ($user_ids))) ";
+        }
+
+        $sql = "SELECT COUNT($messages_table.id) as total
+        FROM $messages_table
+        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
+        return $this->db->query($sql)->getRow()->total;
+    }
+
+
+    function count_unread_inbox_message($user_id = 0, $user_ids = "") {
+        $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
 
         $where = "";
         if ($user_ids) {
@@ -242,7 +334,22 @@ class Messages_model extends Crud_model {
 
         $sql = "SELECT COUNT($messages_table.id) as total
         FROM $messages_table
-        WHERE $messages_table.deleted=0 AND $messages_table.status='unread'  AND $messages_table.to_user_id = $user_id $where";
+        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND $messages_table.to_user_id = $user_id $where";
+        return $this->db->query($sql)->getRow()->total;
+    }
+
+    function count_unread_message($user_id = 0, $user_ids = "") {
+        $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+
+        $where = "";
+        if ($user_ids) {
+            $where .= " AND ($messages_table.to_user_id IN($user_ids) OR $messages_table.from_user_id IN($user_ids) OR $messages_table.to_group_id IN(SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id IN ($user_ids))) ";
+        }
+
+        $sql = "SELECT COUNT($messages_table.id) as total
+        FROM $messages_table
+        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_user_id = $user_id OR $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
         return $this->db->query($sql)->getRow()->total;
     }
 

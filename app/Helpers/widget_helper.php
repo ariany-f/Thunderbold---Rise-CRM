@@ -697,6 +697,33 @@ if (!function_exists('count_unread_message')) {
 
 
 /**
+ * count unread group messages
+ * @return number
+ */
+if (!function_exists('count_unread_group_message')) {
+
+    function count_unread_group_message() {
+        $ci = new Security_Controller(false);
+        return $ci->Messages_model->count_unread_group_message($ci->login_user->id, $ci->get_allowed_user_ids());
+    }
+
+}
+
+/**
+ * count unread inbox messages
+ * @return number
+ */
+if (!function_exists('count_unread_inbox_message')) {
+
+    function count_unread_inbox_message() {
+        $ci = new Security_Controller(false);
+        return $ci->Messages_model->count_unread_inbox_message($ci->login_user->id, $ci->get_allowed_user_ids());
+    }
+
+}
+
+
+/**
  * count new tickets
  * @param string $ticket_types
  * @return number

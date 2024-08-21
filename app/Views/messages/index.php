@@ -5,11 +5,22 @@
         <div class="box">
             <div class="box-content message-button-list">
                 <ul class="list-group ">
-                    <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?> 
 
-                    <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'), array("class" => "list-group-item")); ?>
+                    <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?> 
+                   
+                    <?php $count_inbox = count_unread_inbox_message(); ?>
+                    <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
 
                     <?php echo anchor(get_uri("messages/sent_items"), app_lang('sent_items'), array("class" => "list-group-item")); ?>
+
+                    <?php if(get_setting('module_message_group')) { ?>
+
+                        <?php $count_group = count_unread_group_message(); ?>
+
+                        <?php echo anchor(get_uri("messages/list_groups"), app_lang('groups') . ' <span class="badge '. ($count_group > 0 ? "bg-danger" : "badge-light") .'">' . $count_group . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+
+                    <?php } ?>
+
                 </ul>
             </div>
 
@@ -25,11 +36,17 @@
                                         echo "<i data-feather='inbox' class='icon-16'></i> " . app_lang('inbox');
                                     } else if ($mode === "sent_items") {
                                         echo "<i data-feather='send' class='icon-16'></i> " . app_lang('sent_items');
+                                    } else if ($mode === "list_groups") {
+                                        echo "<i data-feather='users' class='icon-16'></i> " . app_lang('groups');
                                     }
                                     ?>
                                 </div>
                                 <div class="float-end">
-                                    <input type="text" id="search-messages" class="datatable-search" placeholder="<?php echo app_lang('search') ?>">
+                                    <?php if ($mode === "inbox" || $mode === "sent_items") { ?>
+                                        <input type="text" id="search-messages" class="datatable-search" placeholder="<?php echo app_lang('search') ?>">
+                                    <?php } else if ($mode === "list_groups") { ?>
+                                       <?php echo modal_anchor(get_uri("messages/groups_modal_form/"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("new_group"), array("class" => "btn btn-default col-md-12 col-sm-12 col-xs-12", "title" => app_lang('new_group')));?>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <div class="table-responsive">

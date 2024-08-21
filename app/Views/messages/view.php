@@ -13,69 +13,143 @@
             $user_image = $login_user->image;
         }
     }
+    if ($mode === "list_groups") {
+        if ($is_reply) {
+            $user_image = $login_user->image;
+        } else {
+            if(isset($message_info->another_user_image))
+            {
+
+                $user_image = $message_info->another_user_image;
+            }
+            else
+            {
+                $user_image = $message_info->user_image;
+            }
+        }
+    }
     ?>
 
     <div class="b-b p15 m0 bg-white">
         <div class="row">
             <div class="col-md-12">
-                <div class="d-flex">
-                    <div class="flex-shrink-0 pe-2"> 
-                        <span class="avatar avatar-sm">
-                            <img src="<?php echo get_avatar($user_image); ?>" alt="..." />
-                        </span>
-                    </div>
-                    <div class="w-100">
-                        <div class="clearfix">
-                            <?php
-                            $message_user_id = $message_info->from_user_id;
-                            if ($mode === "sent_items" && $is_reply != "1" || $mode === "inbox" && $is_reply == "1") {
-                                $message_user_id = $message_info->to_user_id;
+                <div class="d-flex flex-column">
+                    <?php 
+                     $ticket_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>';
+                     $project_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid icon"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>';
+                     $group_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-coffee icon-18 me-2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>';
+             
+             
+                     $link = null;
+                     $group_name = "";
+                     if($message_info->project_id)
+                     {
+                         if($project_info->is_ticket)
+                         {
+                             $link =  anchor(get_uri("projects/view/" . $message_info->project_id . "/ticket"), "<div style='color: initial;'>" . $ticket_icon . '&nbsp;' . $message_info->group_name . "</div>");
+                         }
+                         else
+                         {
+                             $link = anchor(get_uri("projects/view/" . $message_info->project_id), "<div style='color: initial;'>" . $project_icon . '&nbsp;' . $message_info->group_name . "</div>");
+                         }
+                     }
+                     
+                     if($link)
+                     {
+                         $group_name = $link;
+                     }
+                     else
+                     {
+                         if($message_info->group_name)
+                         {
+                             $group_name = $group_icon . $message_info->group_name;
+                         }
+                     }
+                     
+                    ?>
+                    <div class="d-flex justify-content-between b-b pt-15 mb-3">
+                        <b><?php echo $group_name; ?></b>
+                        <?php if(isset($message_users_result )) { ?>
+                        <div id="all-timesheet-users-summary" class="avatar-group">
+                                <?php
+                                foreach ($message_users_result AS $user) {
+                                    ?>
+                                    <div class="user-avatar avatar-30 avatar-circle" data-bs-toggle='tooltip' title='<?php echo $user->user_name; ?>'>
+                                        <img alt="" src="<?php echo get_avatar($user->user_avatar); ?>">
+                                    </div>
+                                    <?php
+                                }
                                 ?>
-                                <label class="badge bg-success"><?php echo app_lang("to"); ?></label>
-                            <?php } ?>
-                            <?php
-                            if ($message_info->user_type == "client") {
-                                echo get_client_contact_profile_link($message_user_id, $message_info->user_name, array("class" => "dark strong"));
-                            } else {
-                                echo get_team_member_profile_link($message_user_id, $message_info->user_name, array("class" => "dark strong"));
-                            }
-                            ?>
-                            <span class="text-off float-end"><?php echo format_to_relative_time($message_info->created_at); ?></span>
-
-                            <span class="float-end dropdown">
-                                <div class="text-off dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true" >
-                                    <i data-feather="chevron-down" class="icon"></i>
-                                </div>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete'), array("class" => "dropdown-item", "title" => app_lang('delete'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
-                                </ul>
+                            </div>
+                        <?php } ?>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 pe-2"> 
+                            <span class="avatar avatar-sm">
+                                <img src="<?php echo get_avatar($user_image); ?>" alt="..." />
                             </span>
                         </div>
-                        <p class="pt10 pb10 b-b">
-                            <?php echo app_lang("subject"); ?>:  <?php echo $message_info->subject; ?>  
-                        </p>
-
-                        <p>
-                            <?php echo nl2br(link_it(process_images_from_content($message_info->message))); ?>
-                        </p>
-
-                        <div class="comment-image-box clearfix">
-                            <?php
-                            $files = unserialize($message_info->files);
-                            $total_files = count($files);
-
-                            if ($total_files) {
-                                echo view("includes/timeline_preview", array("files" => $files));
-                                $download_caption = app_lang('download');
-                                if ($total_files > 1) {
-                                    $download_caption = sprintf(app_lang('download_files'), $total_files);
+                        <div class="w-100">
+                            <div class="clearfix">
+                                <?php
+                                $message_user_id = $message_info->from_user_id;
+                                if ($mode === "list_groups" && $is_reply != "1" || $mode === "sent_items" && $is_reply != "1" || $mode === "inbox" && $is_reply == "1") {
+                                    if(!empty($message_info->to_user_id)) {
+                                        
+                                        $message_user_id = $message_info->to_user_id;
+                                    }
+                                    ?>
+                                    <label class="badge bg-success"><?php echo app_lang("to"); ?></label>
+                                <?php } ?>
+                                <?php
+                                if ($message_info->user_type == "client") {
+                                    echo get_client_contact_profile_link($message_user_id, ($message_info->user_name ?? $message_info->another_user_name), array("class" => "dark strong"));
+                                } else {
+                                    echo get_team_member_profile_link($message_user_id, ($message_info->user_name ?? $message_info->another_user_name), array("class" => "dark strong"));
                                 }
-                                echo "<i data-feather='paperclip' class='icon-16'></i>";
-                                echo anchor(get_uri("messages/download_message_files/" . $message_info->id), $download_caption, array("class" => "float-end", "title" => $download_caption));
-                            }
-                            ?>
-                        </div>
+                                ?>
+                                <span class="text-off float-end"><?php echo format_to_relative_time($message_info->created_at); ?></span>
 
+                                <span class="float-end dropdown">
+                                    <div class="text-off dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true" >
+                                        <i data-feather="chevron-down" class="icon"></i>
+                                    </div>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete'), array("class" => "dropdown-item", "title" => app_lang('delete'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
+                                    </ul>
+                                </span>
+                            </div>
+                            <p class="pt10 pb10 b-b">
+                                <?php if($message_info->task_id) : ?>
+                                    <?php echo modal_anchor(get_uri("projects/task_view"), '#' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?>
+                                <?php else : ?>
+                                    <?php echo app_lang("subject"); ?>:  
+                                    <?php echo $message_info->subject; ?>
+                                <?php endif; ?>
+                            </p>
+
+                            <p>
+                                <?php echo nl2br(link_it(process_images_from_content($message_info->message))); ?>
+                            </p>
+
+                            <div class="comment-image-box clearfix">
+                                <?php
+                                $files = unserialize($message_info->files);
+                                $total_files = count($files);
+
+                                if ($total_files) {
+                                    echo view("includes/timeline_preview", array("files" => $files));
+                                    $download_caption = app_lang('download');
+                                    if ($total_files > 1) {
+                                        $download_caption = sprintf(app_lang('download_files'), $total_files);
+                                    }
+                                    echo "<i data-feather='paperclip' class='icon-16'></i>";
+                                    echo anchor(get_uri("messages/download_message_files/" . $message_info->id), $download_caption, array("class" => "float-end", "title" => $download_caption));
+                                }
+                                ?>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>

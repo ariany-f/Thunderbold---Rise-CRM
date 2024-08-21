@@ -1467,7 +1467,7 @@ $lang["mark_as_public_help_message"] = "Você não pode tornar esta nota privada
 $lang["google_calendar_help_message"] = "Você obterá seus eventos do Google Agenda pela execução do Cron job. E qualquer adição/modificação de seus eventos locais afetará seu calendário do Google instantaneamente.";
 
 /* Version 2.4 */
-
+$lang['groups'] = 'Grupos';
 $lang["footer"] = "Rodapé";
 $lang["footer_description_message"] = "Este rodapé ficará visível em todas as páginas públicas.";
 $lang["estimate_footer"] = "Rodapé de estimativa";
