@@ -33,7 +33,11 @@
                                     ?>
                                 </div>
                                 <div class="float-end">
-                                    <input type="text" id="search-messages" class="datatable-search" placeholder="<?php echo app_lang('search') ?>">
+                                    <?php if ($mode === "inbox" || $mode === "sent_items") { ?>
+                                        <input type="text" id="search-messages" class="datatable-search" placeholder="<?php echo app_lang('search') ?>">
+                                    <?php } else if ($mode === "list_groups") { ?>
+                                       <?php echo modal_anchor(get_uri("messages/groups_modal_form/"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("new_group"), array("class" => "btn btn-default col-md-12 col-sm-12 col-xs-12", "title" => app_lang('new_group')));?>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <div class="table-responsive">

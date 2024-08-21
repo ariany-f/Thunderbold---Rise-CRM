@@ -166,7 +166,7 @@ class Messages_model extends Crud_model {
         }
         else
         {
-            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, 
+            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COUNT(DISTINCT $message_group_members_table.user_id) AS count_members,  COALESCE($message_groups_table.group_name, '') AS group_name, 
                         $messages_table.status, $messages_table.created_at, $messages_table.files, $messages_table.from_user_id,
                         CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, 
                         another_user.image AS another_user_image,
@@ -176,11 +176,11 @@ class Messages_model extends Crud_model {
                         $users_table.image AS user_image, 
                         $users_table.last_online
                     FROM (
-                        SELECT max(x.id) as id, main_message_id, subject, 
+                        SELECT max(x.id) as id, main_message_id, subject, task_id, 
                             IF(subject='', (SELECT subject FROM $messages_table WHERE id=main_message_id), '') as reply_subject, 
                             $select_user
                         FROM (
-                            SELECT id, IF(message_id=0, id, message_id) as main_message_id, subject, $select_user 
+                            SELECT id, IF(message_id=0, id, message_id) as main_message_id, task_id, subject, $select_user 
                             FROM $messages_table
                             WHERE deleted=0
                             AND FIND_IN_SET($user_id, $messages_table.deleted_by_users) = 0

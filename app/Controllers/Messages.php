@@ -369,6 +369,19 @@ class Messages extends Security_Controller {
             app_redirect("forbidden");
         }
 
+        if($view_data["message_info"]->project_id)
+        {
+            $view_data["project_info"] = $this->Projects_model->get_one($view_data["message_info"]->project_id);
+        }
+
+        if($view_data["message_info"]->to_group_id)
+        {
+            $options = [
+                "group_id" => $view_data["message_info"]->to_group_id
+            ];
+            $view_data["message_users_result"] = $this->Message_group_members_model->get_message_statistics($options)->group_users_data;
+        }
+
         //change message status to read
         $this->Messages_model->set_message_status_as_read($view_data["message_info"]->id, $this->login_user->id);
 
@@ -405,6 +418,10 @@ class Messages extends Security_Controller {
             $subject = $data->reply_subject;
         }
 
+        if (isset($data->task_id)) {
+            $subject = '#' . $data->task_id . ' - ' . $data->subject;
+        }
+
         if ($data->files && is_array(unserialize($data->files)) && count(unserialize($data->files))) {
             $attachment_icon = "<i data-feather='paperclip' class='icon-14 mr15'></i>";
         }
@@ -433,28 +450,34 @@ class Messages extends Security_Controller {
 
         $link = null;
         $group_name = "";
-        if($data->project_id)
+
+        if($data->group_name)
         {
-            if($data->is_ticket)
+            if($data->project_id)
             {
-                $link =  anchor(get_uri("projects/view/" . $data->project_id . "/ticket"), $ticket_icon . $data->group_name);
+                if($data->is_ticket)
+                {
+                    $group_name = $ticket_icon . $data->group_name;
+                }
+                else
+                {
+                    $group_name = $project_icon . $data->group_name;
+                }
             }
             else
             {
-                $link = anchor(get_uri("projects/view/" . $data->project_id), $project_icon . $data->group_name);
-            }
-        }
-        
-        if($link)
-        {
-            $group_name = $link;
-        }
-        else
-        {
-            if($data->group_name)
-            {
                 $group_name = $group_icon . $data->group_name;
             }
+        }
+
+        $members = $last_message = "";
+        $line_name = "<b> " . (isset($data->another_user_name) ? $data->another_user_name : $data->user_name) ."</b>";
+
+        if($data->group_name)
+        {
+            $line_name = "";
+            $members = "<span class='badge badge-light mt-0'>" .($data->count_members ?? 0) . " membros</span>";
+            $last_message = "<i><b>" . (isset($data->another_user_name) ? $data->another_user_name : $data->user_name) ."</b> às </i>";
         }
 
         $message = "<div class='message-row $status' data-id='$message_id' data-index='$data->main_message_id' data-reply='$reply'><div class='d-flex'><div class='flex-shrink-0'>
@@ -465,9 +488,12 @@ class Messages extends Security_Controller {
                     </div>
                     <div class='w-100 ps-3'>
                         <div class='mb5'>
-                            <strong> " . (isset($data->another_user_name) ? $data->another_user_name : $data->user_name) ." </strong>
-                                <small>" . $group_name . "</small>
-                                <span class='text-off float-end time'>$attachment_icon $created_at</span>
+                                <div style='display: flex;align-items: center;gap: 1rem;'>
+                                    <strong>" . $group_name . "</strong> 
+                                    " . $members  . "
+                                </div>
+                                " .  $line_name . "
+                                <span class='text-off float-end time'>$attachment_icon $last_message $created_at</span>
                         </div>
                         $label $subject
                     </div></div></div>
