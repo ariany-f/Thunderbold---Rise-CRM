@@ -120,7 +120,7 @@
                                 </span>
                             </div>
                             <p class="pt10 pb10 b-b">
-                                <?php if($message_info->task_id) : ?>
+                                <?php if($message_info->task_id && $message_info->task_id != 0) : ?>
                                     <?php echo modal_anchor(get_uri("projects/task_view"), '#' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?>
                                 <?php else : ?>
                                     <?php echo app_lang("subject"); ?>:  
