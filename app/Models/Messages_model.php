@@ -253,7 +253,7 @@ class Messages_model extends Crud_model {
 
         $sql = "SELECT COUNT($messages_table.id) AS total_notifications
         FROM $messages_table
-        WHERE $messages_table.deleted=0 AND $messages_table.status='unread'  AND $messages_table.to_user_id = $user_id
+        WHERE $messages_table.deleted=0 AND $messages_table.status='unread' AND $messages_table.to_user_id = $user_id 
         AND timestamp($messages_table.created_at)>timestamp('$last_message_checke_at') $where
         ORDER BY timestamp($messages_table.created_at) DESC";
 
@@ -270,7 +270,7 @@ class Messages_model extends Crud_model {
         $message_group_members_table = $this->db->prefixTable('message_group_members');
         
         // Obter o valor atual da coluna read_by
-        $query = $this->db->query("SELECT read_by FROM $messages_table WHERE $messages_table.from_user_id <> $user_id AND (message_id = $message_id OR id = $message_id) AND (FIND_IN_SET($user_id, $messages_table.read_by) = 0 OR status = 'unread')");
+        $query = $this->db->query("SELECT read_by FROM $messages_table WHERE (message_id = $message_id OR id = $message_id) AND (FIND_IN_SET($user_id, $messages_table.read_by) = 0 OR status = 'unread')");
         $row = $query->getRow();
         
         // Se a coluna read_by já tiver valores, concatenar o novo user_id
@@ -306,7 +306,7 @@ class Messages_model extends Crud_model {
 
         $sql = "SELECT COUNT($messages_table.id) as total
         FROM $messages_table
-        WHERE $messages_table.deleted=0 AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_user_id = $user_id OR $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
+        WHERE $messages_table.deleted=0 AND $messages_table.from_user_id <> $user_id AND ($messages_table.status='unread' OR FIND_IN_SET($user_id, $messages_table.read_by) = 0) AND ($messages_table.to_user_id = $user_id OR $messages_table.to_group_id IN (SELECT $message_group_members_table.message_group_id FROM $message_group_members_table WHERE $message_group_members_table.user_id = $user_id)) $where";
         return $this->db->query($sql)->getRow()->total;
     }
 
