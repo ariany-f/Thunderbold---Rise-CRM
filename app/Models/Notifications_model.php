@@ -28,6 +28,8 @@ class Notifications_model extends Crud_model {
         $estimates_table = $this->db->prefixTable('estimates');
         $estimate_request_table = $this->db->prefixTable('estimate_requests');
         $messages_table = $this->db->prefixTable('messages');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+        $message_groups_table = $this->db->prefixTable('message_groups');
         $invoices_table = $this->db->prefixTable('invoices');
         $roles_table = $this->db->prefixTable('roles');
         $events_table = $this->db->prefixTable('events');
@@ -266,6 +268,7 @@ class Notifications_model extends Crud_model {
 
         //find message recipient
         if (in_array("recipient", $notify_to_terms) && $actual_message_id) {
+            $where .= " OR ($users_table.id IN(SELECT $message_group_members_table.user_id FROM $messages_table INNER JOIN $message_groups_table ON $message_groups_table.id = $messages_table.to_group_id INNER JOIN $message_group_members_table ON $message_group_members_table.message_group_id = $message_groups_table.id WHERE $messages_table.id=$actual_message_id)) ";
             $where .= " OR ($users_table.id=(SELECT $messages_table.to_user_id FROM $messages_table WHERE $messages_table.id=$actual_message_id)) ";
         }
 
