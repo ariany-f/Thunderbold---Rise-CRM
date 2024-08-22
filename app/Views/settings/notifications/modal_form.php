@@ -107,7 +107,6 @@
         $("#notification-settings-form").appForm({
             onSuccess: function (result) {
                 $("#notification-settings-table").appTable({newData: result.data, dataId: result.id});
-                console.log(result.data);
             }
         });
 
