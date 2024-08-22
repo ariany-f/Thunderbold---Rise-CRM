@@ -926,6 +926,8 @@ $lang["show_background_image_in_signin_page"] = "Mostrar imagem de fundo na pág
 
 /* Version 1.6 */
 
+$lang["end_conversation"] = "Encerrar conversa";
+$lang["reactive_conversation"] = "Reativar conversa";
 $lang["more"] = "Mais";
 $lang["custom"] = "Personalizar";
 $lang["clear"] = "Transparente";

@@ -1373,6 +1373,10 @@ body.modal-open {
     padding: 8px 15px;
 }
 
+.message-row.inactive {
+    opacity: .5;
+}
+
 .unread {
     border-left: 3px solid #337ab7;
 }

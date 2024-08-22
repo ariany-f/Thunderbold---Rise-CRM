@@ -487,6 +487,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `files` longtext COLLATE utf8_unicode_ci NOT NULL,
   `task_id` int(11) NOT NULL DEFAULT '0',
   `read_by` text COLLATE utf8_unicode_ci,
+  `ended` tinyint(1) NOT NULL DEFAULT '0',
   `deleted_by_users` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `message_from` (`from_user_id`),
