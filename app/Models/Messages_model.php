@@ -222,6 +222,11 @@ class Messages_model extends Crud_model {
             $where .= " AND ($messages_table.to_group_id=$group_id) ";
         }
 
+        $ended = $this->_get_clean_value($options, "ended");
+        if ($ended) {
+            $where .= " AND ($messages_table.ended=$ended) ";
+        }
+
         $user_ids = $this->_get_clean_value($options, "user_ids");
         if ($user_ids) {
             $where .= " AND ($messages_table.to_user_id IN($user_ids) OR $messages_table.from_user_id IN($user_ids))";
@@ -229,7 +234,7 @@ class Messages_model extends Crud_model {
 
         $this->db->query("SET sql_mode = ''"); //ignor sql mode here
 
-        $sql = "SELECT $messages_table.id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.subject, $messages_table.from_user_id, IF(another_m.mex_created_at, another_m.mex_created_at, $messages_table.created_at) AS message_time, 
+        $sql = "SELECT $messages_table.id, $messages_table.ended, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.subject, $messages_table.from_user_id, IF(another_m.mex_created_at, another_m.mex_created_at, $messages_table.created_at) AS message_time, 
                 IF(another_m.status, another_m.status, $messages_table.status) AS status, (SELECT from_user_id FROM $messages_table WHERE $messages_table.id=another_m.max_id) AS last_from_user_id,
                 CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.last_online
                 FROM $messages_table
