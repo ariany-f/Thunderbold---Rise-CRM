@@ -28,6 +28,7 @@
         $(selector).appTable({
             source: '<?php echo_uri("proposals/list_data") ?>',
             order: [[0, "desc"]],
+            serverSide: true,
             dateRangeType: dateRange,
             filterDropdown: [{name: "client_id", class: "w150", options: <?php echo $clients_dropdown; ?>},{name: "status", class: "w150", options: <?php echo view("proposals/proposal_statuses_dropdown"); ?>}, <?php echo $custom_field_filters; ?>],
             columns: [
