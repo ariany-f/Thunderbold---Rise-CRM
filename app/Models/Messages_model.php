@@ -142,7 +142,7 @@ class Messages_model extends Crud_model {
     
         if($mode != 'list_groups')
         {
-            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files,
+            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files, $messages_table.ended,
                         CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.last_online
                     FROM (
                         SELECT max(x.id) as id, main_message_id, subject, 
@@ -167,7 +167,7 @@ class Messages_model extends Crud_model {
         else
         {
             $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COUNT(DISTINCT $message_group_members_table.user_id) AS count_members,  COALESCE($message_groups_table.group_name, '') AS group_name, 
-                        $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files, $messages_table.from_user_id,
+                        $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files, $messages_table.ended, $messages_table.from_user_id,
                         CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, 
                         another_user.image AS another_user_image,
                         another_user.id AS another_user_id, 
@@ -367,6 +367,22 @@ class Messages_model extends Crud_model {
         $messages_table = $this->db->prefixTable('messages');
 
         $sql = "UPDATE $messages_table SET $messages_table.deleted_by_users = CONCAT($messages_table.deleted_by_users,',',$user_id)
+        WHERE $messages_table.id=$message_id OR $messages_table.message_id=$message_id";
+        return $this->db->query($sql);
+    }
+
+    function reactive_messages_for_user($message_id = 0, $user_id = 0) {
+        $messages_table = $this->db->prefixTable('messages');
+
+        $sql = "UPDATE $messages_table SET $messages_table.ended = 0
+        WHERE $messages_table.id=$message_id OR $messages_table.message_id=$message_id";
+        return $this->db->query($sql);
+    }
+
+    function end_messages_for_user($message_id = 0, $user_id = 0) {
+        $messages_table = $this->db->prefixTable('messages');
+
+        $sql = "UPDATE $messages_table SET $messages_table.ended = 1
         WHERE $messages_table.id=$message_id OR $messages_table.message_id=$message_id";
         return $this->db->query($sql);
     }

@@ -68,17 +68,20 @@
                      
                     ?>
                     <div class="d-flex justify-content-between b-b pt-15 mb-3">
-                        <b><?php echo $group_name; ?></b>
+                        <b><?php echo $group_name; ?>
+                        <?php if($message_info->ended) { ?>
+                            <span class="badge bg-danger">CONVERSA ENCERRADA</span>
+                        <?php } ?></b>
                         <?php if(isset($message_users_result )) { ?>
                         <div id="all-timesheet-users-summary" class="avatar-group">
                                 <?php
-                                foreach ($message_users_result AS $user) {
+                                    foreach ($message_users_result AS $user) {
                                     ?>
                                     <div class="user-avatar avatar-30 avatar-circle" data-bs-toggle='tooltip' title='<?php echo $user->user_name; ?>'>
                                         <img alt="" src="<?php echo get_avatar($user->user_avatar); ?>">
                                     </div>
-                                    <?php
-                                }
+                                <?php
+                                    }
                                 ?>
                             </div>
                         <?php } ?>
@@ -116,6 +119,11 @@
                                     </div>
                                     <ul class="dropdown-menu" role="menu">
                                         <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete'), array("class" => "dropdown-item", "title" => app_lang('delete'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
+                                        <?php if($message_info->ended) { ?>
+                                            <li role="presentation"><?php echo ajax_anchor(get_uri("messages/reactive_my_messages/$message_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reactive_conversation'), array("class" => "dropdown-item", "title" => app_lang('reactive_conversation'))); ?> </li>
+                                        <?php } else { ?>
+                                            <li role="presentation"><?php echo ajax_anchor(get_uri("messages/end_my_messages/$message_info->id"), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('end_conversation'), array("class" => "dropdown-item", "title" => app_lang('end_conversation'))); ?> </li>
+                                        <?php } ?>
                                     </ul>
                                 </span>
                             </div>
@@ -184,29 +192,32 @@
         <div id="reply-form-dropzone" class="post-dropzone">
             <?php echo form_open(get_uri("messages/reply"), array("id" => "message-reply-form", "class" => "general-form", "role" => "form")); ?>
             <div class="p15 box b-b">
-                <div class="box-content avatar avatar-md pr15 d-table-cell">
-                    <img src="<?php echo get_avatar($login_user->image); ?>" alt="..." />
-                </div>
-                <div class="box-content mb-3 form-group">
-                    <input type="hidden" name="message_id" value="<?php echo $message_info->id; ?>">
-                    <?php
-                    echo form_textarea(array(
-                        "id" => "reply_message",
-                        "name" => "reply_message",
-                        "class" => "form-control",
-                        "placeholder" => app_lang('write_a_reply'),
-                        "data-rule-required" => true,
-                        "data-msg-required" => app_lang("field_required"),
-                        "data-rich-text-editor" => true,
-                        "style" => "height: 6rem;"
-                    ));
-                    ?>
-                    <?php echo view("includes/dropzone_preview"); ?>    
-                    <footer class="card-footer b-a clearfix">
-                        <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class='icon-16'></i> <?php echo app_lang("upload_file"); ?></button>
-                        <button class="btn btn-primary float-end btn-sm " type="submit"><i data-feather="send" class='icon-16'></i> <?php echo app_lang("reply"); ?></button>
-                    </footer>
-                </div>
+                <?php if(!$message_info->ended) { ?>
+                    <div class="box-content avatar avatar-md pr15 d-table-cell">
+                        <img src="<?php echo get_avatar($login_user->image); ?>" alt="..." />
+                    </div>
+                
+                    <div class="box-content mb-3 form-group">
+                        <input type="hidden" name="message_id" value="<?php echo $message_info->id; ?>">
+                        <?php
+                            echo form_textarea(array(
+                                "id" => "reply_message",
+                                "name" => "reply_message",
+                                "class" => "form-control",
+                                "placeholder" => app_lang('write_a_reply'),
+                                "data-rule-required" => true,
+                                "data-msg-required" => app_lang("field_required"),
+                                "data-rich-text-editor" => true,
+                                "style" => "height: 6rem;"
+                            ));
+                        ?>
+                            <?php echo view("includes/dropzone_preview"); ?>
+                            <footer class="card-footer b-a clearfix">
+                                <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class='icon-16'></i> <?php echo app_lang("upload_file"); ?></button>
+                                <button class="btn btn-primary float-end btn-sm " type="submit"><i data-feather="send" class='icon-16'></i> <?php echo app_lang("reply"); ?></button>
+                            </footer>
+                    </div>
+                <?php } ?> 
             </div>
             <?php echo form_close(); ?>
         </div>

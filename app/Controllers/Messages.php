@@ -487,10 +487,16 @@ class Messages extends Security_Controller {
         {
             $line_name = "";
             $members = "<span class='badge badge-light mt-0'>" .($data->count_members ?? 0) . " membros</span>";
-            $last_message = "<i><b>" . (isset($data->another_user_name) ? $data->another_user_name : $data->user_name) ."</b> às </i>";
+            $last_message = "<i><b>" . (isset($data->another_user_name) ? $data->another_user_name : $data->user_name) ."</b> em </i>";
         }
 
-        $message = "<div class='message-row $status' data-id='$message_id' data-index='$data->main_message_id' data-reply='$reply'><div class='d-flex'><div class='flex-shrink-0'>
+        $classe = "";
+        if($data->ended)
+        {
+            $classe = "inactive";
+        }
+
+        $message = "<div class='message-row $status $classe' data-id='$message_id' data-index='$data->main_message_id' data-reply='$reply'><div class='d-flex'><div class='flex-shrink-0'>
                         <span class='avatar avatar-xs'>
                             <img src='$image_url' />
                                 $online
@@ -952,6 +958,30 @@ class Messages extends Security_Controller {
 
         //delete messages for current user.
         $this->Messages_model->delete_messages_for_user($id, $this->login_user->id);
+    }
+
+    function end_my_messages($id = 0) {
+
+        if (!$id) {
+            exit();
+        }
+
+        validate_numeric_value($id);
+
+        //delete messages for current user.
+        $this->Messages_model->end_messages_for_user($id, $this->login_user->id);
+    }
+
+    function reactive_my_messages($id = 0) {
+
+        if (!$id) {
+            exit();
+        }
+
+        validate_numeric_value($id);
+
+        //delete messages for current user.
+        $this->Messages_model->reactive_messages_for_user($id, $this->login_user->id);
     }
 
     //prepare chat inbox list
