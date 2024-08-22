@@ -428,7 +428,7 @@ class Messages extends Security_Controller {
             $subject = $data->reply_subject;
         }
 
-        if (isset($data->task_id)) {
+        if (isset($data->task_id) && $data->task_id) {
             $subject = '#' . $data->task_id . ' - ' . $data->subject;
         }
 
@@ -750,7 +750,7 @@ class Messages extends Security_Controller {
         $save_id = $this->Messages_model->ci_save($message_data);
 
         if ($save_id) {
-            log_notification("new_message_sent", array("actual_message_id" => $save_id));
+            log_notification("new_message_sent_to_group", array("actual_message_id" => $save_id));
             echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), "id" => $save_id));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
@@ -829,7 +829,8 @@ class Messages extends Security_Controller {
                             send_message_via_pusher($pusher_to_user_id, $message_data, $message_id);
                         }
                     }
-    
+
+                    log_notification("message_reply_sent_to_group", array("actual_message_id" => $save_id, "parent_message_id" => $message_id));
                 }
                 else
                 {
@@ -837,12 +838,13 @@ class Messages extends Security_Controller {
                     if (get_setting('enable_chat_via_pusher') && get_setting("enable_push_notification")) {
                         send_message_via_pusher($to_user_id, $message_data, $message_id);
                     }
-    
-                }
-                //we'll not send notification, if the user is online
+                    
+                    //we'll not send notification, if the user is online
 
-                if ($this->request->getPost("is_user_online") !== "1") {
-                    log_notification("message_reply_sent", array("actual_message_id" => $save_id, "parent_message_id" => $message_id));
+                    if ($this->request->getPost("is_user_online") !== "1") {
+                        log_notification("message_reply_sent", array("actual_message_id" => $save_id, "parent_message_id" => $message_id));
+                    }
+    
                 }
 
                 //clear the delete status, if the mail deleted

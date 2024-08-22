@@ -2303,7 +2303,7 @@ if (!function_exists('prepare_proposal_view')) {
             $view_data["client_info"] = $client_info;
             $view_data["is_preview"] = true;
             $parser_data["PROPOSAL_TO_INFO"] = view("proposals/proposal_parts/proposal_to", $view_data);
-            $parser_data["PROPOSAL_TO_COMPANY_CNPJ"] = $client_info->company_cnpj;
+            $parser_data["PROPOSAL_TO_COMPANY_CNPJ"] = ($client_info->company_cnpj ?? '');
             $parser_data["PROPOSAL_TO_COMPANY_NAME"] = $client_info->company_name;
             $parser_data["PROPOSAL_TO_ADDRESS"] = $client_info->address;
             $parser_data["PROPOSAL_TO_CITY"] = $client_info->city;
