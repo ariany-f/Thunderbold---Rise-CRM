@@ -144,6 +144,16 @@ if (!function_exists('get_notification_config')) {
             return array("url" => $url);
         };
 
+        $message_to_group_link = function ($options) {
+            $url = "";
+            if (isset($options->actual_message_id)) {
+                $message_id = isset($options->parent_message_id) && $options->parent_message_id ? $options->parent_message_id : $options->actual_message_id;
+                $url = get_uri("messages/list_groups/" . $message_id);
+            }
+
+            return array("url" => $url);
+        };
+
         $announcement_link = function ($options) {
             $url = "";
             if (isset($options->announcement_id)) {
@@ -378,9 +388,17 @@ if (!function_exists('get_notification_config')) {
                 "notify_to" => array("recipient"),
                 "info" => $message_link
             ),
+            "new_message_sent_to_group" => array(
+                "notify_to" => array("recipient"),
+                "info" => $message_to_group_link
+            ),
             "message_reply_sent" => array(
                 "notify_to" => array("recipient"),
                 "info" => $message_link
+            ),
+            "message_reply_sent_to_group" => array(
+                "notify_to" => array("recipient"),
+                "info" => $message_to_group_link
             ),
             "new_event_added_in_calendar" => array(
                 "notify_to" => array("recipient"),
@@ -602,6 +620,25 @@ if (!function_exists('send_notification_emails')) {
 
             //reply? find the subject from the parent meessage
             if ($notification->event == "message_reply_sent") {
+                $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
+                $parser_data["SUBJECT"] = $main_message_info->subject;
+            }
+
+            $parser_data["USER_NAME"] = $message_info->user_name;
+            $parser_data["MESSAGE_CONTENT"] = nl2br($message_info->message ? $message_info->message : "");
+            $parser_data["MESSAGE_URL"] = $url;
+
+            if ($message_info->files) {
+                $email_options["attachments"] = prepare_attachment_of_files(get_setting("timeline_file_path"), $message_info->files);
+            }
+        } else if ($notification->event == "new_message_sent_to_group" || $notification->event == "message_reply_sent_to_group") {
+            $template_name = "message_received_in_group";
+
+            $message_info = $ci->Messages_model->get_details(array("id" => $notification->actual_message_id))->row;
+            $parser_data["SUBJECT"] = $message_info->subject;
+
+            //reply? find the subject from the parent meessage
+            if ($notification->event == "message_reply_sent_to_group") {
                 $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
                 $parser_data["SUBJECT"] = $main_message_info->subject;
             }
