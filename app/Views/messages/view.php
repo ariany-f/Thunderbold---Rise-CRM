@@ -119,17 +119,22 @@
                                     </div>
                                     <ul class="dropdown-menu" role="menu">
                                         <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete'), array("class" => "dropdown-item", "title" => app_lang('delete'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
-                                        <?php if($message_info->ended) { ?>
-                                            <li role="presentation"><?php echo ajax_anchor(get_uri("messages/reactive_my_messages/$message_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reactive_conversation'), array("class" => "dropdown-item", "title" => app_lang('reactive_conversation'))); ?> </li>
-                                        <?php } else { ?>
-                                            <li role="presentation"><?php echo ajax_anchor(get_uri("messages/end_my_messages/$message_info->id"), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('end_conversation'), array("class" => "dropdown-item", "title" => app_lang('end_conversation'))); ?> </li>
+                                        <?php if($login_user->user_type === 'staff') { ?>
+                                            <?php if($message_info->ended) { ?>
+                                                <li role="presentation"><?php echo ajax_anchor(get_uri("messages/reactive_my_messages/$message_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reactive_conversation'), array("class" => "dropdown-item", "title" => app_lang('reactive_conversation'), "data-reload-on-success" => "1")); ?> </li>
+                                            <?php } else { ?>
+                                                <li role="presentation"><?php echo ajax_anchor(get_uri("messages/end_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('end_conversation'), array("class" => "dropdown-item", "title" => app_lang('end_conversation'), "data-reload-on-success" => "1")); ?> </li>
+                                            <?php } ?>
+                                            <?php if((!$message_info->task_id) and $message_info->group_name != "") { ?>
+                                                <li role="presentation"><?php echo ajax_anchor(get_uri("messages/create_task/" . $message_info->id . ""), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('convert_task'), array("class" => "dropdown-item", "id" => "convert_task", "title" => app_lang('create_task'), "data-reload-on-success" => "1"));?></li>
+                                            <?php } ?>
                                         <?php } ?>
                                     </ul>
                                 </span>
                             </div>
                             <p class="pt10 pb10 b-b">
                                 <?php if($message_info->task_id && $message_info->task_id != 0) : ?>
-                                    <?php echo modal_anchor(get_uri("projects/task_view"), '#' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?>
+                                    <?php echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?>
                                 <?php else : ?>
                                     <?php echo app_lang("subject"); ?>:  
                                     <?php echo $message_info->subject; ?>
