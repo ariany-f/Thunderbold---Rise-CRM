@@ -1,5 +1,8 @@
-.sidebar-scroll, #timeline .post-content .post-date span {
+.sidebar-scroll, #timeline .post-content .post-date span, .bg-primary {
   background: #2e86c1;
+}
+.text-white a {
+  color:#fff;
 }
 .sidebar-menu li a {
   color: rgba(255, 255, 255, 0.8);
