@@ -7190,10 +7190,8 @@ textarea.form-control-lg {
 .lh-lg {
   line-height: 2 !important;
 }
-
-.bg-primary {
-  background-color: #0d6efd !important;
-}
+.card.bg-primary {
+  background-color:
 
 .bg-secondary {
   background-color: #6c757d !important;
