@@ -1,7 +1,7 @@
 .sidebar-scroll, #timeline .post-content .post-date span {
   background: #404040;
 }
-.bg-primary {
+.card.bg-primary {
   background-color: #404040;
 }
 .text-white a {
