@@ -4534,7 +4534,7 @@ body.modal-open {
   padding: 8px 15px;
 }
 .message-row.inactive {
-  opacity: .5;
+  opacity: .6;
 }
 .unread {
   border-left: 3px solid #f5325c;
