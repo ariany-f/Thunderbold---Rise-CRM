@@ -1,8 +1,8 @@
 .sidebar-scroll, #timeline .post-content .post-date span {
   background: #17a589;
 }
-.card.bg-primary {
-  background-color: #17a589;
+.card.bg-primary, .card-header.bg-primary {
+  background-color: #17a589!important;
 }
 .text-white a {
   color:#fff;
