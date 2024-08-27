@@ -1,6 +1,12 @@
 .sidebar-scroll, #timeline .post-content .post-date span {
   background: #2471a3;
 }
+.card.bg-primary, .card-header.bg-primary {
+  background-color: #2471a3!important;
+}
+.text-white a {
+  color:#fff;
+}
 .sidebar-menu li a {
   color: rgba(255, 255, 255, 0.8);
 }
