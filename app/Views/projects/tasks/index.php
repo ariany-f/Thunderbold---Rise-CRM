@@ -160,7 +160,7 @@ foreach ($task_statuses as $status) {
             {title: '<?php echo app_lang("start_date") ?>', "iDataSort": 3, visible: showResponsiveOption, order_by: "start_date"},
             {visible: false, searchable: false, order_by: "deadline"},
             {title: '<?php echo app_lang("deadline") ?>', "iDataSort": 5, visible: showResponsiveOption, order_by: "deadline"},
-            {visible: false, searchable: false},
+            {title: '<?php echo app_lang("milestone") ?>'},
             {visible: false, searchable: false},
             {visible: false, searchable: false},
             {title: '<?php echo app_lang("assigned_to") ?>', "class": "min-w150", visible: showResponsiveOption, order_by: "assigned_to"},
