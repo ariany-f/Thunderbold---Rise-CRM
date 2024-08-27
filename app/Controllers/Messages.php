@@ -486,7 +486,7 @@ class Messages extends Security_Controller {
         if($data->group_name)
         {
             $line_name = "";
-            $members = "<span class='badge badge-light mt-0'>" .($data->count_members ?? 0) . " membros</span>";
+            $members = "<span class='badge badge-light mt-0'><b>" .($data->count_members ?? 0) . " membros</b></span>";
             $last_message = "<i><b>" . (isset($data->another_user_name) ? $data->another_user_name : $data->user_name) ."</b> em </i>";
         }
 
@@ -494,6 +494,7 @@ class Messages extends Security_Controller {
         if($data->ended)
         {
             $classe = "inactive";
+            $members .= "<span class='badge bg-danger mt-0' style='opacity: 1;'><b>Conversa Encerrada</b></span>";
         }
 
         $message = "<div class='message-row $status $classe' data-id='$message_id' data-index='$data->main_message_id' data-reply='$reply'><div class='d-flex'><div class='flex-shrink-0'>
