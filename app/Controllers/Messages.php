@@ -82,7 +82,7 @@ class Messages extends Security_Controller {
             $can_send_message_to_client = true;
         }
 
-        $options = array("message_group_id" => $group_id, "user_type" => $user_type, "show_user_wise" => true);
+        $options = array("message_group_id" => $group_id, "user_type" => $user_type, "show_user_wise" => false);
         $list_data = $this->Message_group_members_model->get_details($options)->getResult();
         $result = array();
         foreach ($list_data as $data) {
