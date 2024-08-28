@@ -4,17 +4,31 @@
         <input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
         <input type="hidden" name="message_group_id" value="<?php echo $message_group_id; ?>" />
 
-        <div class="form-group" style="min-height: 50px">
-            <div class="row">
-                <label for="user_id" class=" col-md-3"><?php echo app_lang('member'); ?></label>
-                <div class="col-md-9">
-                    <div class="select-member-field">
-                        <div class="select-member-form clearfix pb10">
-                            <?php echo form_dropdown("user_id[]", $users_dropdown, array($model_info->created_by), "class='user_select2 col-md-10 p0' id='user_id'"); ?>
-                            <?php echo js_anchor("<i data-feather='x' class='icon-16'></i> ", array("class" => "remove-member delete ml20")); ?>
-                        </div>                                
+        <div class="card">
+            <div class="card-header">
+                <h6 class="float-start"><?php echo app_lang('members'); ?></h6>
+            </div>
+
+            <div class="table-responsive">
+                <table id="group-member-table" class="b-b-only no-thead" width="100%">            
+                </table>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class=""><?php echo app_lang('add'); ?></h5>
+            </div>
+            <div class="container">
+                <div class="form-group" style="min-height: 50px">
+                    <div class="row">
+                        <div class="select-member-field">
+                            <div class="select-member-form clearfix pb10">
+                                <?php echo form_dropdown("user_id[]", $users_dropdown, array($model_info->created_by), "class='user_select2 col-md-10 p0' id='user_id'"); ?>
+                                <?php echo js_anchor("<i data-feather='x' class='icon-16'></i> ", array("class" => "remove-member delete ml20")); ?>
+                            </div>                                
+                        </div>
+                        <?php echo js_anchor("<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_more'), array("class" => "add-member", "id" => "add-more-user")); ?>
                     </div>
-                    <?php echo js_anchor("<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_more'), array("class" => "add-member", "id" => "add-more-user")); ?>
                 </div>
             </div>
         </div>
@@ -27,6 +41,7 @@
     <button type="submit" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('save'); ?></button>
 </div>
 <?php echo form_close(); ?>
+
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -43,6 +58,16 @@
                 window.projectMemberForm.closeModal();
             }
         });
+
+        $("#group-member-table").appTable({
+                    source: '<?php echo_uri("messages/group_member_list_data/" . $message_group_id) ?>',
+                    hideTools: true,
+                    displayLength: 500,
+                    columns: [
+                        {title: ''},
+                        {title: '', "class": "text-center option w100"}
+                    ]
+                });
 
         var $wrapper = $('.select-member-field'),
                 $field = $('.select-member-form:first-child', $wrapper).clone(); //keep a clone for future use.
