@@ -80,6 +80,11 @@
             columnHeight = $(window).height() - 30;
         }
 
+        if(columnHeight < 380){
+            columnHeight = 380;
+        }
+      
+
         $(".kanban-item-list").height(columnHeight);
 
         $(".kanban-item-list").each(function (index) {
