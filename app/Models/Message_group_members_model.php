@@ -104,26 +104,6 @@ class Message_group_members_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    // function get_team_members_of_group($message_group_id = 0) {
-    //     $message_group_members_table = $this->db->prefixTable('message_group_members');
-    //     $users_table = $this->db->prefixTable('users');
-
-    //     $where = "";
-
-    //     if($message_group_id != 0)
-    //     {
-    //         $where = " AND $users_table.id IN (SELECT $message_group_members_table.user_id FROM $message_group_members_table WHERE $message_group_members_table.message_group_id=$message_group_id)";
-    //     }
-
-    //     $sql = "SELECT $users_table.id, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS member_name, $users_table.user_type, $users_table.image as member_image
-    //     FROM $users_table
-    //     LEFT JOIN $message_group_members_table ON $message_group_members_table.user_id=$users_table.id
-    //     WHERE $users_table.status='active' AND $users_table.deleted=0 $where 
-    //     GROUP BY $users_table.id ORDER BY $users_table.first_name ASC";
-
-    //     return $this->db->query($sql);
-    // }
-
     function get_rest_team_members_for_a_group($message_group_id = 0) {
         $message_group_members_table = $this->db->prefixTable('message_group_members');
         $users_table = $this->db->prefixTable('users');
@@ -132,7 +112,7 @@ class Message_group_members_model extends Crud_model {
 
         if($message_group_id != 0)
         {
-            $where = " AND $users_table.id NOT IN (SELECT $message_group_members_table.user_id FROM $message_group_members_table WHERE $message_group_members_table.message_group_id=$message_group_id)";
+            $where = " AND $users_table.id NOT IN (SELECT $message_group_members_table.user_id FROM $message_group_members_table WHERE $message_group_members_table.message_group_id=$message_group_id  AND deleted=0)";
         }
 
         $sql = "SELECT $users_table.id, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS member_name, $users_table.user_type
