@@ -178,19 +178,28 @@
                 if (typeof RELOAD_VIEW_AFTER_UPDATE !== "undefined" && RELOAD_VIEW_AFTER_UPDATE) {
                     location.reload();
                 } else {
-                    if(!<?php echo $model_info->id ?>)
-                    {
-                        window.location = "<?php echo site_url('proposals/view'); ?>/" + result.id;
-                    }
-                    else
-                    {
+                    <?php if( $model_info->id ): ?>
+                        if(!<?php echo $model_info->id ?>)
+                        {
+                            window.location = "<?php echo site_url('proposals/view'); ?>/" + result.id;
+                        }
+                        else
+                        {
+                            var oTable = $('#monthly-proposal-table').dataTable();
+                            // to reload
+                            oTable.api().ajax.reload();
+                            var oTable = $('#yearly-proposal-table').dataTable();
+                            // to reload
+                            oTable.api().ajax.reload();
+                        }
+                    <?php else: ?>
                         var oTable = $('#monthly-proposal-table').dataTable();
                         // to reload
                         oTable.api().ajax.reload();
                         var oTable = $('#yearly-proposal-table').dataTable();
                         // to reload
                         oTable.api().ajax.reload();
-                    }
+                    <?php endif; ?>
                 }
             }
         });

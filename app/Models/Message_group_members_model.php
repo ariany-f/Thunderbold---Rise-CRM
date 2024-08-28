@@ -112,7 +112,7 @@ class Message_group_members_model extends Crud_model {
 
         if($message_group_id != 0)
         {
-            $where = " AND $users_table.id NOT IN (SELECT $message_group_members_table.user_id FROM $message_group_members_table WHERE $message_group_members_table.message_group_id=$message_group_id)";
+            $where = " AND $users_table.id NOT IN (SELECT $message_group_members_table.user_id FROM $message_group_members_table WHERE $message_group_members_table.message_group_id=$message_group_id  AND deleted=0)";
         }
 
         $sql = "SELECT $users_table.id, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS member_name, $users_table.user_type

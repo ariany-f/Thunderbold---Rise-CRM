@@ -67,6 +67,86 @@ class Messages extends Security_Controller {
         return $this->template->view('messages/group_members/modal_form', $view_data);
     }
 
+    /* list of group members, prepared for datatable  */
+
+    function group_member_list_data($group_id = 0, $user_type = "") {
+        validate_numeric_value($group_id);
+        $this->access_only_team_members();
+
+        //show the message icon to client contacts list only if the user can send message to client. 
+        $can_send_message_to_client = false;
+        $client_message_users = get_setting("client_message_users");
+        $client_message_users_array = explode(",", $client_message_users);
+        if (in_array($this->login_user->id, $client_message_users_array)) {
+
+            $can_send_message_to_client = true;
+        }
+
+        $options = array("message_group_id" => $group_id, "user_type" => $user_type, "show_user_wise" => false);
+        $list_data = $this->Message_group_members_model->get_details($options)->getResult();
+        $result = array();
+        foreach ($list_data as $data) {
+            $result[] = $this->_make_group_member_row($data, $can_send_message_to_client);
+        }
+        echo json_encode(array("data" => $result));
+    }
+
+    /* return a row of group member list */
+
+    private function _group_member_row_data($id) {
+        $options = array("id" => $id);
+        $data = $this->Message_group_members_model->get_details($options)->getRow();
+        return $this->_make_group_member_row($data);
+    }
+
+    /* prepare a row of group member list */
+    private function _make_group_member_row($data, $can_send_message_to_client = false) {
+        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image) . "' alt='...'></span> ";
+
+        if ($data->user_type == "staff") {
+            $member = get_team_member_profile_link($data->user_id, $member_image);
+            $member_name = get_team_member_profile_link($data->user_id, $data->member_name, array("class" => "dark strong"));
+        } else {
+            $member = get_client_contact_profile_link($data->user_id, $member_image);
+            $member_name = get_client_contact_profile_link($data->user_id, $data->member_name, array("class" => "dark strong"));
+        }
+
+        $link = "";
+
+        $delete_link = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_member'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("messages/delete_group_member"), "data-action" => "delete"));
+
+        $link .= $delete_link;
+
+        $member = '<div class="d-flex"><div class="p-2 flex-shrink-1">' . $member . '</div><div class="p-2 w-100"><div>' . $member_name . '</div><label class="text-off">' . $data->job_title . '</label></div></div>';
+
+        return array($member, $link);
+    }
+
+    /* delete/undo a group members  */
+    function delete_group_member() {
+        $id = $this->request->getPost('id');
+        $group_member_info = $this->Message_group_members_model->get_one($id);
+
+      
+        if ($this->request->getPost('undo')) {
+            if ($this->Message_group_members_model->delete($id, true)) {
+                echo json_encode(array("success" => true, "data" => $this->_group_member_row_data($id), "message" => app_lang('record_undone')));
+            } else {
+                echo json_encode(array("success" => false, app_lang('error_occurred')));
+            }
+        } else {
+            if ($this->Message_group_members_model->delete($id)) {
+
+                $group_member_info = $this->Message_group_members_model->get_one($id);
+
+                log_notification("group_member_deleted", array("message_group_id" => $group_member_info->message_group_id, "to_user_id" => $group_member_info->user_id));
+                echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
+            } else {
+                echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+            }
+        }
+    }
+
     /* add a message group members  */
     function save_message_group_member() {
         $message_group_id = $this->request->getPost('message_group_id');

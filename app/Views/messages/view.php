@@ -72,19 +72,29 @@
                         <?php if($message_info->ended) { ?>
                             <span class="badge bg-danger">CONVERSA ENCERRADA</span>
                         <?php } ?></b>
-                        <?php if(isset($message_users_result )) { ?>
-                        <div id="all-timesheet-users-summary" class="avatar-group">
-                                <?php
-                                    foreach ($message_users_result AS $user) {
+                        <div class="title-button-group">
+                            <div class="d-flex align-items-center">
+                            <?php if(isset($message_users_result )) { ?>
+                                <div class="avatar-group pt-3">
+                                    <?php
+                                        foreach ($message_users_result AS $user) {
+                                        ?>
+                                        <div class="user-avatar avatar-30 avatar-circle" data-bs-toggle='tooltip' title='<?php echo $user->user_name; ?>'>
+                                            <img alt="" src="<?php echo get_avatar($user->user_avatar); ?>">
+                                        </div>
+                                    <?php
+                                        }
                                     ?>
-                                    <div class="user-avatar avatar-30 avatar-circle" data-bs-toggle='tooltip' title='<?php echo $user->user_name; ?>'>
-                                        <img alt="" src="<?php echo get_avatar($user->user_avatar); ?>">
-                                    </div>
-                                <?php
-                                    }
-                                ?>
-                            </div>
-                        <?php } ?>
+                                </div>
+                            <?php } ?>
+                            
+                            <?php if($message_info->group_name)
+                                {
+                                    echo modal_anchor(get_uri("messages/message_group_member_modal_form/" . $message_info->group_id), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("manage_members"), array("class" => "btn bg-success d-flex align-items-center", "title" => app_lang('manage_members')));
+                                }   
+                            ?>
+                        </div>
+                        </div>
                     </div>
                     <div class="d-flex">
                         <div class="flex-shrink-0 pe-2"> 

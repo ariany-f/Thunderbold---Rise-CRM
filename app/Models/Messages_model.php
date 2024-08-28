@@ -66,7 +66,7 @@ class Messages_model extends Crud_model {
         $offset = $this->_get_clean_value($options, "offset");
         $offset = $offset ? $offset : "0";
 
-        $sql = "SELECT * FROM (SELECT 0 AS reply_message_id, COALESCE($message_groups_table.group_name, '') AS group_name, COALESCE($message_groups_table.project_id, '') AS project_id, $messages_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.user_type, CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, another_user.id AS another_user_id, another_user.last_online AS another_user_last_online
+        $sql = "SELECT * FROM (SELECT 0 AS reply_message_id, COALESCE($message_groups_table.group_name, '') AS group_name, COALESCE($message_groups_table.id, '') AS group_id, COALESCE($message_groups_table.project_id, '') AS project_id, $messages_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.user_type, CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, another_user.id AS another_user_id, another_user.last_online AS another_user_last_online
         FROM $messages_table
         LEFT JOIN $users_table ON $users_table.id=$join_with
         LEFT JOIN $users_table AS another_user ON another_user.id=$join_another
@@ -166,7 +166,9 @@ class Messages_model extends Crud_model {
         }
         else
         {
-            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COUNT(DISTINCT $message_group_members_table.user_id) AS count_members,  COALESCE($message_groups_table.group_name, '') AS group_name, 
+            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COUNT(DISTINCT CASE 
+                  WHEN $message_group_members_table.deleted = 0 THEN $message_group_members_table.user_id 
+               END) AS count_members,  COALESCE($message_groups_table.group_name, '') AS group_name, 
                         $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files, $messages_table.ended, $messages_table.from_user_id,
                         CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, 
                         another_user.image AS another_user_image,
