@@ -25,9 +25,10 @@
                 <?php } ?>
 
                 <?php if ($model_info->outlook_event_id) { ?>
-                   
+                    <div class="float-end pb10 ">
+                        Evento importado do Outlook
+                    </div>
                 <?php } ?>
-
             </div>
 
             <?php if ($status) { ?>
