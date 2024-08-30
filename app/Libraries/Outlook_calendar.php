@@ -353,7 +353,7 @@ class Outlook_calendar {
         $user = $this->ci->Users_model->get_one($user_id);
         $event = $this->ci->Events_model->get_one($event_id);
 
-        $this->do_request("POST", "calendar/events", array(
+        $outlook_event =  $this->do_request("POST", "calendar/events", array(
             "subject" => $event->title,
             "start" => array(
                 "dateTime" => $event->start_date . "T" . $event->start_time,
@@ -368,5 +368,11 @@ class Outlook_calendar {
                 "content" => $event->description
             )
         ));
+
+        if($outlook_event->id)
+        {
+            $event->outlook_event_id = $outlook_event->id;
+            $this->ci->Events_model->ci_save($event, $event_id);
+        }
     }
 }
