@@ -3,14 +3,17 @@
 namespace App\Controllers;
 
 use App\Libraries\Google_calendar_events;
+use App\Libraries\Outlook_calendar;
 
 class Events extends Security_Controller {
 
     private $Google_calendar_events;
+    private $Outlook_calendar;
 
     function __construct() {
         parent::__construct();
         $this->Google_calendar_events = new Google_calendar_events();
+        $this->Outlook_calendar = new Outlook_calendar();
     }
 
     //load calendar view
@@ -203,6 +206,13 @@ class Events extends Security_Controller {
             //if the google calendar is integrated, add/modify the event
             if (get_setting("enable_google_calendar_api") && get_setting('user_' . $this->login_user->id . '_integrate_with_google_calendar') && (get_setting("google_calendar_authorized") || get_setting('user_' . $this->login_user->id . '_google_calendar_authorized'))) {
                 $this->Google_calendar_events->save_event($this->login_user->id, $save_id);
+            }
+
+            //if the google calendar is integrated, add/modify the event
+            $user = $this->Users_model->get_one($this->login_user->id);
+            $export_to_outlook = $this->request->getPost('export_to_outlook') ?? 0;
+            if ($user->outlook_calendar_authorized && $export_to_outlook == "1") {
+                $this->Outlook_calendar->save_event($this->login_user->id, $save_id);
             }
 
             save_custom_fields("events", $save_id, $this->login_user->is_admin, $this->login_user->user_type);

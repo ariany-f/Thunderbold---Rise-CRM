@@ -205,42 +205,89 @@ class Outlook_calendar {
                 $body = json_encode($body);
             }
         }
-        $user = $this->ci->Users_model->get_one($this->cis->login_user->id);
-        $oauth_access_token = $user->outlook_calendar_access_token;
-        $oauth_access_token = json_decode($oauth_access_token);
 
-        $method = strtoupper($method);
-        $url = $this->graph_url . $path;
+        if($this->cis->login_user)
+        {
+            $user = $this->ci->Users_model->get_one($this->cis->login_user->id);
+            $oauth_access_token = $user->outlook_calendar_access_token;
+            $oauth_access_token = json_decode($oauth_access_token);
 
-        $ch = curl_init();
+            $method = strtoupper($method);
+            $url = $this->graph_url . $path;
 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers($oauth_access_token->access_token, $extra_header));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-       
-        if (in_array($method, array('DELETE', 'PATCH', 'POST', 'PUT', 'GET'))) {
+            $ch = curl_init();
 
-            // All except DELETE can have a payload in the body
-            if ($method != 'DELETE' && strlen($body)) {
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers($oauth_access_token->access_token, $extra_header));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+            if (in_array($method, array('DELETE', 'PATCH', 'POST', 'PUT', 'GET'))) {
+
+                // All except DELETE can have a payload in the body
+                if ($method != 'DELETE' && strlen($body)) {
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                }
+
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
             }
 
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+            $result = curl_exec($ch);
+            $err = curl_error($ch);
+            $this->responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            $result = $this->common_error_handling_for_curl($result, $err, $decode_result);
+
+            if (isset($result->error->code) && $result->error->code === "InvalidAuthenticationToken") {
+                //access token is expired
+                $this->save_access_token($oauth_access_token->refresh_token, true);
+                return $this->do_request($method, $path, $body, $decode_result);
+            }
         }
-
-        $result = curl_exec($ch);
-        $err = curl_error($ch);
-        $this->responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        $result = $this->common_error_handling_for_curl($result, $err, $decode_result);
-
-        if (isset($result->error->code) && $result->error->code === "InvalidAuthenticationToken") {
-            //access token is expired
-            $this->save_access_token($oauth_access_token->refresh_token, true);
-            return $this->do_request($method, $path, $body, $decode_result);
+        else
+        {
+            $users = $this->ci->Users_model->get_details(array('outlook_calendar_authorized' => 1))->getResults();
+            foreach($users as $user)
+            {
+                $oauth_access_token = $user->outlook_calendar_access_token;
+                $oauth_access_token = json_decode($oauth_access_token);
+        
+                $method = strtoupper($method);
+                $url = $this->graph_url . $path;
+        
+                $ch = curl_init();
+        
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers($oauth_access_token->access_token, $extra_header));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+               
+                if (in_array($method, array('DELETE', 'PATCH', 'POST', 'PUT', 'GET'))) {
+        
+                    // All except DELETE can have a payload in the body
+                    if ($method != 'DELETE' && strlen($body)) {
+                        curl_setopt($ch, CURLOPT_POST, true);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                    }
+        
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+                }
+        
+                $result = curl_exec($ch);
+                $err = curl_error($ch);
+                $this->responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+        
+                $result = $this->common_error_handling_for_curl($result, $err, $decode_result);
+        
+                if (isset($result->error->code) && $result->error->code === "InvalidAuthenticationToken") {
+                    //access token is expired
+                    $this->save_access_token($oauth_access_token->refresh_token, true);
+                    return $this->do_request($method, $path, $body, $decode_result);
+                }
+            }
         }
+        
 
         return $result;
     }
@@ -299,5 +346,27 @@ class Outlook_calendar {
                 }
             }
         }
+    }
+
+    public function save_event($user_id, $event_id)
+    {
+        $user = $this->ci->Users_model->get_one($user_id);
+        $event = $this->ci->Events_model->get_one($event_id);
+
+        $this->do_request("POST", "calendar/events", array(
+            "subject" => $event->title,
+            "start" => array(
+                "dateTime" => $event->start_date . "T" . $event->start_time,
+                "timeZone" => "America/Sao_Paulo"
+            ),
+            "end" => array(
+                "dateTime" => $event->end_date . "T" . $event->end_time,
+                "timeZone" => "America/Sao_Paulo"
+            ),
+            "body" => array(
+                "contentType" => "text",
+                "content" => $event->description
+            )
+        ));
     }
 }
