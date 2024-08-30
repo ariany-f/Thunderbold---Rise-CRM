@@ -13,6 +13,7 @@
                 <ul id="integration-tab" data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white title" role="tablist">
                     <li class="title-tab"><h4 class="pl15 pt10 pr15"><?php echo app_lang("integration"); ?></h4></li>
                     <li><a role="presentation" data-bs-toggle="tab"  href="<?php echo_uri("settings/re_captcha/"); ?>" data-bs-target="#integration-re-captcha">reCAPTCHA</a></li>
+                    <li><a role="presentation" data-bs-toggle="tab"  href="<?php echo_uri("settings/outlook_calendar/"); ?>" data-bs-target="#integration-outlook-calendar">Outlook Calendar</a></li>
                     <li><a id="google_drive" role="presentation" data-bs-toggle="tab" href="<?php echo_uri("settings/google_drive/"); ?>" data-bs-target="#integration-google-drive">Google Drive</a></li>
                     <li><a role="presentation" data-bs-toggle="tab" class="" href="<?php echo_uri("settings/push_notification/"); ?>" data-bs-target="#integration-push-notification"><?php echo app_lang("pusher"); ?></a></li>
                     <li><a role="presentation" data-bs-toggle="tab" class="" href="<?php echo_uri("settings/slack/"); ?>" data-bs-target="#integration-slack">Slack</a></li>
@@ -32,6 +33,7 @@
 
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade" id="integration-re-captcha"></div>
+                    <div role="tabpanel" class="tab-pane fade" id="integration-outlook-calendar"></div>
                     <div role="tabpanel" class="tab-pane fade" id="integration-google-drive"></div>
                     <div role="tabpanel" class="tab-pane fade" id="integration-push-notification"></div>
                     <div role="tabpanel" class="tab-pane fade" id="integration-slack"></div>
@@ -56,6 +58,8 @@
             var tab = "<?php echo $tab; ?>";
             if (tab === "google_drive") {
                 $("[data-bs-target='#integration-google-drive']").trigger("click");
+            } else  if (tab === "outlook_calendar") {
+                $("[data-bs-target='#integration-outlook-calendar']").trigger("click");
             } else if (tab === "push_notification") {
                 $("[data-bs-target='#integration-push-notification']").trigger("click");
             } else if (tab === "slack") {

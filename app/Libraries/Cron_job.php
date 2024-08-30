@@ -4,6 +4,7 @@ namespace App\Libraries;
 
 use App\Controllers\App_Controller;
 use App\Libraries\Google_calendar_events;
+use App\Libraries\Outlook_calendar;
 use App\Libraries\Imap;
 use App\Libraries\Outlook_imap;
 
@@ -22,6 +23,12 @@ class Cron_job {
 
         try {
             $this->run_imap();
+        } catch (\Exception $e) {
+            echo $e;
+        }
+
+        try {
+            $this->run_import();
         } catch (\Exception $e) {
             echo $e;
         }
@@ -281,6 +288,11 @@ class Cron_job {
         $this->ci->Subscriptions_model->ci_save($subscription_data, $subscription_info->id);
 
         //finally send notification
+    }
+
+    private function run_import() {
+        $Outlook_calendar = new Outlook_calendar();
+        $Outlook_calendar->run_import();
     }
 
     private function get_google_calendar_events() {

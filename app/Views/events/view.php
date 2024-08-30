@@ -24,6 +24,10 @@
                     </div>
                 <?php } ?>
 
+                <?php if ($model_info->outlook_event_id) { ?>
+                   
+                <?php } ?>
+
             </div>
 
             <?php if ($status) { ?>
