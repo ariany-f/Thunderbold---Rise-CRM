@@ -196,7 +196,7 @@ if ($total_sub_tasks) {
 
                         <div class="col-md-6 mb15">
                             <?php if((!empty($message_group)) && $message_group->id) { ?>
-                                <?php if((!empty($messages)) && $messages->id) { ?>
+                                <?php if((!empty($messages)) && $messages->id && $messages->deleted == 0) { ?>
                                     <div class="enter_chat_group_message btn btn-primary btn-sm" data-id="<?= $messages->id?>"><i data-feather="mail" class="icon-16"></i> <?= app_lang('enter_conversation') ?></div>
                                 <?php }else{ ?>
                                     <?php 
