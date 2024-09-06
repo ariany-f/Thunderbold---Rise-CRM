@@ -73,7 +73,7 @@
             <!--        </div>-->
             <!--    </div>-->
             <!--</div>-->
-            <?php if ($login_user->user_type === "staff") { ?>
+            <?php if ($login_user->user_type === "staff" && (!$project_info->is_ticket)) { ?>
             <div class="form-group">
                 <div class="row">
                     <label for="milestone_id" class=" col-md-3"><?php echo app_lang('milestone'); ?></label>
