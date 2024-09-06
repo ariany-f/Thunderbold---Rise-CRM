@@ -1858,6 +1858,7 @@ $lang["re_captcha_info_text"] = "Antes de fazer logout, abra um novo navegador e
 $lang["yes_assigned_tickets_only"] = "Sim, apenas tíquetes atribuídos";
 $lang["no_such_custom_field_found"] = "No such campo personalizado encontrados.";
 $lang["open_in_google_calendar"] = "Abra no google calendar";
+$lang["export_to_outlook"] = "Exportar para Outlook";
 
 $lang["enable_embedded_form_to_get_tickets"] = "Habilitar formulário incorporado para obter tíquetes";
 $lang["submit_your_request"] = "Envie sua solicitação";

@@ -104,6 +104,7 @@ class Message_groups_model extends Crud_model {
     function get_groups_for_messaging($options = array()) {
         $groups_table = $this->db->prefixTable('message_groups');
         $message_group_members_table = $this->db->prefixTable('message_group_members');
+        $messages_table = $this->db->prefixTable('messages');
         $projects_table = $this->db->prefixTable('projects');
     
         $where = "1=1";
@@ -118,12 +119,16 @@ class Message_groups_model extends Crud_model {
                     $groups_table.group_name, 
                     $groups_table.project_id, 
                     $projects_table.is_ticket as is_ticket,
-                    (SELECT COUNT(*) FROM $message_group_members_table WHERE $message_group_members_table.message_group_id = $groups_table.id) as member_count
+                    (SELECT COUNT(*) FROM $message_group_members_table WHERE $message_group_members_table.message_group_id = $groups_table.id) as member_count,
+                    MAX($messages_table.created_at) as last_message_date
                 FROM 
                     $groups_table
                 LEFT JOIN 
                     $message_group_members_table 
                     ON $message_group_members_table.message_group_id = $groups_table.id
+                LEFT JOIN
+                    $messages_table
+                    ON $messages_table.to_group_id = $groups_table.id
                 LEFT JOIN 
                     $projects_table 
                     ON $projects_table.id = $groups_table.project_id
@@ -132,7 +137,7 @@ class Message_groups_model extends Crud_model {
                 GROUP BY 
                     $groups_table.id 
                 ORDER BY 
-                    $groups_table.id ASC";
+                    last_message_date DESC, $groups_table.id ASC";
     
         return $this->db->query($sql);
     }

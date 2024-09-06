@@ -7,6 +7,7 @@ use App\Libraries\Cron_job;
 class Cron extends App_Controller {
 
     private $cron_job;
+    private $outlook_calendar;
 
     function __construct() {
         parent::__construct();
