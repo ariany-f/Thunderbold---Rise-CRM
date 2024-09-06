@@ -3450,11 +3450,12 @@ class Projects extends Security_Controller {
                 app_redirect("forbidden");
             }
         }
-
+        $project_info = $this->Projects_model->get_one($project_id);
         $view_data['model_info'] = $model_info;
         $view_data["projects_dropdown"] = $this->_get_projects_dropdown(); //projects dropdown is necessary on add multiple tasks
         $view_data["add_type"] = $add_type;
         $view_data['project_id'] = $project_id;
+        $view_data['project_info'] = $project_info;
         $view_data['ticket_id'] = $ticket_id;
 
         $view_data['show_assign_to_dropdown'] = true;
