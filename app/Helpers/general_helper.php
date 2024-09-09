@@ -2265,6 +2265,15 @@ if (!function_exists('prepare_proposal_view')) {
                 $unit_type = $item->unit_type;
             }
 
+            if($proposal_info->discount_amount_type == 'percentage')
+            {
+                $total_amount = $total_amount - ($total_amount * $proposal_info->discount_amount / 100);
+            }
+            else
+            {
+                $total_amount = $total_amount - $proposal_info->discount_amount;
+            }
+
             $parser_data["PROPOSAL_ID"] = get_proposal_id($proposal_info->id);
             $parser_data["PROPOSAL_DATE"] = format_to_date($proposal_info->proposal_date, false);
             $parser_data["PROPOSAL_NAME"] = $proposal_info->name;
