@@ -1245,7 +1245,7 @@ class Messages extends Security_Controller {
 
         $group_id = $this->request->getPost("group_id");
 
-        $options = array("group_id" => $group_id, "login_user_id" => $this->login_user->id, "ended" => "0");
+        $options = array("group_id" => $group_id, "login_user_id" => $this->login_user->id, "ended" => 0);
         $view_data["messages"] = $this->Messages_model->get_chat_list($options)->getResult();
 
         $group_info = $this->Message_groups_model->get_one_where(array("id" => $group_id, "deleted" => "0"));
