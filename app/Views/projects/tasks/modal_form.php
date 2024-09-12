@@ -130,7 +130,7 @@
 
             <!--<div class="form-group">-->
             <!--    <div class="row">-->
-            <!--        <label for="status_id" class=" col-md-3"><?php echo app_lang('status'); ?></label>-->
+            <!--        <label for="status_id" class=" col-md-3"><?php //echo app_lang('status'); ?></label>-->
             <!--        <div class="col-md-9">-->
                         <?php
                         // foreach ($statuses as $status) {
@@ -164,7 +164,7 @@
             </div>
             <!--<div class="form-group">-->
             <!--    <div class="row">-->
-            <!--        <label for="project_labels" class=" col-md-3"><?php echo app_lang('labels'); ?></label>-->
+            <!--        <label for="project_labels" class=" col-md-3"><?php //echo app_lang('labels'); ?></label>-->
             <!--        <div class=" col-md-9" id="dropdown-apploader-section">-->
                         <?php
                         // echo form_input(array(
@@ -178,43 +178,43 @@
             <!--        </div>-->
             <!--    </div>-->
             <!--</div>-->
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="row">
-                    <label for="start_date" class=" col-md-3"><?php echo app_lang('start_date'); ?></label>
+                    <label for="start_date" class=" col-md-3"><?php //echo app_lang('start_date'); ?></label>
                     <div class=" col-md-9">
                         <?php
-                        echo form_input(array(
-                            "id" => "start_date",
-                            "name" => "start_date",
-                            "autocomplete" => "off",
-                            "value" => is_date_exists($model_info->start_date) ? $model_info->start_date : "",
-                            "class" => "form-control",
-                            "placeholder" => "YYYY-MM-DD"
-                        ));
+                        // echo form_input(array(
+                        //     "id" => "start_date",
+                        //     "name" => "start_date",
+                        //     "autocomplete" => "off",
+                        //     "value" => is_date_exists($model_info->start_date) ? $model_info->start_date : "",
+                        //     "class" => "form-control",
+                        //     "placeholder" => "YYYY-MM-DD"
+                        // ));
                         ?>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <?php if ($login_user->user_type === "staff") { ?>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="row">
-                    <label for="deadline" class=" col-md-3"><?php echo app_lang('deadline'); ?></label>
+                    <label for="deadline" class=" col-md-3"><?php //echo app_lang('deadline'); ?></label>
                     <div class=" col-md-9">
                         <?php
-                        echo form_input(array(
-                            "id" => "deadline",
-                            "name" => "deadline",
-                            "autocomplete" => "off",
-                            "value" => is_date_exists($model_info->deadline) ? $model_info->deadline : "",
-                            "class" => "form-control",
-                            "placeholder" => "YYYY-MM-DD",
-                            "data-rule-greaterThanOrEqual" => "#start_date",
-                            "data-msg-greaterThanOrEqual" => app_lang("deadline_must_be_equal_or_greater_than_start_date")
-                        ));
+                        // echo form_input(array(
+                        //     "id" => "deadline",
+                        //     "name" => "deadline",
+                        //     "autocomplete" => "off",
+                        //     "value" => is_date_exists($model_info->deadline) ? $model_info->deadline : "",
+                        //     "class" => "form-control",
+                        //     "placeholder" => "YYYY-MM-DD",
+                        //     "data-rule-greaterThanOrEqual" => "#start_date",
+                        //     "data-msg-greaterThanOrEqual" => app_lang("deadline_must_be_equal_or_greater_than_start_date")
+                        // ));
                         ?>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <?php } ?>
             <?php if (get_setting("enable_recurring_option_for_tasks")) { ?>
 
