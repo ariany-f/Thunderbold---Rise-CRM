@@ -54,6 +54,7 @@ if (!function_exists("make_project_tabs_data")) {
                     <div class="page-title no-bg clearfix mb5 no-border">
                         <div>
                             <h1 class="pl0">
+                            <?php if (!$project_info->is_ticket) { ?>
                                 <?php if ($project_info->status == "open") { ?>
                                     <span title="<?php echo app_lang("open"); ?>"><i data-feather="grid" class='icon'></i></span>
                                 <?php } else if ($project_info->status == "completed") { ?>
@@ -62,6 +63,9 @@ if (!function_exists("make_project_tabs_data")) {
                                     <span title="<?php echo app_lang("hold"); ?>"><i data-feather="pause-circle" class='icon'></i></span>
                                 <?php } else if ($project_info->status == "canceled") { ?>
                                     <span title="<?php echo app_lang("canceled"); ?>"><i data-feather="x-circle" class='icon'></i></span>
+                                <?php } ?>
+                                <?php } else { ?>
+                                    <span title="<?php echo app_lang("ticket"); ?>"><i data-feather="tag" class='icon'></i></span>
                                 <?php } ?>
 
                                 <?php echo "#$project_info->id - $project_info->title"; ?>

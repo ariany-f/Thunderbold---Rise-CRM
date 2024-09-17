@@ -4,6 +4,14 @@
 .card.bg-primary, .card-header.bg-primary {
   background-color: #2471a3!important;
 }
+.init-chat-icon {
+  background-color: #2471a3;
+  color:#fff;
+}
+.init-chat-icon.has-message {
+  background-color: #c5453c;
+  color: #fff;
+}
 .text-white a {
   color:#fff;
 }

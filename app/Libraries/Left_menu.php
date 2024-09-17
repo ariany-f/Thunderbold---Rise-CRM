@@ -343,7 +343,7 @@ class Left_menu {
             }
 
             if (get_setting("module_proposal") && ($this->ci->login_user->is_admin || $access_proposal)) {
-                $prospects_submenu["proposals"] = array("name" => "proposals", "url" => "proposals", "class" => "coffee");
+                $prospects_submenu["proposals"] = array("name" => "proposals", "url" => "proposals", "class" => "dollar-sign");
             }
 
             if (count($prospects_submenu)) {

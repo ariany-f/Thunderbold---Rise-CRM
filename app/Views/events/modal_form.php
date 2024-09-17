@@ -255,6 +255,20 @@
                 </div>
             </div>  
 
+            <?php if($login_user->outlook_calendar_authorized) { ?>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="export_to_outlook" class="col-md-3 col-xs-5 col-sm-4"><?php echo app_lang('export_to_outlook'); ?></label>
+                        <div class="col-md-9 col-xs-7 col-sm-8">
+                            <?php
+                            echo form_checkbox("export_to_outlook", "1", false, "id='export_to_outlook' class='form-check-input'");
+                            ?> 
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+
+
             <div id="recurring_fields" class="<?php if (!$model_info->recurring) echo "hide"; ?>"> 
                 <div class="form-group">
                     <div class="row">

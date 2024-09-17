@@ -755,6 +755,45 @@ class Settings extends Security_Controller {
 
     /* show the google drive settings tab */
 
+    function outlook_calendar() {
+        $this->redirect_uri = get_uri("microsoft_api/save_outlook_calendar_access_token");
+        $this->login_url = "https://login.microsoftonline.com/common/oauth2/v2.0";
+        $this->authorize_url = "$this->login_url/authorize?".
+            "&scope=Calendars.ReadWrite offline_access User.Read".
+            "&response_type=code" .
+            "&response_mode=query".
+            "&state=thunderboldcrm".
+            "&redirect_uri=".$this->redirect_uri.
+            "&client_id=".get_setting("outlook_calendar_client_id")
+        ;
+        $view_data['redirect_url'] = $this->authorize_url;
+        return $this->template->view("settings/integration/outlook_calendar", $view_data);
+    }
+
+    /* save google drive settings */
+
+    function save_outlook_calendar_settings() {
+        $settings = array("outlook_calendar_client_id", "outlook_calendar_client_secret");
+
+        foreach ($settings as $setting) {
+            $value = $this->request->getPost($setting);
+            if (is_null($value)) {
+                $value = "";
+            }
+
+            //if user change credentials, flag google drive as unauthorized
+            if (($setting == "outlook_calendar_client_id" || $setting == "outlook_calendar_client_secret") && get_setting($setting) != $value) {
+                $this->Settings_model->save_setting("outlook_calendar_authorized", "0");
+            }
+
+            $this->Settings_model->save_setting($setting, $value);
+        }
+
+        echo json_encode(array("success" => true, 'message' => app_lang('settings_updated')));
+    }
+
+    /* show the google drive settings tab */
+
     function google_drive() {
         return $this->template->view("settings/integration/google_drive");
     }

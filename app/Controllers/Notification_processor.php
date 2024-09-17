@@ -32,94 +32,97 @@ class Notification_processor extends App_Controller {
             $data = $_POST;
         }
 
-        $event = decode_id(get_array_value($data, "event"), "notification");
+        if($data)
+        {
+            $event = decode_id(get_array_value($data, "event"), "notification");
 
-        if (!$event) {
-            die("Access Denied!");
-        }
-
-        $notification_data = get_notification_config($event);
-
-        if (!is_array($notification_data)) {
-            die("Access Denied!!");
-        }
-
-        $user_id = get_array_value($data, "user_id");
-        $activity_log_id = get_array_value($data, "activity_log_id");
-
-        $options = array(
-            "project_id" => get_array_value($data, "project_id"),
-            "task_id" => get_array_value($data, "task_id"),
-            "project_comment_id" => get_array_value($data, "project_comment_id"),
-            "ticket_id" => get_array_value($data, "ticket_id"),
-            "ticket_comment_id" => get_array_value($data, "ticket_comment_id"),
-            "project_file_id" => get_array_value($data, "project_file_id"),
-            "leave_id" => get_array_value($data, "leave_id"),
-            "post_id" => get_array_value($data, "post_id"),
-            "to_user_id" => get_array_value($data, "to_user_id"),
-            "activity_log_id" => get_array_value($data, "activity_log_id"),
-            "client_id" => get_array_value($data, "client_id"),
-            "invoice_payment_id" => get_array_value($data, "invoice_payment_id"),
-            "invoice_id" => get_array_value($data, "invoice_id"),
-            "estimate_id" => get_array_value($data, "estimate_id"),
-            "order_id" => get_array_value($data, "order_id"),
-            "estimate_request_id" => get_array_value($data, "estimate_request_id"),
-            "actual_message_id" => get_array_value($data, "actual_message_id"),
-            "parent_message_id" => get_array_value($data, "parent_message_id"),
-            "event_id" => get_array_value($data, "event_id"),
-            "announcement_id" => get_array_value($data, "announcement_id"),
-            "exclude_ticket_creator" => get_array_value($data, "exclude_ticket_creator"),
-            "notification_multiple_tasks" => get_array_value($data, "notification_multiple_tasks"),
-            "contract_id" => get_array_value($data, "contract_id"),
-            "lead_id" => get_array_value($data, "lead_id"),
-            "proposal_id" => get_array_value($data, "proposal_id"),
-            "estimate_comment_id" => get_array_value($data, "estimate_comment_id"),
-            "subscription_id" => get_array_value($data, "subscription_id")
-        );
-
-        //get data from plugin by persing 'plugin_'
-        foreach ($data as $key => $value) {
-            if (strpos($key, 'plugin_') !== false) {
-                $options[$key] = $value;
+            if (!$event) {
+                die("Access Denied!");
             }
-        }
-
-        //clasified the task modification parts
-        if ($event == "project_task_updated") {
-            //overwrite event and options
-            $notify_to_array = $this->_clasified_task_modification($event, $options, $activity_log_id);
-
-            /*
-             * for custom field changes, we've to check if the field has any restrictions 
-             * like 'visible to admins only' or 'hide from clients'
-             * but there might be changed other things along with the secret custom fields
-             * so, we've to show only that fields. then, we need to create notification for all users
-             */
-            if (is_array($notify_to_array)) {
-                if (!get_array_value($notify_to_array, array_search("all", $notify_to_array))) {
-                    $options["notify_to_admins_only"] = true;
+    
+            $notification_data = get_notification_config($event);
+    
+            if (!is_array($notification_data)) {
+                die("Access Denied!!");
+            }
+    
+            $user_id = get_array_value($data, "user_id");
+            $activity_log_id = get_array_value($data, "activity_log_id");
+    
+            $options = array(
+                "project_id" => get_array_value($data, "project_id"),
+                "task_id" => get_array_value($data, "task_id"),
+                "project_comment_id" => get_array_value($data, "project_comment_id"),
+                "ticket_id" => get_array_value($data, "ticket_id"),
+                "ticket_comment_id" => get_array_value($data, "ticket_comment_id"),
+                "project_file_id" => get_array_value($data, "project_file_id"),
+                "leave_id" => get_array_value($data, "leave_id"),
+                "post_id" => get_array_value($data, "post_id"),
+                "to_user_id" => get_array_value($data, "to_user_id"),
+                "activity_log_id" => get_array_value($data, "activity_log_id"),
+                "client_id" => get_array_value($data, "client_id"),
+                "invoice_payment_id" => get_array_value($data, "invoice_payment_id"),
+                "invoice_id" => get_array_value($data, "invoice_id"),
+                "estimate_id" => get_array_value($data, "estimate_id"),
+                "order_id" => get_array_value($data, "order_id"),
+                "estimate_request_id" => get_array_value($data, "estimate_request_id"),
+                "actual_message_id" => get_array_value($data, "actual_message_id"),
+                "parent_message_id" => get_array_value($data, "parent_message_id"),
+                "event_id" => get_array_value($data, "event_id"),
+                "announcement_id" => get_array_value($data, "announcement_id"),
+                "exclude_ticket_creator" => get_array_value($data, "exclude_ticket_creator"),
+                "notification_multiple_tasks" => get_array_value($data, "notification_multiple_tasks"),
+                "contract_id" => get_array_value($data, "contract_id"),
+                "lead_id" => get_array_value($data, "lead_id"),
+                "proposal_id" => get_array_value($data, "proposal_id"),
+                "estimate_comment_id" => get_array_value($data, "estimate_comment_id"),
+                "subscription_id" => get_array_value($data, "subscription_id")
+            );
+    
+            //get data from plugin by persing 'plugin_'
+            foreach ($data as $key => $value) {
+                if (strpos($key, 'plugin_') !== false) {
+                    $options[$key] = $value;
                 }
             }
-        }
-
-        //get reminder tasks
-        if (get_array_value($options, "notification_multiple_tasks")) {
-            $reminder_tasks = $this->get_reminder_tasks($event);
-            if ($reminder_tasks) {
-                $options["notification_multiple_tasks"] = $reminder_tasks;
-            } else {
-                //if no tasks to remind, exit for reminder tasks notifications
-                return;
+    
+            //clasified the task modification parts
+            if ($event == "project_task_updated") {
+                //overwrite event and options
+                $notify_to_array = $this->_clasified_task_modification($event, $options, $activity_log_id);
+    
+                /*
+                 * for custom field changes, we've to check if the field has any restrictions 
+                 * like 'visible to admins only' or 'hide from clients'
+                 * but there might be changed other things along with the secret custom fields
+                 * so, we've to show only that fields. then, we need to create notification for all users
+                 */
+                if (is_array($notify_to_array)) {
+                    if (!get_array_value($notify_to_array, array_search("all", $notify_to_array))) {
+                        $options["notify_to_admins_only"] = true;
+                    }
+                }
             }
-        }
-
-        //save reminder date
-        $this->_save_reminder_date($event, $options);
-
-        //error_log("announcement_id: " . $options["announcement_id"] . PHP_EOL, 3, "notification.txt");
-        //error_log("announcement_share_with: " . $options["announcement_share_with"] . PHP_EOL, 3, "notification.txt");
-
-        $this->Notifications_model->create_notification($event, $user_id, $options);
+    
+            //get reminder tasks
+            if (get_array_value($options, "notification_multiple_tasks")) {
+                $reminder_tasks = $this->get_reminder_tasks($event);
+                if ($reminder_tasks) {
+                    $options["notification_multiple_tasks"] = $reminder_tasks;
+                } else {
+                    //if no tasks to remind, exit for reminder tasks notifications
+                    return;
+                }
+            }
+    
+            //save reminder date
+            $this->_save_reminder_date($event, $options);
+    
+            //error_log("announcement_id: " . $options["announcement_id"] . PHP_EOL, 3, "notification.txt");
+            //error_log("announcement_share_with: " . $options["announcement_share_with"] . PHP_EOL, 3, "notification.txt");
+    
+            $this->Notifications_model->create_notification($event, $user_id, $options);
+        }      
     }
 
     private function get_reminder_tasks($event) {
