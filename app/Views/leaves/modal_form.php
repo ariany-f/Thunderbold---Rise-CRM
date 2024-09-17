@@ -9,7 +9,7 @@
                         <div class=" col-md-9">
                             <?php
                             if (isset($team_members_info)) {
-                                $image_url = get_avatar($team_members_info->image);
+                                $image_url = get_avatar($team_members_info->image, ($team_members_info->first_name . " " . $team_members_info->last_name));
                                 echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span>" . $team_members_info->first_name . " " . $team_members_info->last_name;
                                 ?>
                                 <input type="hidden" name="applicant_id" value="<?php echo $team_members_info->id; ?>" />

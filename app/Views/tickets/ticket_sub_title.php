@@ -54,7 +54,7 @@
     if ($ticket_info->assigned_to && $login_user->user_type == "staff") {
         //show assign to field to team members only
 
-        $image_url = get_avatar($ticket_info->assigned_to_avatar);
+        $image_url = get_avatar($ticket_info->assigned_to_avatar, $ticket_info->assigned_to_user);
         $assigned_to_user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $ticket_info->assigned_to_user";
         ?>
         <span class="text-off ml15 mr10"><?php echo app_lang("assigned_to") . ": "; ?></span>

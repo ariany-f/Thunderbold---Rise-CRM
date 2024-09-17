@@ -39,7 +39,7 @@
                 <div class="d-flex">
                     <div class='flex-shrink-0'>
                         <span class='avatar avatar-xs'>
-                            <img src='<?php echo get_avatar($message->user_image); ?>' />
+                            <img src='<?php echo get_avatar($message->user_image, $message->user_name); ?>' />
                             <?php echo $online; ?>
                         </span>
                     </div>

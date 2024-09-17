@@ -530,7 +530,7 @@ class Attendance extends Security_Controller {
             $view_data = js_anchor("<i data-feather='log-in' class='icon-16'></i> " . app_lang('clock_in'), array('title' => app_lang('clock_in'), "class" => "btn btn-default spinning-btn", "data-action-url" => get_uri("attendance/log_time/$data->id"), "data-action" => "update", "data-inline-loader" => "1", "data-post-id" => $data->id));
         }
 
-        $image_url = get_avatar($data->image);
+        $image_url = get_avatar($data->image, ($data->first_name . ' ' . $data->last_name));
         $user_avatar = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span>";
 
         return array(

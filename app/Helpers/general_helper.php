@@ -64,7 +64,7 @@ if (!function_exists('get_file_uri')) {
  */
 if (!function_exists('get_avatar')) {
 
-    function get_avatar($image = "") {
+    function get_avatar($image = "", $name = "") {
         if ($image === "system_bot") {
             return base_url("assets/images/avatar-bot.jpg");
         } else if ($image === "bitbucket") {
@@ -79,10 +79,71 @@ if (!function_exists('get_avatar')) {
                 return base_url(get_setting("profile_image_path")) . "/" . $image;
             }
         } else {
-            return base_url("assets/images/avatar.jpg");
+            // Caminho da imagem baseado no ID
+            $str_sem_espacos = str_replace(' ', '', $name);
+
+            $image_name = 'initials_' . $str_sem_espacos . '.png';
+            $image_path = get_setting("profile_image_path") . $image_name;
+            
+            // Verifica se a imagem já existe
+            if (file_exists($image_path)) {
+                // Se a imagem já existe, retorna a URL
+                return base_url(get_setting("profile_image_path")) . "/" . $image_name;
+            }
+
+            $name_parts = explode(' ', trim($name)); // Divide o nome por espaços
+
+            // Se houver mais de uma parte, pega as iniciais da primeira e última palavra
+            if (count($name_parts) > 1) {
+                $initials = strtoupper($name_parts[0][0] . $name_parts[count($name_parts) - 1][0]);
+            } else {
+                // Se houver apenas um nome, pega as duas primeiras letras
+                $initials = strtoupper(substr($name_parts[0], 0, 2));
+            }
+
+            $width = 100;
+            $height = 100;
+            
+            // Cria uma imagem
+            $image = imagecreate($width, $height);
+            
+            // Define cores
+            $red = rand(0, 255);
+            $green = rand(0, 255);
+            $blue = rand(0, 255);
+            
+            // Define a cor de fundo usando os valores aleatórios
+            $background_color = imagecolorallocate($image, $red, $green, $blue);
+            $text_color = imagecolorallocate($image, 255, 255, 255); // Branco
+            
+            // Define a fonte e o tamanho
+            $font_size = 30;
+            $font_path = './assets/css/fonts/opensans/opensans-bold.woff'; // Substitua pelo caminho correto da fonte no seu servidor
+            
+            // Centraliza o texto
+            $bbox = imagettfbbox($font_size, 0, $font_path, $initials);
+            $x = ($width - ($bbox[2] - $bbox[0])) / 2;
+            $y = ($height - ($bbox[1] - $bbox[7])) / 2 + 12;
+            $y += $font_size / 2;
+            
+            // Escreve o texto na imagem
+            imagettftext($image, $font_size, 0, $x, $y, $text_color, $font_path, $initials);
+                    
+            // Define o caminho onde a imagem será salva
+            $image_name = 'initials_' . $str_sem_espacos . '.png';
+            $image_path =  get_setting("profile_image_path") . $image_name;  // Diretório onde será salva
+
+            // Salva a imagem como PNG
+            imagepng($image, $image_path);
+
+            // Limpa a memória
+            imagedestroy($image);
+
+            // Retorna a URL da imagem
+            return base_url(get_setting("profile_image_path")) . "/" . $image_name;
+          //  return base_url("assets/images/avatar.jpg");
         }
     }
-
 }
 
 /**
