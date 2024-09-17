@@ -37,7 +37,7 @@ class Messages extends Security_Controller {
 
     function index() {
         $this->check_message_user_permission();
-        app_redirect("messages/inbox");
+        app_redirect("messages/list_groups");
     }
 
     function message_group_member_modal_form($message_group_id = 0) {
