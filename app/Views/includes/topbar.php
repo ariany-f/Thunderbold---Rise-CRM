@@ -132,7 +132,7 @@
                     <li class="nav-item dropdown">
                         <a id="user-dropdown" href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">
                             <span class="avatar-xs avatar me-1" >
-                                <img alt="..." src="<?php echo get_avatar($login_user->image); ?>">
+                                <img alt="..." src="<?php echo get_avatar($login_user->image, ($login_user->first_name . ' ' . $login_user->last_name)); ?>">
                             </span>
                             <span class="user-name ml10"><?php echo $login_user->first_name . " " . $login_user->last_name; ?></span>
                         </a>

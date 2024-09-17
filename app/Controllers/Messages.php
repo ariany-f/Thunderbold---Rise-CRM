@@ -101,7 +101,7 @@ class Messages extends Security_Controller {
 
     /* prepare a row of group member list */
     private function _make_group_member_row($data, $can_send_message_to_client = false) {
-        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image) . "' alt='...'></span> ";
+        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image, $data->member_name) . "' alt='...'></span> ";
 
         if ($data->user_type == "staff") {
             $member = get_team_member_profile_link($data->user_id, $member_image);
@@ -202,7 +202,7 @@ class Messages extends Security_Controller {
     }
 
     private function _make_message_group_member_row($data) {
-        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image) . "' alt='...'></span> ";
+        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image, $data->member_name) . "' alt='...'></span> ";
 
         if ($data->user_type == "staff") {
             $member = get_team_member_profile_link($data->user_id, $member_image);
@@ -480,7 +480,7 @@ class Messages extends Security_Controller {
 
     private function _make_row($data, $mode = "", $return_only_message = false, $online_status = false) {
         $image = (isset($data->another_user_name) ? $data->another_user_image : $data->user_image);
-        $image_url = get_avatar($image);
+        $image_url = get_avatar($image, (isset($data->another_user_name) ? $data->another_user_name : $data->user_name));
         $created_at = format_to_relative_time($data->created_at);
         $message_id = $data->main_message_id;
         $label = "";

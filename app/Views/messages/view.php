@@ -3,28 +3,35 @@
     if ($mode === "inbox") {
         if ($is_reply) {
             $user_image = $login_user->image;
+            $user_name = $login_user->first_name . " " . $login_user->last_name;
         } else {
             $user_image = $message_info->user_image;
+            $user_name = $message_info->user_name;
         }
     } if ($mode === "sent_items") {
         if ($is_reply) {
             $user_image = $message_info->user_image;
+            $user_name = $message_info->user_name;
         } else {
             $user_image = $login_user->image;
+            $user_name = $login_user->first_name . " " . $login_user->last_name;
         }
     }
     if ($mode === "list_groups") {
         if ($is_reply) {
             $user_image = $login_user->image;
+            $user_name = $login_user->first_name . " " . $login_user->last_name;
         } else {
             if(isset($message_info->another_user_image))
             {
 
                 $user_image = $message_info->another_user_image;
+                $user_name = $message_info->another_user_name;
             }
             else
             {
                 $user_image = $message_info->user_image;
+                $user_name = $message_info->user_name;
             }
         }
     }
@@ -80,7 +87,7 @@
                                         foreach ($message_users_result AS $user) {
                                         ?>
                                         <div class="user-avatar avatar-30 avatar-circle" data-bs-toggle='tooltip' title='<?php echo $user->user_name; ?>'>
-                                            <img alt="" src="<?php echo get_avatar($user->user_avatar); ?>">
+                                            <img alt="" src="<?php echo get_avatar($user->user_avatar, $user->user_name); ?>">
                                         </div>
                                     <?php
                                         }
@@ -99,7 +106,7 @@
                     <div class="d-flex">
                         <div class="flex-shrink-0 pe-2"> 
                             <span class="avatar avatar-sm">
-                                <img src="<?php echo get_avatar($user_image); ?>" alt="..." />
+                                <img src="<?php echo get_avatar($user_image, $user_name); ?>" alt="..." />
                             </span>
                         </div>
                         <div class="w-100">
@@ -209,7 +216,7 @@
             <div class="p15 box b-b">
                 <?php if(!$message_info->ended) { ?>
                     <div class="box-content avatar avatar-md pr15 d-table-cell">
-                        <img src="<?php echo get_avatar($login_user->image); ?>" alt="..." />
+                        <img src="<?php echo get_avatar($login_user->image, ($login_user->first_name . ' ' . $login_user->last_name)); ?>" alt="..." />
                     </div>
                 
                     <div class="box-content mb-3 form-group">

@@ -253,7 +253,7 @@ class Clients extends Security_Controller {
     private function _make_row($data, $custom_fields) {
 
 
-        $image_url = get_avatar($data->contact_avatar);
+        $image_url = get_avatar($data->contact_avatar, $data->primary_contact);
         $contact = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->primary_contact";
         $primary_contact = get_client_contact_profile_link($data->primary_contact_id, $contact);
 
@@ -1267,7 +1267,7 @@ class Clients extends Security_Controller {
     /* prepare a row of contact list table */
 
     private function _make_contact_row($data, $custom_fields, $hide_primary_contact_label = false) {
-        $image_url = get_avatar($data->image);
+        $image_url = get_avatar($data->image, ($data->first_name . ' ' . $data->last_name));
         $user_avatar = "<span class='avatar avatar-xs'><img src='$image_url' alt='...'></span>";
         $full_name = $data->first_name . " " . $data->last_name . " ";
         $primary_contact = "";
