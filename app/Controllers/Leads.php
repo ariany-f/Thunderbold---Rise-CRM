@@ -886,7 +886,7 @@ class Leads extends Security_Controller {
     /* prepare a row of contact list table */
 
     private function _make_contact_row($data, $custom_fields) {
-        $image_url = get_avatar($data->image);
+        $image_url = get_avatar($data->image, ($data->first_name . ' ' . $data->last_name));
         $user_avatar = "<span class='avatar avatar-xs'><img src='$image_url' alt='...'></span>";
         $full_name = $data->first_name . " " . $data->last_name . " ";
         $primary_contact = "";

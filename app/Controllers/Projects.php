@@ -1775,7 +1775,7 @@ class Projects extends Security_Controller {
     /* prepare a row of project member list */
 
     private function _make_project_member_row($data, $can_send_message_to_client = false) {
-        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image) . "' alt='...'></span> ";
+        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image, $data->member_name) . "' alt='...'></span> ";
 
         if ($data->user_type == "staff") {
             $member = get_team_member_profile_link($data->user_id, $member_image);

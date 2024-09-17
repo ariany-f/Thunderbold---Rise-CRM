@@ -8,7 +8,7 @@
                     <div class="col-md-10">
                         <?php
                         if (isset($message_user_info)) {
-                            $image_url = get_avatar($message_user_info->image);
+                            $image_url = get_avatar($message_user_info->image, ($message_user_info->first_name . " " . $message_user_info->last_name));
                             echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span>" . $message_user_info->first_name . " " . $message_user_info->last_name;
                             ?>
                             <input type="hidden" name="to_user_id" value="<?php echo $message_user_info->id; ?>" />

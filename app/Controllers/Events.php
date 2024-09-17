@@ -595,7 +595,7 @@ class Events extends Security_Controller {
         $response_by_users = $this->Events_model->get_response_by_users(($confirmed_by_array + $rejected_by_array));
         if ($response_by_users) {
             foreach ($response_by_users->getResult() as $user) {
-                $image_url = get_avatar($user->image);
+                $image_url = get_avatar($user->image, ($user->first_name . ' ' . $user->last_name));
                 $response_by_user = "<span data-bs-toggle='tooltip' title='" . $user->member_name . "' class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span>";
 
                 if ($user->user_type === "client") {
