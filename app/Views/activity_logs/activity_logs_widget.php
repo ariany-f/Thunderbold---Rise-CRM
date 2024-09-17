@@ -8,7 +8,7 @@ foreach ($activity_logs as $log) {
             <div class="flex-shrink-0 me-2 mt-3">
                 <span class="avatar avatar-xs">
                     <?php if ($log->created_by_user) { ?>
-                        <img src="<?php echo get_avatar($log->created_by_avatar); ?>" alt="..." />
+                        <img src="<?php echo get_avatar($log->created_by_avatar, $log->created_by_user); ?>" alt="..." />
                     <?php } else if ($log->action === "bitbucket_notification_received") { ?>
                         <img src="<?php echo get_avatar("bitbucket"); ?>" alt="..." />
                     <?php } else if ($log->action === "github_notification_received") { ?>
