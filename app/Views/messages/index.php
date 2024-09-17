@@ -16,14 +16,15 @@
 
                     <?php } ?>
 
-                    <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?> 
-
+                    
                     <?php $count_inbox = count_unread_inbox_message(); ?>
-
+                    
                     <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
-
+                    
+                    <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?> 
+                    
                     <?php echo anchor(get_uri("messages/sent_items"), app_lang('sent_items'), array("class" => "list-group-item")); ?>
-
+                    
                 </ul>
             </div>
 
