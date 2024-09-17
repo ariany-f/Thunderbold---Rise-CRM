@@ -11,7 +11,7 @@
                 <div class="d-flex">
                     <div class="flex-shrink-0">
                         <span class="avatar avatar-xs">
-                            <img alt="..." src="<?php echo get_avatar($user->image); ?>">
+                            <img alt="..." src="<?php echo get_avatar($user->image, ($user->first_name . ' ' . $user->last_name)); ?>">
                             <?php echo $online; ?>
                         </span>
                     </div>
