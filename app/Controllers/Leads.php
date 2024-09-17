@@ -210,14 +210,14 @@ class Leads extends Security_Controller {
 
     private function _make_row($data, $custom_fields) {
         //primary contact 
-        $image_url = get_avatar($data->contact_avatar);
+        $image_url = get_avatar($data->contact_avatar, $data->primary_contact);
         $contact = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->primary_contact";
         $primary_contact = get_lead_contact_profile_link($data->primary_contact_id, $contact);
 
         //lead owner
         $owner = "-";
         if ($data->owner_id) {
-            $owner_image_url = get_avatar($data->owner_avatar);
+            $owner_image_url = get_avatar($data->owner_avatar, $data->owner_name);
             $owner_user = "<span class='avatar avatar-xs mr10'><img src='$owner_image_url' alt='...'></span> $data->owner_name";
             $owner = get_team_member_profile_link($data->owner_id, $owner_user);
         }
@@ -447,7 +447,7 @@ class Leads extends Security_Controller {
     private function _make_file_row($data) {
         $file_icon = get_file_icon(strtolower(pathinfo($data->file_name, PATHINFO_EXTENSION)));
 
-        $image_url = get_avatar($data->uploaded_by_user_image);
+        $image_url = get_avatar($data->uploaded_by_user_image, $data->uploaded_by_user_name);
         $uploaded_by = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->uploaded_by_user_name";
 
         $uploaded_by = get_team_member_profile_link($data->uploaded_by, $uploaded_by);
