@@ -588,6 +588,7 @@ if (!function_exists('count_project_status_widget')) {
             );
         } else {
             $options = array(
+                "is_contact" => ($ci->login_user->user_type == "client" ? 1 : 0),
                 "user_id" => $user_id ? $user_id : $ci->login_user->id
             );
         }
@@ -837,6 +838,7 @@ if (!function_exists('open_projects_widget')) {
             );
         } else {
             $options = array(
+                "is_contact" => ($ci->login_user->user_type == "client" ? 1 : 0),
                 "user_id" => $user_id ? $user_id : $ci->login_user->id
             );
         }
@@ -926,6 +928,7 @@ if (!function_exists('my_open_projects_widget')) {
 
         if ($ci->login_user->user_type == "client") {
             $options["client_id"] = $client_id;
+            $options["is_contact"] = 1;
         } else if ($ci->login_user->is_admin) {
             $options["user_id"] = "";
         } else {
@@ -1463,6 +1466,7 @@ if (!function_exists('projects_overview_widget')) {
             );
         } else {
             $options = array(
+                "is_contact" => ($ci->login_user->user_type == "client" ? 1 : 0),
                 "user_id" => $ci->login_user->id
             );
         }
