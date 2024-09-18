@@ -115,7 +115,7 @@ foreach ($tasks as $task) {
     }
 
     echo modal_anchor(get_uri("projects/task_view"), "<span class='avatar'>" .
-            "<img src='" . get_avatar($task->assigned_to_avatar) . "'>" .
+            "<img src='" . get_avatar($task->assigned_to_avatar, $task->assigned_to_user) . "'>" .
             "</span>" . $sub_task_icon . $task_id . $task->title . $toggle_sub_task_icon . $batch_operation_checkbox . "<div class='clearfix'>" . $start_date . $end_date . "</div>" . $project_name . $client_name . $kanban_custom_fields_data .
             $task_labels . $task_checklist_status . $sub_task_status . "<div class='clearfix'></div>" . $parent_task, array("class" => "kanban-item d-block $disable_dragging $unread_comments_class", "data-status_id" => $task->status_id,  "data-id" => $task->id, "data-project_id" => $task->project_id, "data-sort" => $task->new_sort, "data-post-id" => $task->id, "title" => app_lang('task_info') . " #$task->id", "data-modal-lg" => "1"));
 }
