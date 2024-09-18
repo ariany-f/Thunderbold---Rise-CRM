@@ -577,6 +577,8 @@ $lang["team_member_invitation"] = "Convite para membro da equipe";
 $lang["client_contact_invitation"] = "Convite para contato do cliente";
 $lang["send_invoice"] = "Enviar fatura";
 $lang["signature"] = "Assinatura";
+$lang["all_members"] = "Todos os membros da equipe";
+$lang["all_clients"] = "Todos os clientes";
 
 /* roles */
 

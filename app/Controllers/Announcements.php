@@ -240,9 +240,38 @@ class Announcements extends Security_Controller {
             $option = anchor(get_uri("announcements/form/" . $data->id), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_announcement')))
                     . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_announcement'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("announcements/delete"), "data-action" => "delete"));
         }
+
+        $share_with = "";
+        if ($data->client_groups) {
+            $groups = explode(",", $data->client_groups);
+            foreach ($groups as $group) {
+                if ($group) {
+                    $share_with .= "<li>" . $group . "</li>";
+                }
+            }
+        }
+
+        if ($share_with) {
+            $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
+        }
+        else
+        {
+            if ($data->share_with) {
+                $share_with_data = explode(",", $data->share_with);
+                foreach ($share_with_data as $dt) {
+                    if ($dt) {
+                        $share_with .= "<li>" . app_lang($dt) . "</li>";
+                    }
+                }
+                if ($share_with) {
+                    $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
+                }
+            }
+        }
         return array(
             anchor(get_uri("announcements/view/" . $data->id), $data->title, array("class" => "", "title" => app_lang('view'))),
             get_team_member_profile_link($data->created_by, $user),
+            $share_with,
             $data->start_date,
             format_to_date($data->start_date, false),
             $data->end_date,

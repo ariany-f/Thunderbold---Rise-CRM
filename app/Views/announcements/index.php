@@ -38,6 +38,7 @@
             columns: [
                 {title: '<?php echo app_lang("title") ?>', "class": "all"},
                 {visible: showUserInfo, title: '<?php echo app_lang("created_by") ?>'},
+                {title: '<?php echo app_lang("share_with") ?>'},
                 {visible: false, searchable: false},
                 {title: '<?php echo app_lang("start_date") ?>', "iDataSort": 2},
                 {visible: false, searchable: false},
