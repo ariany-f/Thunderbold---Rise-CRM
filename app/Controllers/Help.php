@@ -21,7 +21,7 @@ class Help extends Security_Controller {
         $this->check_module_availability("module_help");
 
         $type = "help";
-        
+
         $view_data["categories"] = $this->Help_categories_model->get_details(array("type" => $type, "only_active_categories" => true))->getResult();
         $view_data["type"] = $type;
         return $this->template->rander("help_and_knowledge_base/index", $view_data);
@@ -393,7 +393,7 @@ class Help extends Security_Controller {
         }
         else
         {
-            if ($data->share_with) {
+            if ($data->share_with && ($data->share_with === "all_members" || $data->share_with === "all_clients")) {
                 $share_with_data = explode(",", $data->share_with);
                 foreach ($share_with_data as $dt) {
                     if ($dt) {
