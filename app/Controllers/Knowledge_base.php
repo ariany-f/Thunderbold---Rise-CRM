@@ -42,7 +42,14 @@ class Knowledge_base extends App_Controller {
         }
 
         $type = "knowledge_base";
-        $view_data["categories"] = $this->Help_categories_model->get_details(array("type" => $type, "only_active_categories" => true))->getResult();
+        
+
+        $options = array();
+        $options = $this->_prepare_access_options($options);
+        $options['type'] = $type;
+        $options['only_active_categories'] = true;
+
+        $view_data["categories"] = $this->Help_categories_model->get_details( $options )->getResult();
         $view_data["type"] = $type;
 
         if (!isset($this->login_user->id)) {
@@ -67,14 +74,19 @@ class Knowledge_base extends App_Controller {
         $view_data['page_type'] = "articles_list_view";
         $view_data['type'] = $category_info->type;
         $view_data['selected_category_id'] = $category_info->id;
-        $view_data['categories'] = $this->Help_categories_model->get_details(array("type" => $category_info->type))->getResult();
-              
-        $options = array("id" => $id);
-        $options = $this->_prepare_access_options($options);
-        $options['id'] = $id;
-        $options['login_user_id'] = $this->login_user->id;
 
-        $view_data["articles"] = $this->Help_articles_model->get_articles_of_a_category( $options )->getResult();
+        $options = array();
+        $options = $this->_prepare_access_options($options);
+        $options['type'] = $category_info->type;
+
+        $view_data['categories'] = $this->Help_categories_model->get_details($options)->getResult();
+              
+        $options_article = array("id" => $id);
+        $options_article = $this->_prepare_access_options($options_article);
+        $options_article['id'] = $id;
+        $options_article['login_user_id'] = $this->login_user->id;
+
+        $view_data["articles"] = $this->Help_articles_model->get_articles_of_a_category( $options_article )->getResult();
         $view_data["category_info"] = $category_info;
 
         if (!isset($this->login_user->id)) {
