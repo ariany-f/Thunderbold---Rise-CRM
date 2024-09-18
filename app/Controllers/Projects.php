@@ -2355,7 +2355,7 @@ class Projects extends Security_Controller {
     /* prepare a row of timesheet list table */
 
     private function _make_timesheet_row($data, $custom_fields) {
-        $image_url = get_avatar($data->logged_by_avatar);
+        $image_url = get_avatar($data->logged_by_avatar, $data->logged_by_user);
         $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
 
         $start_time = $data->start_time;
@@ -2485,7 +2485,7 @@ class Projects extends Security_Controller {
             $task_title = "-";
 
             if ($group_by != "task") {
-                $image_url = get_avatar($data->logged_by_avatar);
+                $image_url = get_avatar($data->logged_by_avatar, $data->logged_by_user);
                 $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
 
                 $member = get_team_member_profile_link($data->user_id, $user);
@@ -4278,7 +4278,7 @@ class Projects extends Security_Controller {
         $assigned_to = "-";
 
         if ($data->assigned_to) {
-            $image_url = get_avatar($data->assigned_to_avatar);
+            $image_url = get_avatar($data->assigned_to_avatar, $data->assigned_to_user);
             $assigned_to_user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->assigned_to_user";
             $assigned_to = get_team_member_profile_link($data->assigned_to, $assigned_to_user);
 
@@ -4449,7 +4449,7 @@ class Projects extends Security_Controller {
                 $collaborator_id = get_array_value($collaborator_parts, 0);
                 $collaborator_name = get_array_value($collaborator_parts, 1);
 
-                $image_url = get_avatar(get_array_value($collaborator_parts, 2));
+                $image_url = get_avatar(get_array_value($collaborator_parts, 2), get_array_value($collaborator_parts, 1));
                 $user_type = get_array_value($collaborator_parts, 3);
 
                 $collaboratr_image = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span>";
@@ -5056,7 +5056,7 @@ class Projects extends Security_Controller {
     private function _make_file_row($data, $custom_fields) {
         $file_icon = get_file_icon(strtolower(pathinfo($data->file_name, PATHINFO_EXTENSION)));
 
-        $image_url = get_avatar($data->uploaded_by_user_image);
+        $image_url = get_avatar($data->uploaded_by_user_image, $data->uploaded_by_user_name);
         $uploaded_by = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->uploaded_by_user_name";
 
         if ($data->uploaded_by_user_type == "staff") {

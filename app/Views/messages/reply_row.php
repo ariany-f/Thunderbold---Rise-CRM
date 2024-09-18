@@ -4,7 +4,7 @@
             <div class="d-flex">
                 <div class="flex-shrink-0">
                     <span class="avatar avatar-sm">
-                        <img src="<?php echo get_avatar($reply_info->user_image); ?>" alt="..." />
+                        <img src="<?php echo get_avatar($reply_info->user_image, $reply_info->user_name); ?>" alt="..." />
                     </span>
                 </div>
                 <div class="w-100 ps-2">
