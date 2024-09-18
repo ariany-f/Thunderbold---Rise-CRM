@@ -34,6 +34,11 @@ class Help_articles_model extends Crud_model {
             $where .= " AND $help_categories_table.status='active'";
         }
 
+        
+        $client_group_ids = $this->_get_clean_value($options, "client_group_ids");
+        $user_type = $this->_get_clean_value($options, "user_type");
+        $where .= $this->prepare_share_with_query($help_articles_table, $user_type, $client_group_ids);
+
         $extra_select = "";
         $login_user_id = $this->_get_clean_value($options, "login_user_id");
         if ($login_user_id) {
@@ -49,13 +54,43 @@ class Help_articles_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    function get_articles_of_a_category($category_id) {
+    private function prepare_share_with_query($help_articles_table, $user_type, $client_group_ids) {
+        $where = "";
+        if ($user_type) { //if no user type found, we'll assume the user has permission to access all
+            if ($user_type === "staff") {
+                $where = " AND FIND_IN_SET('all_members',$help_articles_table.share_with)";
+            } else {
+                $client_groups_where = "";
+
+                if($client_group_ids)
+                {
+                    $client_group_ids = explode(',', $client_group_ids);
+                    foreach ($client_group_ids as $group_id) {
+                        $client_groups_where .= " OR FIND_IN_SET('cg:$group_id', $help_articles_table.share_with)";
+                    }
+                }
+
+                $where = " AND (FIND_IN_SET('all_clients', $help_articles_table.share_with) $client_groups_where )";
+            }
+        }
+
+        return $where;
+    }
+
+    function get_articles_of_a_category($options) {
         $help_articles_table = $this->db->prefixTable('help_articles');
+
+        $where = "";
+        
+        $category_id = $this->_get_clean_value($options, "id");
+        $client_group_ids = $this->_get_clean_value($options, "client_group_ids");
+        $user_type = $this->_get_clean_value($options, "user_type");
+        $where .= $this->prepare_share_with_query($help_articles_table, $user_type, $client_group_ids);
 
         $sql = "SELECT $help_articles_table.id, $help_articles_table.title
         FROM $help_articles_table
      
-        WHERE $help_articles_table.deleted=0 AND $help_articles_table.status='active' AND $help_articles_table.category_id=$category_id
+        WHERE $help_articles_table.deleted=0 AND $help_articles_table.status='active' AND $help_articles_table.category_id=$category_id $where
         ORDER BY $help_articles_table.sort";
 
         return $this->db->query($sql);

@@ -21,7 +21,7 @@ class Help extends Security_Controller {
         $this->check_module_availability("module_help");
 
         $type = "help";
-
+        
         $view_data["categories"] = $this->Help_categories_model->get_details(array("type" => $type, "only_active_categories" => true))->getResult();
         $view_data["type"] = $type;
         return $this->template->rander("help_and_knowledge_base/index", $view_data);
@@ -179,6 +179,23 @@ class Help extends Security_Controller {
         }
     }
 
+    private function _prepare_access_options($options = array()) {
+        if ($this->access_type === "all") {
+            return $options;
+        }
+
+        $options["user_type"] = $this->login_user->user_type;
+
+        if ($this->login_user->user_type === "client") {
+            $group_ids = $this->Clients_model->get_one($this->login_user->client_id)->group_ids;
+            if ($group_ids) {
+                $options["client_group_ids"] = $group_ids;
+            }
+        }
+
+        return $options;
+    }
+
     //prepare categories list data
     function categories_list_data($type) {
         $this->access_only_allowed_members();
@@ -331,7 +348,11 @@ class Help extends Security_Controller {
     function articles_list_data($type) {
         $this->access_only_allowed_members();
 
-        $list_data = $this->Help_articles_model->get_details(array("type" => $type, "login_user_id" => $this->login_user->id))->getResult();
+        $options = array();
+        $options = $this->_prepare_access_options($options);
+        $options['type'] = $type;
+        $options['login_user_id'] = $this->login_user->id;
+        $list_data = $this->Help_articles_model->get_details($options)->getResult();
         $result = array();
         foreach ($list_data as $data) {
             $result[] = $this->_make_article_row($data);
