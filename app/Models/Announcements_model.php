@@ -49,6 +49,7 @@ class Announcements_model extends Crud_model {
     function get_details($options = array()) {
         $announcements_table = $this->db->prefixTable('announcements');
         $users_table = $this->db->prefixTable('users');
+        $client_groups_table = $this->db->prefixTable('client_groups');
 
         $where = "";
         $id = $this->_get_clean_value($options, "id");
@@ -60,7 +61,7 @@ class Announcements_model extends Crud_model {
         $user_type = $this->_get_clean_value($options, "user_type");
         $where .= $this->prepare_share_with_query($announcements_table, $user_type, $client_group_ids);
 
-        $sql = "SELECT $announcements_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS created_by_user, $users_table.image AS created_by_avatar
+        $sql = "SELECT $announcements_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS created_by_user, $users_table.image AS created_by_avatar, (SELECT GROUP_CONCAT($client_groups_table.title) FROM $client_groups_table WHERE FIND_IN_SET(CONCAT('cg:', $client_groups_table.id), $announcements_table.share_with)) AS client_groups 
         FROM $announcements_table
         LEFT JOIN $users_table ON $users_table.id= $announcements_table.created_by
         WHERE $announcements_table.deleted=0 $where";

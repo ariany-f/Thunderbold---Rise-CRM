@@ -68,8 +68,13 @@ class Knowledge_base extends App_Controller {
         $view_data['type'] = $category_info->type;
         $view_data['selected_category_id'] = $category_info->id;
         $view_data['categories'] = $this->Help_categories_model->get_details(array("type" => $category_info->type))->getResult();
+              
+        $options = array("id" => $id);
+        $options = $this->_prepare_access_options($options);
+        $options['id'] = $id;
+        $options['login_user_id'] = $this->login_user->id;
 
-        $view_data["articles"] = $this->Help_articles_model->get_articles_of_a_category($id)->getResult();
+        $view_data["articles"] = $this->Help_articles_model->get_articles_of_a_category( $options )->getResult();
         $view_data["category_info"] = $category_info;
 
         if (!isset($this->login_user->id)) {
@@ -78,6 +83,23 @@ class Knowledge_base extends App_Controller {
         }
 
         return $this->template->rander("help_and_knowledge_base/articles/view_page", $view_data);
+    }
+
+    private function _prepare_access_options($options = array()) {
+        if ($this->access_type === "all") {
+            return $options;
+        }
+
+        $options["user_type"] = $this->login_user->user_type;
+
+        if ($this->login_user->user_type === "client") {
+            $group_ids = $this->Clients_model->get_one($this->login_user->client_id)->group_ids;
+            if ($group_ids) {
+                $options["client_group_ids"] = $group_ids;
+            }
+        }
+
+        return $options;
     }
 
     //show article
@@ -92,8 +114,13 @@ class Knowledge_base extends App_Controller {
         } else {
             $login_user_id = $this->login_user->id;
         }
+            
+        $options = array("id" => $id);
+        $options = $this->_prepare_access_options($options);
+        $options['id'] = $id;
+        $options['login_user_id'] = $this->login_user->id;
 
-        $model_info = $this->Help_articles_model->get_details(array("id" => $id, "login_user_id" => $login_user_id))->getRow();
+        $model_info = $this->Help_articles_model->get_details($options)->getRow();
 
         if (!$model_info || $model_info->type != "knowledge_base") {
             show_404();
