@@ -20,6 +20,7 @@
                 {title: '<?php echo app_lang("title"); ?>'},
                 {title: '<?php echo app_lang("description"); ?>'},
                 {title: '<?php echo app_lang("status"); ?>'},
+                {title: '<?php echo app_lang("share_with"); ?>'},
                 {title: '<?php echo app_lang("sort"); ?>'},
                 {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],

@@ -83,6 +83,73 @@
                 </div>
             </div>
         </div>
+        <div class="form-group">
+            <div class="row">
+                <label for="share_with" class=" col-md-3"><?php echo app_lang('share_with'); ?></label>
+                <div class="col-md-9">
+                    <div>
+                        <?php
+                        echo form_checkbox(array(
+                            "id" => "share_with_members",
+                            "name" => "share_with_all_members",
+                            "value" => "all_members",
+                            "class" => "form-check-input",
+                                ), $model_info->share_with, (in_array("all_members", $share_with)) ? true : false);
+                        ?>
+                        <label for="share_with_members"><?php echo app_lang("all_team_members"); ?> </label>
+                    </div>
+
+                    <?php
+                    $has_client_group = false;
+                    $client_groups_value = "";
+
+                    foreach ($share_with as $share) {
+                        if (strpos($share, 'cg') !== false) {
+                            $has_client_group = true;
+
+                            if ($client_groups_value) {
+                                $client_groups_value .= ",";
+                            }
+
+                            $client_groups_value .= $share;
+                        }
+                    }
+                    ?>
+
+                    <div id="share_with_clients_area" class="<?php echo $has_client_group ? "hide" : ""; ?>">
+                        <div>
+                            <?php
+                            echo form_checkbox(array(
+                                "id" => "share_with_clients",
+                                "name" => "share_with_all_clients",
+                                "value" => "all_clients",
+                                "class" => "form-check-input"
+                                    ), $model_info->share_with, (in_array("all_clients", $share_with)) ? true : false);
+                            ?>
+
+                            <label for="share_with_clients"><?php echo app_lang("all_team_clients"); ?></label>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="share_with_specific_area" class="form-group <?php echo (in_array("all_clients", $share_with)) ? "hide" : ""; ?>">
+                        <div>
+                            <?php
+                            echo form_checkbox("share_with_specific_checkbox", "1", $has_client_group ? true : false, "id='share_with_specific_checkbox' class='form-check-input'");
+                            ?>
+                            <label for="share_with_specific_checkbox"><?php echo app_lang("specific_client_groups"); ?></label>
+
+                            <div class="specific_dropdown">
+                                <input type="text" value="<?php echo $client_groups_value; ?>" name="share_with_specific_client_groups" id="share_with_specific_dropdown" class="w100p validate-hidden"  data-rule-required="true" data-msg-required="<?php echo app_lang('field_required'); ?>" placeholder="<?php echo app_lang('choose_client_groups'); ?>"  />    
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -98,6 +165,44 @@
             onSuccess: function (result) {
                 $("#category-table").appTable({newData: result.data, dataId: result.id});
             }
+        });
+        $("#share_with_specific_dropdown").select2({
+            multiple: true,
+            data: <?php echo ($groups_dropdown); ?>
+        });
+
+        toggle_specific_dropdown();
+
+        function toggle_specific_dropdown() {
+            var $element = $("#share_with_specific_checkbox:checked");
+            if ($element.is(":checked") && !$("#share_with_specific_area").hasClass("hide")) {
+                $("#share_with_specific_checkbox").closest("div.form-group").find(".specific_dropdown").show().find("input").addClass("validate-hidden");
+            } else {
+                $("#share_with_specific_checkbox").closest("div.form-group").find(".specific_dropdown").hide().find("input").removeClass("validate-hidden");
+            }
+        }
+
+        //show/hide client groups area
+        $("#share_with_clients").click(function () {
+            if ($(this).is(":checked")) {
+                $("#share_with_specific_area").addClass("hide");
+            } else {
+                $("#share_with_specific_area").removeClass("hide");
+            }
+
+            toggle_specific_dropdown();
+        });
+
+
+        //show/hide clients area
+        $("#share_with_specific_checkbox").click(function () {
+            if ($(this).is(":checked")) {
+                $("#share_with_clients_area").addClass("hide");
+            } else {
+                $("#share_with_clients_area").removeClass("hide");
+            }
+
+            toggle_specific_dropdown();
         });
     });
 </script>    

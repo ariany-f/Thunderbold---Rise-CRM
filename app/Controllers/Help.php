@@ -21,7 +21,7 @@ class Help extends Security_Controller {
         $this->check_module_availability("module_help");
 
         $type = "help";
-        
+
         $view_data["categories"] = $this->Help_categories_model->get_details(array("type" => $type, "only_active_categories" => true))->getResult();
         $view_data["type"] = $type;
         return $this->template->rander("help_and_knowledge_base/index", $view_data);
@@ -75,9 +75,19 @@ class Help extends Security_Controller {
         $view_data['page_type'] = "articles_list_view";
         $view_data['type'] = $category_info->type;
         $view_data['selected_category_id'] = $category_info->id;
-        $view_data['categories'] = $this->Help_categories_model->get_details(array("type" => $category_info->type))->getResult();
 
-        $view_data["articles"] = $this->Help_articles_model->get_articles_of_a_category($id)->getResult();
+        $options = array();
+        $options = $this->_prepare_access_options($options);
+        $options['type'] = $category_info->type;
+
+        $view_data['categories'] = $this->Help_categories_model->get_details( $options )->getResult();
+
+        $options_article = array("id" => $id);
+        $options_article = $this->_prepare_access_options($options_article);
+        $options_article['id'] = $id;
+        $options_article['login_user_id'] = $this->login_user->id;
+
+        $view_data["articles"] = $this->Help_articles_model->get_articles_of_a_category( $options_article )->getResult();
         $view_data["category_info"] = $category_info;
 
         return $this->template->rander("help_and_knowledge_base/articles/view_page", $view_data);
@@ -125,6 +135,8 @@ class Help extends Security_Controller {
 
         $id = $this->request->getPost('id');
         $view_data['model_info'] = $this->Help_categories_model->get_one($id);
+        $view_data['share_with'] = $id ? ($view_data['model_info']->share_with ? explode(",", $view_data['model_info']->share_with) : array("all_members")) : array("all_members");
+        $view_data['groups_dropdown'] = json_encode($this->_get_client_groups_dropdown_select2_data());
         $view_data['type'] = clean_data($type);
         return $this->template->view('help_and_knowledge_base/categories/modal_form', $view_data);
     }
@@ -140,12 +152,30 @@ class Help extends Security_Controller {
         ));
 
         $id = $this->request->getPost('id');
+        $share_with = array();
+        $share_with_all_members = $this->request->getPost('share_with_all_members');
+        $share_with_all_clients = $this->request->getPost('share_with_all_clients');
+        $share_with_specific_checkbox = $this->request->getPost('share_with_specific_checkbox');
+        $share_with_specific_client_groups = $this->request->getPost('share_with_specific_client_groups');
+
+        if ($share_with_all_members) {
+            array_push($share_with, $share_with_all_members);
+        }
+
+        if ($share_with_all_clients) {
+            array_push($share_with, $share_with_all_clients);
+        }
+
+        if ($share_with_specific_checkbox && $share_with_specific_client_groups && !$share_with_all_clients) {
+            array_push($share_with, $share_with_specific_client_groups);
+        }
         $data = array(
             "title" => $this->request->getPost('title'),
             "description" => $this->request->getPost('description'),
             "type" => $this->request->getPost('type'),
             "sort" => $this->request->getPost('sort'),
-            "status" => $this->request->getPost('status')
+            "status" => $this->request->getPost('status'),
+            "share_with" => $share_with ? implode(",", $share_with) : ""
         );
         $save_id = $this->Help_categories_model->ci_save($data, $id);
         if ($save_id) {
@@ -217,10 +247,39 @@ class Help extends Security_Controller {
 
     //make a row of category row
     private function _make_category_row($data) {
+
+        $share_with = "";
+        if ($data->client_groups) {
+            $groups = explode(",", $data->client_groups);
+            foreach ($groups as $group) {
+                if ($group) {
+                    $share_with .= "<li>" . $group . "</li>";
+                }
+            }
+        }
+
+        if ($share_with) {
+            $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
+        }
+        else
+        {
+            if ($data->share_with && ($data->share_with === "all_members" || $data->share_with === "all_clients")) {
+                $share_with_data = explode(",", $data->share_with);
+                foreach ($share_with_data as $dt) {
+                    if ($dt) {
+                        $share_with .= "<li>" . app_lang($dt) . "</li>";
+                    }
+                }
+                if ($share_with) {
+                    $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
+                }
+            }
+        }
         return array(
             $data->title,
             $data->description ? $data->description : "-",
             app_lang($data->status),
+            $share_with,
             $data->sort,
             modal_anchor(get_uri("help/category_modal_form/" . $data->type), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_category'), "data-post-id" => $data->id))
             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_category'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("help/delete_category"), "data-action" => "delete"))
@@ -267,31 +326,12 @@ class Help extends Security_Controller {
         $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "help");
         $new_files = unserialize($files_data);
 
-        $share_with = array();
-        $share_with_all_members = $this->request->getPost('share_with_all_members');
-        $share_with_all_clients = $this->request->getPost('share_with_all_clients');
-        $share_with_specific_checkbox = $this->request->getPost('share_with_specific_checkbox');
-        $share_with_specific_client_groups = $this->request->getPost('share_with_specific_client_groups');
-
-        if ($share_with_all_members) {
-            array_push($share_with, $share_with_all_members);
-        }
-
-        if ($share_with_all_clients) {
-            array_push($share_with, $share_with_all_clients);
-        }
-
-        if ($share_with_specific_checkbox && $share_with_specific_client_groups && !$share_with_all_clients) {
-            array_push($share_with, $share_with_specific_client_groups);
-        }
-
         $data = array(
             "title" => $this->request->getPost('title'),
             "description" => $this->request->getPost('description'),
             "category_id" => $this->request->getPost('category_id'),
             "sort" => $this->request->getPost('sort'),
-            "status" => $this->request->getPost('status'),
-            "share_with" => $share_with ? implode(",", $share_with) : ""
+            "status" => $this->request->getPost('status')
         );
 
         //is editing? update the files if required
@@ -378,33 +418,33 @@ class Help extends Security_Controller {
             $feedback = "<span class='badge bg-success mt0'>" . $data->helpful_status_yes . " " . app_lang("yes") . "</span> <span class='badge bg-danger mt0'>" . $data->helpful_status_no . " " . app_lang("no") . "</span>";
         }
         
-        $share_with = "";
-        if ($data->client_groups) {
-            $groups = explode(",", $data->client_groups);
-            foreach ($groups as $group) {
-                if ($group) {
-                    $share_with .= "<li>" . $group . "</li>";
-                }
-            }
-        }
+        // $share_with = "";
+        // if ($data->client_groups) {
+        //     $groups = explode(",", $data->client_groups);
+        //     foreach ($groups as $group) {
+        //         if ($group) {
+        //             $share_with .= "<li>" . $group . "</li>";
+        //         }
+        //     }
+        // }
 
-        if ($share_with) {
-            $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
-        }
-        else
-        {
-            if ($data->share_with) {
-                $share_with_data = explode(",", $data->share_with);
-                foreach ($share_with_data as $dt) {
-                    if ($dt) {
-                        $share_with .= "<li>" . app_lang($dt) . "</li>";
-                    }
-                }
-                if ($share_with) {
-                    $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
-                }
-            }
-        }
+        // if ($share_with) {
+        //     $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
+        // }
+        // else
+        // {
+        //     if ($data->share_with && ($data->share_with === "all_members" || $data->share_with === "all_clients")) {
+        //         $share_with_data = explode(",", $data->share_with);
+        //         foreach ($share_with_data as $dt) {
+        //             if ($dt) {
+        //                 $share_with .= "<li>" . app_lang($dt) . "</li>";
+        //             }
+        //         }
+        //         if ($share_with) {
+        //             $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
+        //         }
+        //     }
+        // }
 
         return array(
             $title,
@@ -413,7 +453,6 @@ class Help extends Security_Controller {
             $data->total_views,
             $feedback,
             $data->sort,
-            $share_with,
             anchor(get_uri("help/article_form/" . $data->type . "/" . $data->id), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_article')))
             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_article'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("help/delete_article"), "data-action" => "delete"))
         );

@@ -32,7 +32,6 @@
                 {title: "<?php echo app_lang('total_views') ?>", "class": "w10p"},
                 {visible: showFeedback, title: "<?php echo app_lang('feedback') ?>", "class": "w10p"},
                 {title: "<?php echo app_lang('sort'); ?>"},
-                {title: "<?php echo app_lang('share_with') ?>", "class": "w10p"},
                 {title: "<i data-feather='menu' class='icon-16'></i>", "class": "text-center option w100"}
             ],
             printColumns: [0, 1, 2, 3]
