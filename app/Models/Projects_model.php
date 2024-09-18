@@ -77,6 +77,7 @@ class Projects_model extends Crud_model {
         $extra_join = "";
         $extra_where = "";
         $user_id = $this->_get_clean_value($options, "user_id");
+        $is_contact = $this->_get_clean_value($options, "is_contact");
 
         $starred_projects = $this->_get_clean_value($options, "starred_projects");
         if ($starred_projects) {
@@ -86,6 +87,27 @@ class Projects_model extends Crud_model {
         if (!$client_id && $user_id && !$starred_projects) {
             $extra_join = " LEFT JOIN (SELECT $project_members_table.user_id, $project_members_table.project_id FROM $project_members_table WHERE $project_members_table.user_id=$user_id AND $project_members_table.deleted=0 GROUP BY $project_members_table.project_id) AS project_members_table ON project_members_table.project_id= $projects_table.id ";
             $extra_where = " AND project_members_table.user_id=$user_id";
+        }
+
+        // Para projetos com contatos de clientes adicionados, o projeto só aparece para o contato logado caso ele esteja listado, caso não hajam contatos cadastrados como membros, o projeto aparece para todos os contatos
+        if ($is_contact && $user_id) {
+            $extra_join = " LEFT JOIN (SELECT $project_members_table.project_id 
+                FROM $project_members_table) AS project_members_table 
+                ON project_members_table.project_id = $projects_table.id";
+
+            $extra_where = " AND (project_members_table.project_id IS NULL OR EXISTS (
+                        SELECT 1 
+                        FROM $project_members_table 
+                        WHERE $project_members_table.project_id = $projects_table.id 
+                        AND $project_members_table.user_id = $user_id 
+                        AND $project_members_table.deleted = 0
+                    ) OR EXISTS (
+                        SELECT 1 
+                        FROM $project_members_table 
+                        WHERE $project_members_table.project_id = $projects_table.id 
+                        AND $project_members_table.user_id <> $user_id 
+                        AND $project_members_table.deleted = 1
+                    ))";
         }
 
         $select_labels_data_query = $this->get_labels_data_query();
@@ -154,10 +176,32 @@ class Projects_model extends Crud_model {
             $extra_where = " AND project_members_table.user_id=$user_id";
         }
 
+        $is_contact = $this->_get_clean_value($options, "is_contact");
+         // Para projetos com contatos de clientes adicionados, o projeto só aparece para o contato logado caso ele esteja listado, caso não hajam contatos cadastrados como membros, o projeto aparece para todos os contatos
+         if ($is_contact && $user_id) {
+            $extra_join = " LEFT JOIN (SELECT $project_members_table.project_id 
+                FROM $project_members_table) AS project_members_table 
+                ON project_members_table.project_id = $projects_table.id";
+
+            $extra_where = " AND (project_members_table.project_id IS NULL OR EXISTS (
+                        SELECT 1 
+                        FROM $project_members_table 
+                        WHERE $project_members_table.project_id = $projects_table.id 
+                        AND $project_members_table.user_id = $user_id 
+                        AND $project_members_table.deleted = 0
+                    ) OR EXISTS (
+                        SELECT 1 
+                        FROM $project_members_table 
+                        WHERE $project_members_table.project_id = $projects_table.id 
+                        AND $project_members_table.user_id <> $user_id 
+                        AND $project_members_table.deleted = 1
+                    ))";
+        }
+
         $sql = "SELECT $projects_table.status, COUNT($projects_table.id) as total
         FROM $projects_table
               $extra_join    
-        WHERE $projects_table.deleted=0 AND ($projects_table.status='open' OR  $projects_table.status='completed' OR $projects_table.status='hold') $extra_where
+        WHERE $projects_table.deleted=0 AND $projects_table.is_ticket = 0 AND ($projects_table.status='open' OR  $projects_table.status='completed' OR $projects_table.status='hold') $extra_where
         GROUP BY $projects_table.status";
         $result = $this->db->query($sql)->getResult();
 
