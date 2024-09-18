@@ -32,7 +32,7 @@ foreach ($comments as $comment) {
             <div class="d-flex">
                 <div class="flex-shrink-0 comment-avatar">
                     <span class="avatar <?php echo ($type === "project") ? " avatar-sm" : " avatar-xs"; ?> ">
-                        <img src="<?php echo get_avatar($comment->created_by_avatar); ?>" alt="..." />
+                        <img src="<?php echo get_avatar($comment->created_by_avatar, $comment->created_by_user); ?>" alt="..." />
                     </span>
                 </div>
                 <div class="w-100 ps-2">

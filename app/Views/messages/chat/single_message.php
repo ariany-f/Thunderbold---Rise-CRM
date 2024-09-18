@@ -36,7 +36,7 @@ if ($reply_info->from_user_id === $login_user->id) {
             <div class="col-md-12">
                 <div class="avatar-xs avatar mr10" >
                     <?php
-                    $avatar = get_avatar($reply_info->user_image);
+                    $avatar = get_avatar($reply_info->user_image, $reply_info->user_name);
                     if ($reply_info->user_type == "client") {
                         echo get_client_contact_profile_link($reply_info->from_user_id, " <img alt='...' src='" . $avatar . "' /> ", array("class" => "dark strong"));
                     } else {

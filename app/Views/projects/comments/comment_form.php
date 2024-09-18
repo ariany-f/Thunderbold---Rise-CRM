@@ -16,7 +16,7 @@ if (isset($task_id)) {
     <div class="d-flex b-b comment-form-container">
         <div class="flex-shrink-0 d-none d-sm-block">
             <div class="avatar  <?php echo isset($project_id) || isset($customer_feedback_id) ? " avatar-md" : " avatar-sm"; ?>  pr15 d-table-cell">
-                <img src="<?php echo get_avatar($login_user->image); ?>" alt="..." />
+                <img src="<?php echo get_avatar($login_user->image, ($login_user->first_name . ' ' . $login_user->last_name)); ?>" alt="..." />
             </div>
         </div>
         <div class="w-100">
