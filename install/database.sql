@@ -1378,6 +1378,7 @@ CREATE TABLE IF NOT EXISTS `help_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `description` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `share_with` mediumtext COLLATE utf8_unicode_ci,
   `type` enum('help','knowledge_base') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `sort` int(11) NOT NULL,
   `status` enum('active','inactive') NOT NULL DEFAULT 'active',
