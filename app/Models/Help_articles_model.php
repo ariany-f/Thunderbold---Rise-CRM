@@ -15,6 +15,7 @@ class Help_articles_model extends Crud_model {
         $help_categories_table = $this->db->prefixTable('help_categories');
         $help_articles_table = $this->db->prefixTable('help_articles');
         $article_helpful_status_table = $this->db->prefixTable('article_helpful_status');
+        $client_groups_table = $this->db->prefixTable('client_groups');
 
         $where = "";
         $id = $this->_get_clean_value($options, "id");
@@ -41,7 +42,7 @@ class Help_articles_model extends Crud_model {
                     (SELECT count($article_helpful_status_table.id) FROM $article_helpful_status_table WHERE $article_helpful_status_table.article_id=$help_articles_table.id AND $article_helpful_status_table.deleted=0 AND $article_helpful_status_table.status='no') as helpful_status_no";
         }
 
-        $sql = "SELECT $help_articles_table.*, $help_categories_table.title AS category_title, $help_categories_table.type $extra_select
+        $sql = "SELECT $help_articles_table.*, $help_categories_table.title AS category_title, $help_categories_table.type, (SELECT GROUP_CONCAT($client_groups_table.title) FROM $client_groups_table WHERE FIND_IN_SET(CONCAT('cg:', $client_groups_table.id), $help_articles_table.share_with)) AS client_groups $extra_select
         FROM $help_articles_table
         LEFT JOIN $help_categories_table ON $help_categories_table.id=$help_articles_table.category_id
         WHERE $help_articles_table.deleted=0 AND $help_categories_table.deleted=0 $where";

@@ -215,9 +215,22 @@ class Help extends Security_Controller {
         $this->access_only_allowed_members();
 
         $view_data['model_info'] = $this->Help_articles_model->get_one($id);
+        $view_data['share_with'] = $id ? explode(",", $view_data['model_info']->share_with) : array("all_members");
+        $view_data['groups_dropdown'] = json_encode($this->_get_client_groups_dropdown_select2_data());
         $view_data['type'] = clean_data($type);
         $view_data['categories_dropdown'] = $this->Help_categories_model->get_dropdown_list(array("title"), "id", array("type" => $type));
         return $this->template->rander('help_and_knowledge_base/articles/form', $view_data);
+    }   
+    
+    private function _get_client_groups_dropdown_select2_data() {
+        $client_groups = $this->Client_groups_model->get_all()->getResult();
+        $groups_dropdown = array();
+
+        foreach ($client_groups as $group) {
+            $groups_dropdown[] = array("id" => "cg:" . $group->id, "text" => $group->title);
+        }
+
+        return $groups_dropdown;
     }
 
     //save article
@@ -237,12 +250,31 @@ class Help extends Security_Controller {
         $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "help");
         $new_files = unserialize($files_data);
 
+        $share_with = array();
+        $share_with_all_members = $this->request->getPost('share_with_all_members');
+        $share_with_all_clients = $this->request->getPost('share_with_all_clients');
+        $share_with_specific_checkbox = $this->request->getPost('share_with_specific_checkbox');
+        $share_with_specific_client_groups = $this->request->getPost('share_with_specific_client_groups');
+
+        if ($share_with_all_members) {
+            array_push($share_with, $share_with_all_members);
+        }
+
+        if ($share_with_all_clients) {
+            array_push($share_with, $share_with_all_clients);
+        }
+
+        if ($share_with_specific_checkbox && $share_with_specific_client_groups && !$share_with_all_clients) {
+            array_push($share_with, $share_with_specific_client_groups);
+        }
+
         $data = array(
             "title" => $this->request->getPost('title'),
             "description" => $this->request->getPost('description'),
             "category_id" => $this->request->getPost('category_id'),
             "sort" => $this->request->getPost('sort'),
-            "status" => $this->request->getPost('status')
+            "status" => $this->request->getPost('status'),
+            "share_with" => $share_with ? implode(",", $share_with) : ""
         );
 
         //is editing? update the files if required
@@ -324,6 +356,34 @@ class Help extends Security_Controller {
             $title = anchor(get_uri("knowledge_base/view/" . $data->id), $data->title);
             $feedback = "<span class='badge bg-success mt0'>" . $data->helpful_status_yes . " " . app_lang("yes") . "</span> <span class='badge bg-danger mt0'>" . $data->helpful_status_no . " " . app_lang("no") . "</span>";
         }
+        
+        $share_with = "";
+        if ($data->client_groups) {
+            $groups = explode(",", $data->client_groups);
+            foreach ($groups as $group) {
+                if ($group) {
+                    $share_with .= "<li>" . $group . "</li>";
+                }
+            }
+        }
+
+        if ($share_with) {
+            $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
+        }
+        else
+        {
+            if ($data->share_with) {
+                $share_with_data = explode(",", $data->share_with);
+                foreach ($share_with_data as $dt) {
+                    if ($dt) {
+                        $share_with .= "<li>" . app_lang($dt) . "</li>";
+                    }
+                }
+                if ($share_with) {
+                    $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
+                }
+            }
+        }
 
         return array(
             $title,
@@ -332,6 +392,7 @@ class Help extends Security_Controller {
             $data->total_views,
             $feedback,
             $data->sort,
+            $share_with,
             anchor(get_uri("help/article_form/" . $data->type . "/" . $data->id), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_article')))
             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_article'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("help/delete_article"), "data-action" => "delete"))
         );
