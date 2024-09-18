@@ -142,7 +142,13 @@ class Knowledge_base extends App_Controller {
 
         $view_data['selected_category_id'] = $model_info->category_id;
         $view_data['type'] = $model_info->type;
-        $view_data['categories'] = $this->Help_categories_model->get_details(array("type" => $model_info->type))->getResult();
+
+        
+        $options = array();
+        $options = $this->_prepare_access_options($options);
+        $options['type'] = $model_info->type;
+
+        $view_data['categories'] = $this->Help_categories_model->get_details($options)->getResult();
         $view_data['page_type'] = "article_view";
 
         $view_data['article_info'] = $model_info;
