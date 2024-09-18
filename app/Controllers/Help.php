@@ -263,7 +263,7 @@ class Help extends Security_Controller {
         }
         else
         {
-            if ($data->share_with && ($data->share_with === "all_members" || $data->share_with === "all_clients")) {
+            if ($data->share_with && (strpos($data->share_with, "all_members") !== false || strpos($data->share_with, "all_clients") !== false)) {
                 $share_with_data = explode(",", $data->share_with);
                 foreach ($share_with_data as $dt) {
                     if ($dt) {
@@ -417,34 +417,6 @@ class Help extends Security_Controller {
             $title = anchor(get_uri("knowledge_base/view/" . $data->id), $data->title);
             $feedback = "<span class='badge bg-success mt0'>" . $data->helpful_status_yes . " " . app_lang("yes") . "</span> <span class='badge bg-danger mt0'>" . $data->helpful_status_no . " " . app_lang("no") . "</span>";
         }
-        
-        // $share_with = "";
-        // if ($data->client_groups) {
-        //     $groups = explode(",", $data->client_groups);
-        //     foreach ($groups as $group) {
-        //         if ($group) {
-        //             $share_with .= "<li>" . $group . "</li>";
-        //         }
-        //     }
-        // }
-
-        // if ($share_with) {
-        //     $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
-        // }
-        // else
-        // {
-        //     if ($data->share_with && ($data->share_with === "all_members" || $data->share_with === "all_clients")) {
-        //         $share_with_data = explode(",", $data->share_with);
-        //         foreach ($share_with_data as $dt) {
-        //             if ($dt) {
-        //                 $share_with .= "<li>" . app_lang($dt) . "</li>";
-        //             }
-        //         }
-        //         if ($share_with) {
-        //             $share_with = "<ul class='pl15'>" . $share_with . "</ul>";
-        //         }
-        //     }
-        // }
 
         return array(
             $title,
