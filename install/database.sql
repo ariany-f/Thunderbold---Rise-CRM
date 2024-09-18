@@ -1390,6 +1390,7 @@ CREATE TABLE IF NOT EXISTS `help_articles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `description` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `share_with` mediumtext COLLATE utf8_unicode_ci,
   `category_id` int(11) NOT NULL,
   `created_by` int(11) NOT NULL,
   `created_at` datetime DEFAULT NULL,

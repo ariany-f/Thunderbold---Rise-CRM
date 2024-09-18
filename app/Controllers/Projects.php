@@ -1124,6 +1124,8 @@ class Projects extends Security_Controller {
             "is_ticket" => 1,
             "statuses" => $statuses,
             "project_label" => $this->request->getPost("project_label"),
+            'user_id' => $this->login_user->id,
+            'is_contact' => $this->login_user->user_type == "client" ? 1 : 0,
             "custom_fields" => $custom_fields,
             "custom_field_filter" => $this->prepare_custom_field_filter_values("projects", $this->login_user->is_admin, $this->login_user->user_type)
         );
