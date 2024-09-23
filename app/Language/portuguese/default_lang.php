@@ -348,6 +348,8 @@ $lang["invite_an_user"] = "Convidar um usuário para %s"; // Convidar um usuári
 $lang["unit_type"] = "Tipo de unidade";
 
 /* projects */
+$lang["select"] = "Selecione usuário/cliente";
+$lang["save_member"] = "Add membro";
 $lang["add_project"] = "Add projeto";
 $lang["edit_project"] = "Editar projeto";
 $lang["delete_project"] = "Deletar projeto";

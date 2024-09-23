@@ -321,17 +321,17 @@ if (! function_exists('form_dropdown')) {
                     $optgroupKey = (string) $optgroupKey;
 
                     $sel = in_array($optgroupKey, $selected, true) ? ' selected="selected"' : '';
-                    $form .= '<option value="' . htmlspecialchars($optgroupKey) . '"' . $sel . '>' . $optgroupVal . "</option>\n";
+                    $form .= '<option value="' . ($optgroupKey != 0 ? htmlspecialchars($optgroupKey) : '') . '"' . $sel . '>' . $optgroupVal . "</option>\n";
                 }
 
                 $form .= "</optgroup>\n";
             } else {
-                $form .= '<option value="' . htmlspecialchars($key) . '"'
+                $form .= '<option value="' . ($key != 0 ? htmlspecialchars($key) : '') . '"'
                     . (in_array($key, $selected, true) ? ' selected="selected"' : '') . '>'
                     . $val . "</option>\n";
             }
         }
-
+        
         return $form . "</select>\n";
     }
 }
