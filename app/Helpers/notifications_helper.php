@@ -645,6 +645,7 @@ if (!function_exists('send_notification_emails')) {
 
             $parser_data["USER_NAME"] = $message_info->user_name;
             $parser_data["MESSAGE_CONTENT"] = nl2br($message_info->message ? $message_info->message : "");
+            $parser_data["GROUP_NAME"] = $message_info->group_name;
             $parser_data["MESSAGE_URL"] = $url;
 
             if ($message_info->files) {
