@@ -41,6 +41,8 @@ class Messages extends Security_Controller {
     }
 
     function message_group_member_modal_form($message_group_id = 0) {
+
+        $users_dropdown[] = app_lang('select');
         
         if($message_group_id === 0) {
             $message_group_id = $this->request->getPost('id');
@@ -63,7 +65,6 @@ class Messages extends Security_Controller {
 
         $view_data["users_dropdown"] = $users_dropdown;
         $view_data["add_user_type"] = $add_user_type;
-        //echo '<pre>';print_r($view_data);die;
         return $this->template->view('messages/group_members/modal_form', $view_data);
     }
 
@@ -333,7 +334,8 @@ class Messages extends Security_Controller {
     function modal_form($user_id = 0) {
         validate_numeric_value($user_id);
         $this->check_message_user_permission();
-        $view_data['users_dropdown'] = array("" => "-");
+        
+        $users_dropdown = array(array("id" => "", "text" => "- " . app_lang('select') . " -"));
 
         if ($user_id) {
             $view_data['message_user_info'] = $this->Users_model->get_one($user_id);
@@ -351,9 +353,11 @@ class Messages extends Security_Controller {
                     }
                 }
 
-                $view_data['users_dropdown'][$user->id] = $user_name;
+                $users_dropdown[$user->id] = $user_name;
             }
         }
+
+        $view_data['users_dropdown'] = $users_dropdown;
 
         return $this->template->view('messages/modal_form', $view_data);
     }
