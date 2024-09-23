@@ -651,6 +651,7 @@ if (!function_exists('send_notification_emails')) {
 
             if($task_url !== array("url" => get_uri("projects/all_tasks")))
             {
+                $parser_data["SUBJECT"] = "Tarefa #" . $message_info->task_id . " - " . $message_info->subject;
                 $parser_data["TASK_URL"] = $task_url;
             }
 
@@ -670,6 +671,7 @@ if (!function_exists('send_notification_emails')) {
     
                 if($task_url !== array("url" => get_uri("projects/all_tasks")))
                 {
+                    $parser_data["SUBJECT"] = "Tarefa #" . $main_message_info->task_id . " - " . $main_message_info->subject;
                     $parser_data["TASK_URL"] = $task_url;
                 }
             }
