@@ -122,7 +122,7 @@ class Timesheets_model extends Crud_model {
         }
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS $timesheet_table.*,  CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
-            $tasks_table.title AS task_title, $projects_table.title AS project_title,
+            $tasks_table.title AS task_title, $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
             $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name $select_custom_fieds
         FROM $timesheet_table
         LEFT JOIN $users_table ON $users_table.id= $timesheet_table.user_id
