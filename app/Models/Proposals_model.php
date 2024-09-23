@@ -61,6 +61,11 @@ class Proposals_model extends Crud_model {
             $where .= " AND $proposals_table.status='$status'";
         }
 
+        $statuses = $this->_get_clean_value($options, "statuses");
+        if ($statuses) {
+            $where .= " AND (FIND_IN_SET($proposals_table.status, '$statuses')) ";
+        }
+
         $exclude_draft = $this->_get_clean_value($options, "exclude_draft");
         if ($exclude_draft) {
             $where .= " AND $proposals_table.status!='draft' ";

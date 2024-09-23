@@ -272,8 +272,10 @@ class Proposals extends Security_Controller {
 
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("proposals", $this->login_user->is_admin, $this->login_user->user_type);
 
+        $statuses = $this->request->getPost('status') ? implode(",", $this->request->getPost('status')) : "";
+
         $options = array(
-            "status" => $this->request->getPost("status"),
+            "statuses" => $statuses,
             "client_id" => $this->request->getPost("client_id"),
             "start_date" => $this->request->getPost("start_date"),
             "end_date" => $this->request->getPost("end_date"),
