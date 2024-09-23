@@ -793,34 +793,60 @@ class Proposals extends Security_Controller {
 
         $proposal_id = $this->request->getPost('id');
 
-        $contact_id = $this->request->getPost('contact_id');
+        $contact_ids = $this->request->getPost('contact_id');
         $cc = $this->request->getPost('proposal_cc');
 
         $custom_bcc = $this->request->getPost('proposal_bcc');
         $subject = $this->request->getPost('subject');
         $message = decode_ajax_post_data($this->request->getPost('message'));
 
-        $contact = $this->Users_model->get_one($contact_id);
+        $send_result = array();
 
-        $default_bcc = get_setting('send_proposal_bcc_to');
-        $bcc_emails = "";
+        if ($contact_ids) {
+            foreach ($contact_ids as $contact_id) {
+                if ($contact_id) {
 
-        if ($default_bcc && $custom_bcc) {
-            $bcc_emails = $default_bcc . "," . $custom_bcc;
-        } else if ($default_bcc) {
-            $bcc_emails = $default_bcc;
-        } else if ($custom_bcc) {
-            $bcc_emails = $custom_bcc;
-        }
+                    $contact = $this->Users_model->get_one($contact_id);
 
-        if (send_app_mail($contact->email, $subject, $message, array("cc" => $cc, "bcc" => $bcc_emails))) {
-            // change email status
-            $status_data = array("status" => "sent", "last_email_sent_date" => get_my_local_time());
-            if ($this->Proposals_model->ci_save($status_data, $proposal_id)) {
-                echo json_encode(array('success' => true, 'message' => app_lang("proposal_sent_message"), "proposal_id" => $proposal_id));
+                    $default_bcc = get_setting('send_proposal_bcc_to');
+                    $bcc_emails = "";
+            
+                    if ($default_bcc && $custom_bcc) {
+                        $bcc_emails = $default_bcc . "," . $custom_bcc;
+                    } else if ($default_bcc) {
+                        $bcc_emails = $default_bcc;
+                    } else if ($custom_bcc) {
+                        $bcc_emails = $custom_bcc;
+                    }
+
+                    $send_result[$contact->email] = send_app_mail($contact->email, $subject, $message, array("cc" => $cc, "bcc" => $bcc_emails));
+            
+                    $failed_emails = []; // Array para armazenar emails que falharam
+                    $any_email_sent = false; // Flag para verificar se algum email foi enviado
+
+                    foreach ($send_result as $email => $result) {
+                        if ($result === true) {
+                            $any_email_sent = true; // Marca que pelo menos um email foi enviado com sucesso
+                        } else {
+                            $failed_emails[] = $email; // Armazena o email que falhou
+                        }
+                    }
+
+                    if ($any_email_sent) {
+                        // Muda o status da proposta
+                        $status_data = array("status" => "sent", "last_email_sent_date" => get_my_local_time());
+                        if ($this->Proposals_model->ci_save($status_data, $proposal_id)) {
+                            $message = app_lang("proposal_sent_message");
+                            if (!empty($failed_emails)) {
+                                $message .= " Porém, o(s) seguinte(s) email(s) falharam: " . implode(", ", $failed_emails);
+                            }
+                            echo json_encode(array('success' => true, 'message' => $message, "proposal_id" => $proposal_id));
+                        }
+                    } else {
+                        echo json_encode(array('success' => false, 'message' => app_lang('error_occurred') . " Email(s) que falharam: " . implode(", ", $failed_emails)));
+                    }
+                }
             }
-        } else {
-            echo json_encode(array('success' => false, 'message' => app_lang('error_occurred')));
         }
     }
 
