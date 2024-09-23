@@ -641,28 +641,11 @@ if (!function_exists('send_notification_emails')) {
 
             $task_url = get_uri();
             $task_options = new stdClass();
-            $task_options->task_id = $message_info->task_id;
-
-            $task_info = get_notification_config("project_task_updated", "info", $task_options);
-    
-            if (is_array($task_info) && get_array_value($task_info, "url")) {
-                $task_url = get_array_value($task_info, "url");
-            }
-
-            if($task_url !== array("url" => get_uri("projects/all_tasks")))
+            
+            if($message_info->task_title)
             {
-                $parser_data["SUBJECT"] = "Tarefa #" . $message_info->task_id . " - " . $message_info->subject;
-                $parser_data["TASK_URL"] = $task_url;
-            }
-
-            //reply? find the subject from the parent meessage
-            if ($notification->event == "message_reply_sent_to_group") {
-                $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
-                $parser_data["SUBJECT"] = $main_message_info->subject;
-               
-                $task_url = get_uri();
-                $task_options->task_id = $main_message_info->task_id;
-    
+                $task_options->task_id = $message_info->task_id;
+            
                 $task_info = get_notification_config("project_task_updated", "info", $task_options);
         
                 if (is_array($task_info) && get_array_value($task_info, "url")) {
@@ -671,8 +654,32 @@ if (!function_exists('send_notification_emails')) {
     
                 if($task_url !== array("url" => get_uri("projects/all_tasks")))
                 {
-                    $parser_data["SUBJECT"] = "Tarefa #" . $main_message_info->task_id . " - " . $main_message_info->subject;
+                    $parser_data["SUBJECT"] = "Tarefa #" . $message_info->task_id . " - " . $message_info->subject;
                     $parser_data["TASK_URL"] = $task_url;
+                }
+            }
+
+            //reply? find the subject from the parent meessage
+            if ($notification->event == "message_reply_sent_to_group") {
+                $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
+                $parser_data["SUBJECT"] = $main_message_info->subject;
+               
+                if($main_message_info->task_title)
+                {
+                    $task_url = get_uri();
+                    $task_options->task_id = $main_message_info->task_id;
+        
+                    $task_info = get_notification_config("project_task_updated", "info", $task_options);
+            
+                    if (is_array($task_info) && get_array_value($task_info, "url")) {
+                        $task_url = get_array_value($task_info, "url");
+                    }
+        
+                    if($task_url !== array("url" => get_uri("projects/all_tasks")))
+                    {
+                        $parser_data["SUBJECT"] = "Tarefa #" . $main_message_info->task_id . " - " . $main_message_info->subject;
+                        $parser_data["TASK_URL"] = $task_url;
+                    }
                 }
             }
 
