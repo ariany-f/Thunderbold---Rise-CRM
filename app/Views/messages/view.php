@@ -152,11 +152,34 @@
                             </div>
                             <p class="pt10 pb10 b-b">
                                 <?php if($message_info->task_id && $message_info->task_id != 0) : ?>
-                                    <?php if($message_info->task_title) : ?>
-                                            <?php echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?>
-                                        <?php else : ?>
-                                            Tarefa: # <?php echo $message_info->task_id . ' ' . $message_info->subject ?> (<i><small>Tarefa Excluída</small></i>)
-                                        <?php endif; ?>    
+                                    <?php if($message_info->task_title) {
+                                            if(app_lang($message_info->task_status_key_name) == 'Esperando')
+                                            {
+                                                $status_class = 'bg-danger';
+                                            }
+                                            if(app_lang($message_info->task_status_key_name) == 'Em progresso')
+                                            {
+                                                $status_class = 'bg-warning';
+                                            }
+                                            if(app_lang($message_info->task_status_key_name) == 'Qualidade')
+                                            {
+                                                $status_class = 'bg-info';
+                                            }
+                                            if(app_lang($message_info->task_status_key_name) == 'Em Validação')
+                                            {
+                                                $status_class = 'bg-purple';
+                                            }
+                                            if(app_lang($message_info->task_status_key_name) == 'Concluído')
+                                            {
+                                                $status_class = 'bg-green';
+                                            }
+                                               
+                                            $status = "<span class='badge ".$status_class."'>" . ($message_info->task_status_key_name ? app_lang($message_info->task_status_key_name) : $message_info->task_status) . "</span>";
+                                           
+                                            echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?> <?php echo $status; ?>
+                                        <?php } else { ?>
+                                            Tarefa: # <?php echo $message_info->task_id . ' ' . $message_info->subject ?>  <span class='badge bg-danger'>Excluída</span>
+                                        <?php } ?>    
                                 <?php else : ?>
                                     <?php echo app_lang("subject"); ?>:  
                                     <?php echo $message_info->subject; ?>
