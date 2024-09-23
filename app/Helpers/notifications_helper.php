@@ -636,18 +636,7 @@ if (!function_exists('send_notification_emails')) {
 
             $message_info = $ci->Messages_model->get_details(array("id" => $notification->actual_message_id))->row;
             $parser_data["SUBJECT"] = $message_info->subject;
-
-            //reply? find the subject from the parent meessage
-            if ($notification->event == "message_reply_sent_to_group") {
-                $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
-                $parser_data["SUBJECT"] = $main_message_info->subject;
-            }
-
-            $parser_data["USER_NAME"] = $message_info->user_name;
-            $parser_data["MESSAGE_CONTENT"] = nl2br($message_info->message ? $message_info->message : "");
-            $parser_data["GROUP_NAME"] = $message_info->group_name;
-            $parser_data["MESSAGE_URL"] = $url;
-            
+              
             $task_url = get_uri();
             $task_options = new stdClass();
             $task_options->task_id = $message_info->task_id;
@@ -659,6 +648,29 @@ if (!function_exists('send_notification_emails')) {
             }
 
             $parser_data["TASK_URL"] = $task_url;
+
+            //reply? find the subject from the parent meessage
+            if ($notification->event == "message_reply_sent_to_group") {
+                $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
+                $parser_data["SUBJECT"] = $main_message_info->subject;
+               
+                $task_url = get_uri();
+                $task_options = new stdClass();
+                $task_options->task_id = $main_message_info->task_id;
+    
+                $task_info = get_notification_config("project_task_updated", "info", $task_options);
+        
+                if (is_array($task_info) && get_array_value($task_info, "url")) {
+                    $task_url = get_array_value($task_info, "url");
+                }
+    
+                $parser_data["TASK_URL"] = $task_url;
+            }
+
+            $parser_data["USER_NAME"] = $message_info->user_name;
+            $parser_data["MESSAGE_CONTENT"] = nl2br($message_info->message ? $message_info->message : "");
+            $parser_data["GROUP_NAME"] = $message_info->group_name;
+            $parser_data["MESSAGE_URL"] = $url;
 
             if ($message_info->files) {
                 $email_options["attachments"] = prepare_attachment_of_files(get_setting("timeline_file_path"), $message_info->files);
