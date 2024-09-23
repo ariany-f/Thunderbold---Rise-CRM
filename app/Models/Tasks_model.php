@@ -248,6 +248,12 @@ class Tasks_model extends Crud_model {
             $where .= " AND $ticket_table.ticket_id=$ticket_id";
         }
 
+        
+        $is_ticket = $this->_get_clean_value($options, "is_ticket");
+        if (isset($is_ticket) and (!empty($is_ticket))) {
+            $where .= " AND $projects.is_ticket=$is_ticket";
+        }
+
         $order = "";
         $sort_by_project = $this->_get_clean_value($options, "sort_by_project");
         if ($sort_by_project) {
