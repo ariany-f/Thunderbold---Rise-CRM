@@ -152,7 +152,11 @@
                             </div>
                             <p class="pt10 pb10 b-b">
                                 <?php if($message_info->task_id && $message_info->task_id != 0) : ?>
-                                    <?php echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?>
+                                    <?php if($message_info->task_title) : ?>
+                                            <?php echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?>
+                                        <?php else : ?>
+                                            Tarefa: # <?php echo $message_info->task_id . ' ' . $message_info->subject ?> (<i><small>Tarefa Excluída</small></i>)
+                                        <?php endif; ?>    
                                 <?php else : ?>
                                     <?php echo app_lang("subject"); ?>:  
                                     <?php echo $message_info->subject; ?>
