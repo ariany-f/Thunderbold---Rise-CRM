@@ -647,6 +647,22 @@ if (!function_exists('send_notification_emails')) {
             $parser_data["MESSAGE_CONTENT"] = nl2br($message_info->message ? $message_info->message : "");
             $parser_data["GROUP_NAME"] = $message_info->group_name;
             $parser_data["MESSAGE_URL"] = $url;
+            
+            $task_url = get_uri();
+            $task_parser_data = array();
+            $task_options = [
+                "task_id" => $message_info->task_id
+            ];
+            $task_info = get_notification_config("project_task_updated", "info", $task_options);
+    
+            $task_email_options = array();
+            $task_attachement_url = null;
+    
+            if (is_array($task_info) && get_array_value($task_info, "url")) {
+                $task_url = get_array_value($task_info, "url");
+            }
+
+            $parser_data["TASK_URL"] = $task_url;
 
             if ($message_info->files) {
                 $email_options["attachments"] = prepare_attachment_of_files(get_setting("timeline_file_path"), $message_info->files);
