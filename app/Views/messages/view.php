@@ -94,12 +94,13 @@
                                     ?>
                                 </div>
                             <?php } ?>
-                            
+                            <?php if($login_user->user_type === 'staff') { ?>
                             <?php if($message_info->group_name)
                                 {
                                     echo modal_anchor(get_uri("messages/message_group_member_modal_form/" . $message_info->group_id), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("manage_members"), array("class" => "btn bg-success d-flex align-items-center", "title" => app_lang('manage_members')));
                                 }   
                             ?>
+                            <?php } ?>
                         </div>
                         </div>
                     </div>
