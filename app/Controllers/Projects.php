@@ -2364,7 +2364,7 @@ class Projects extends Security_Controller {
 
         $start_time = $data->start_time;
         $end_time = $data->end_time;
-        $project_title = anchor(get_uri("projects/view/" . $data->project_id), $data->project_title);
+        $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
         $task_title = modal_anchor(get_uri("projects/task_view"), $data->task_title, array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
 
         $client_name = "-";
@@ -2946,6 +2946,13 @@ class Projects extends Security_Controller {
         return json_encode($priorities_dropdown);
     }
 
+    private function _get_project_types_dropdown_list($priority_id = 0) {
+        $priorities = $this->Task_priority_model->get_details()->getResult();
+        $project_type_dropdown = array(array("id" => "", "text" => "- " . app_lang("project_type") . " -"),array("id" => "1", "text" => app_lang("ticket")), array("id" => "0", "text" => app_lang("project")));
+
+        return json_encode($project_type_dropdown);
+    }
+
     private function _get_project_members_dropdown_list($project_id = 0) {
         if ($this->login_user->user_type === "staff") {
             $assigned_to_dropdown = array(array("id" => "", "text" => "- " . app_lang("assigned_to") . " -"));
@@ -3017,6 +3024,7 @@ class Projects extends Security_Controller {
         $view_data['projects_dropdown'] = json_encode($projects_dropdown);
         $view_data['can_create_tasks'] = $this->can_create_tasks(false);
         $view_data['priorities_dropdown'] = $this->_get_priorities_dropdown_list($priority_id);
+        $view_data['project_type_dropdown'] = $this->_get_project_types_dropdown_list();
 
         return $this->template->rander("projects/tasks/my_tasks", $view_data);
     }
@@ -4163,6 +4171,7 @@ class Projects extends Security_Controller {
             "milestone_id" => $this->request->getPost('milestone_id'),
             "priority_id" => $this->request->getPost('priority_id'),
             "deadline" => $this->request->getPost('deadline'),
+            "is_ticket" => $this->request->getPost('is_ticket'),
             "custom_fields" => $custom_fields,
             "project_status" => "open",
             "status_ids" => $status,

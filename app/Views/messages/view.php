@@ -94,12 +94,13 @@
                                     ?>
                                 </div>
                             <?php } ?>
-                            
+                            <?php if($login_user->user_type === 'staff') { ?>
                             <?php if($message_info->group_name)
                                 {
-                                    echo modal_anchor(get_uri("messages/message_group_member_modal_form/" . $message_info->group_id), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("manage_members"), array("class" => "btn bg-success d-flex align-items-center", "title" => app_lang('manage_members')));
+                                    echo modal_anchor(get_uri("messages/message_group_member_modal_form/" . $message_info->group_id), "<i data-feather='plus-circle' class='icon-16'></i>" . app_lang("manage_members"), array("class" => "btn bg-success d-flex align-items-center justify-content-between gap-1", "title" => app_lang('manage_members')));
                                 }   
                             ?>
+                            <?php } ?>
                         </div>
                         </div>
                     </div>
@@ -151,7 +152,35 @@
                             </div>
                             <p class="pt10 pb10 b-b">
                                 <?php if($message_info->task_id && $message_info->task_id != 0) : ?>
-                                    <?php echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?>
+                                    <!-- Quando não vier o task_title é pq a tarefa foi excluída pois estou filtrando somente as não excluídas na tabela tasks -->
+                                    <?php if($message_info->task_title) {
+                                        if(app_lang($message_info->task_status_key_name) == 'Esperando')
+                                        {
+                                            $status_class = 'bg-danger';
+                                        }
+                                        if(app_lang($message_info->task_status_key_name) == 'Em progresso')
+                                        {
+                                            $status_class = 'bg-warning';
+                                        }
+                                        if(app_lang($message_info->task_status_key_name) == 'Qualidade')
+                                        {
+                                            $status_class = 'bg-info';
+                                        }
+                                        if(app_lang($message_info->task_status_key_name) == 'Em Validação')
+                                        {
+                                            $status_class = 'bg-purple';
+                                        }
+                                        if(app_lang($message_info->task_status_key_name) == 'Concluído')
+                                        {
+                                            $status_class = 'bg-green';
+                                        }
+                                            
+                                        $status = "<span class='badge ".$status_class."'>" . ($message_info->task_status_key_name ? app_lang($message_info->task_status_key_name) : $message_info->task_status) . "</span>";
+                                        
+                                        echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?> <?php echo $status; ?>
+                                    <?php } else { ?>
+                                        Tarefa: # <?php echo $message_info->task_id . ' ' . $message_info->subject ?>  <span class='badge bg-danger'>Excluída</span>
+                                    <?php } ?>
                                 <?php else : ?>
                                     <?php echo app_lang("subject"); ?>:  
                                     <?php echo $message_info->subject; ?>
@@ -210,11 +239,11 @@
         <?php echo view("messages/reply_row", array("reply_info" => $reply_info)); ?>
     <?php } ?>
 
+    <?php if(!$message_info->ended) { ?>
     <div id="reply-form-container">
         <div id="reply-form-dropzone" class="post-dropzone">
             <?php echo form_open(get_uri("messages/reply"), array("id" => "message-reply-form", "class" => "general-form", "role" => "form")); ?>
             <div class="p15 box b-b">
-                <?php if(!$message_info->ended) { ?>
                     <div class="box-content avatar avatar-md pr15 d-table-cell">
                         <img src="<?php echo get_avatar($login_user->image, ($login_user->first_name . ' ' . $login_user->last_name)); ?>" alt="..." />
                     </div>
@@ -239,29 +268,31 @@
                                 <button class="btn btn-primary float-end btn-sm " type="submit"><i data-feather="send" class='icon-16'></i> <?php echo app_lang("reply"); ?></button>
                             </footer>
                     </div>
-                <?php } ?> 
             </div>
             <?php echo form_close(); ?>
         </div>
     </div>
+    <?php } ?> 
     <script type="text/javascript">
         $(document).ready(function () {
             var uploadUrl = "<?php echo get_uri("messages/upload_file"); ?>";
             var validationUrl = "<?php echo get_uri("messages/validate_message_file"); ?>";
 
-            var dropzone = attachDropzoneWithForm("#reply-form-dropzone", uploadUrl, validationUrl);
+            <?php if(!$message_info->ended) { ?>
+                var dropzone = attachDropzoneWithForm("#reply-form-dropzone", uploadUrl, validationUrl);
 
-            $("#message-reply-form").appForm({
-                isModal: false,
-                onSuccess: function (result) {
-                    $("#reply_message").val("");
-                    $(result.data).insertBefore("#reply-form-container");
-                    appAlert.success(result.message, {duration: 10000});
-                    if (dropzone) {
-                        dropzone.removeAllFiles();
+                $("#message-reply-form").appForm({
+                    isModal: false,
+                    onSuccess: function (result) {
+                        $("#reply_message").val("");
+                        $(result.data).insertBefore("#reply-form-container");
+                        appAlert.success(result.message, {duration: 10000});
+                        if (dropzone) {
+                            dropzone.removeAllFiles();
+                        }
                     }
-                }
-            });
+                });
+            <?php } ?> 
 
             $("#load-more-messages-link").click(function () {
                 loadMoreMessages();

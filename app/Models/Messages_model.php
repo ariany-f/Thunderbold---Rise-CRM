@@ -20,6 +20,8 @@ class Messages_model extends Crud_model {
         $users_table = $this->db->prefixTable('users');
         $message_group_members_table = $this->db->prefixTable('message_group_members');
         $message_groups_table = $this->db->prefixTable('message_groups');
+        $tasks_table = $this->db->prefixTable('tasks');
+        $task_status_table = $this->db->prefixTable('task_status');
 
         $mode = $this->_get_clean_value($options, "mode");
 
@@ -66,8 +68,22 @@ class Messages_model extends Crud_model {
         $offset = $this->_get_clean_value($options, "offset");
         $offset = $offset ? $offset : "0";
 
-        $sql = "SELECT * FROM (SELECT 0 AS reply_message_id, COALESCE($message_groups_table.group_name, '') AS group_name, COALESCE($message_groups_table.id, '') AS group_id, COALESCE($message_groups_table.project_id, '') AS project_id, $messages_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.user_type, CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, another_user.id AS another_user_id, another_user.last_online AS another_user_last_online
+        $sql = "SELECT * FROM 
+            (SELECT 0 AS reply_message_id, COALESCE($message_groups_table.group_name, '') AS group_name, 
+            COALESCE($message_groups_table.id, '') AS group_id, COALESCE($message_groups_table.project_id, '') AS project_id, 
+            $messages_table.*, 
+            COALESCE($tasks_table.title, '') AS task_title,
+            COALESCE($tasks_table.status, '') AS task_status,
+            COALESCE($task_status_table.key_name, '') AS task_status_key_name,
+            CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, 
+            $users_table.image AS user_image, 
+            $users_table.user_type, 
+            CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, 
+            another_user.id AS another_user_id, 
+            another_user.last_online AS another_user_last_online
         FROM $messages_table
+        LEFT JOIN $tasks_table ON $tasks_table.id=$messages_table.task_id AND $tasks_table.deleted=0
+        LEFT JOIN $task_status_table ON $tasks_table.status_id = $task_status_table.id 
         LEFT JOIN $users_table ON $users_table.id=$join_with
         LEFT JOIN $users_table AS another_user ON another_user.id=$join_another
         LEFT JOIN $message_groups_table ON $message_groups_table.id=$messages_table.to_group_id

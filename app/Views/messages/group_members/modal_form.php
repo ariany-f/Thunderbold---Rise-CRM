@@ -23,7 +23,7 @@
                     <div class="row">
                         <div class="select-member-field">
                             <div class="select-member-form clearfix pb10">
-                                <?php echo form_dropdown("user_id[]", $users_dropdown, array($model_info->created_by), "class='user_select2 col-md-10 p0' id='user_id'"); ?>
+                                <?php echo form_dropdown("user_id[]", $users_dropdown, "", "class='user_select2 col-md-10 p0' id='user_id'"); ?>
                                 <?php echo js_anchor("<i data-feather='x' class='icon-16'></i> ", array("class" => "remove-member delete ml20")); ?>
                             </div>                                
                         </div>
@@ -38,7 +38,7 @@
 
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
-    <button type="submit" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('save'); ?></button>
+    <button type="submit" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('save_member'); ?></button>
 </div>
 <?php echo form_close(); ?>
 

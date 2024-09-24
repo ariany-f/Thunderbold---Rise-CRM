@@ -348,6 +348,8 @@ $lang["invite_an_user"] = "Convidar um usuário para %s"; // Convidar um usuári
 $lang["unit_type"] = "Tipo de unidade";
 
 /* projects */
+$lang["select"] = "Selecione usuário/cliente";
+$lang["save_member"] = "Add membro";
 $lang["add_project"] = "Add projeto";
 $lang["edit_project"] = "Editar projeto";
 $lang["delete_project"] = "Deletar projeto";
@@ -1026,6 +1028,7 @@ $lang["payment_card_charged_but_system_error_message"] = "O seu cartão poderá 
 $lang["card_payment_failed_error_message"] = "Nós não pudemos processar o seu pagamento neste momento. Por favor, tente novamente mais tarde.";
 
 $lang["message_received"] = "Mensagem recebida";
+$lang["message_received_in_group"] = "Mensagem recebida em grupo";
 $lang["in_number_of_days"] = "Em %s dias"; //Ex. In 7 days
 $lang["details"] = "Detalhes";
 $lang["summary"] = "Resumo";

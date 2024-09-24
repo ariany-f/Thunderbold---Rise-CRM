@@ -25,12 +25,28 @@
 
 <script type="text/javascript">
     loadProposalsTable = function (selector, dateRange) {
+
         $(selector).appTable({
             source: '<?php echo_uri("proposals/list_data") ?>',
             order: [[0, "desc"]],
             serverSide: true,
             dateRangeType: dateRange,
-            filterDropdown: [{name: "client_id", class: "w150", options: <?php echo $clients_dropdown; ?>},{name: "status", class: "w150", options: <?php echo view("proposals/proposal_statuses_dropdown"); ?>}, <?php echo $custom_field_filters; ?>],
+            multiSelect: [
+                {
+                    name: "status",
+                    text: "<?php echo app_lang('status'); ?>",
+                    options: [
+                        {text: '<?php echo app_lang("draft") ?>', value: "draft", isChecked: 1},
+                        {text: '<?php echo app_lang("sent") ?>', value: "sent", isChecked: 1},
+                        {text: '<?php echo app_lang("accepted") ?>', value: "accepted", isChecked: 1},
+                        {text: '<?php echo app_lang("rejected") ?>', value: "rejected", isChecked: 1},
+                    ]
+                }
+            ],
+            filterDropdown: [
+                {name: "client_id", class: "w150", options: <?php echo $clients_dropdown; ?>},
+                <?php echo $custom_field_filters; ?>
+            ],
             columns: [
                 {title: "<?php echo app_lang("proposal") ?> ", "class": "w5p all"},
                 {title: "<?php echo app_lang("name") ?>", "class": "w15p"},

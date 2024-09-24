@@ -32,7 +32,9 @@
         <?php
         if (get_setting("module_chat")) {
             echo modal_anchor(get_uri("messages/to_group_modal_form/" . $group_id), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("new_conversation"), array("class" => "btn btn-default col-md-12 col-sm-12 col-xs-12", "title" => app_lang('send_message')));
-            echo modal_anchor(get_uri("messages/message_group_member_modal_form/" . $group_id), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("manage_members"), array("class" => "btn btn-default col-md-12 col-sm-12 col-xs-12", "title" => app_lang('manage_members')));
+            if($login_user->user_type === 'staff') {
+                echo modal_anchor(get_uri("messages/message_group_member_modal_form/" . $group_id), "<i data-feather='plus-circle' class='icon-16'></i>" . app_lang("manage_members"), array("class" => "btn btn-default justify-content-between col-md-12 col-sm-12 col-xs-12 gap-1", "title" => app_lang('manage_members')));
+            }
         }
         ?>
     </div>

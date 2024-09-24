@@ -8,7 +8,7 @@
                 <label for="contact_id" class=" col-md-3"><?php echo app_lang('to'); ?></label>
                 <div class=" col-md-9">
                     <?php
-                    echo form_dropdown("contact_id", $contacts_dropdown, array(), "class='select2 validate-hidden' id='contact_id' data-rule-required='true', data-msg-required='" . app_lang('field_required') . "'");
+                    echo form_multiselect("contact_id[]", $contacts_dropdown, array(), "class='select2 validate-hidden' id='contact_id' data-rule-required='true', data-msg-required='" . app_lang('field_required') . "'");
                     ?>
                 </div>
             </div>

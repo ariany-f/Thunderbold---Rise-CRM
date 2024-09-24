@@ -117,12 +117,20 @@ class Projects_model extends Crud_model {
         $status_result = $this->db->query($status_query);
         
         $status_columns = [];
-        
+   
         if($status_result) {
             foreach ($status_result->getResult() as $status_row) {
                 $status_id = $status_row->id;
                 $status_title = $status_row->title;
-                $status_columns[] = "SUM(CASE WHEN $tasks_table.status_id = $status_id THEN 1 ELSE 0 END) AS 'status_{$status_title}'";
+                $status_columns[] = "
+                    (
+                        SELECT COUNT(DISTINCT $tasks_table.id)
+                        FROM $tasks_table
+                        WHERE $tasks_table.status_id = $status_id
+                        AND $tasks_table.deleted = 0
+                        AND $tasks_table.project_id = $projects_table.id
+                    ) AS 'status_{$status_title}'
+                ";
             }
         }
 
