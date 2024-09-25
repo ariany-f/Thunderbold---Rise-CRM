@@ -375,7 +375,7 @@ $lang["staff"] = "Usuário do sistema";
 $lang["group_name"] = "Nome do Grupo";
 $lang["create_conversation"] = "Criar Chat da Tarefa no Grupo";
 $lang["enter_conversation"] = "Entrar no Chat da Tarefa";
-$lang["convert_task"] = "Tarefa";
+$lang["convert_task"] = "Criar Tarefa";
 $lang["project_timeline"] = "Cronograma do projeto";
 $lang["open_projects"] = "Projetos abertos";
 $lang["projects_completed"] = "Projetos completos";
@@ -387,6 +387,7 @@ $lang["project_comment_reply"] = "Respostas dos comentários do projeto";
 $lang["task_comment_reply"] = "Respostas dos comentários das tarefas";
 $lang["file_comment_reply"] = "Respostas dos comentários com arquivo";
 $lang["customer_feedback_reply"] = "Resposta dos feedback dos clientes";
+$lang["change_group_name"] = "Alterar nome do grupo";
 
 /* expense */
 $lang["add_category"] = "Add categoria";

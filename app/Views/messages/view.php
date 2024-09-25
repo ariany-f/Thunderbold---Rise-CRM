@@ -141,10 +141,12 @@
                                             <?php if($message_info->ended) { ?>
                                                 <li role="presentation"><?php echo ajax_anchor(get_uri("messages/reactive_my_messages/$message_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reactive_conversation'), array("class" => "dropdown-item", "title" => app_lang('reactive_conversation'), "data-reload-on-success" => "1")); ?> </li>
                                             <?php } else { ?>
-                                                <li role="presentation"><?php echo ajax_anchor(get_uri("messages/end_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('end_conversation'), array("class" => "dropdown-item", "title" => app_lang('end_conversation'), "data-reload-on-success" => "1")); ?> </li>
+                                                <li role="presentation"><?php echo ajax_anchor(get_uri("messages/end_my_messages/$message_info->id"), "<i data-feather='wifi-off' class='icon-16'></i> " . app_lang('end_conversation'), array("class" => "dropdown-item", "title" => app_lang('end_conversation'), "data-reload-on-success" => "1")); ?> </li>
                                             <?php } ?>
                                             <?php if((!$message_info->task_id) and $message_info->group_name != "" and $message_info->project_id) { ?>
                                                 <li role="presentation"><?php echo ajax_anchor(get_uri("messages/create_task/" . $message_info->id . ""), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('convert_task'), array("class" => "dropdown-item", "id" => "convert_task", "title" => app_lang('create_task'), "data-reload-on-success" => "1"));?></li>
+                                            <?php } else { ?>
+                                                <li role="presentation"><?php echo modal_anchor(get_uri("messages/groups_modal_form/" . $message_info->group_id . ""), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('change_group_name'), array("class" => "dropdown-item", "id" => "convert_task", "title" => app_lang('change_group_name'), "data-reload-on-success" => "1"));?></li>
                                             <?php } ?>
                                         <?php } ?>
                                     </ul>

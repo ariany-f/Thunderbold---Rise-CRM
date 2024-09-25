@@ -430,6 +430,7 @@ class Messages extends Security_Controller {
        $data = clean_data($data);
   
        $save_id = $this->Message_groups_model->ci_save($data, $id);
+
        if ($save_id) {
            if (!$id) {
                if ($this->login_user->user_type === "staff") {
@@ -469,10 +470,11 @@ class Messages extends Security_Controller {
            $list_data = $this->Messages_model->get_list($options)->getResult();
    
            $result = array();
-   
-           foreach ($list_data as $data) {
-               $result[] = $this->_make_row($data, "list_groups");
-           }
+           if (!$id) {
+                foreach ($list_data as $data) {
+                    $result[] = $this->_make_row($data, "list_groups");
+                }
+            }
 
            echo json_encode(array("success" => true, "data" => $result, 'id' => $save_id, 'message' => app_lang('record_saved')));
        } else {
@@ -480,10 +482,10 @@ class Messages extends Security_Controller {
        }
    }
 
-    function groups_modal_form() {
-        $message_group_id = $this->request->getPost('id');
+    function groups_modal_form($id = 0) {
+        $message_group_id = $this->request->getPost('id') ?? ($id != 0 ? $id : "");
 
-        $view_data['model_info'] = $this->Projects_model->get_one($message_group_id);
+        $view_data['model_info'] = $this->Message_groups_model->get_one($message_group_id);
 
         return $this->template->view('messages/group_modal_form', $view_data);
     }
@@ -492,7 +494,7 @@ class Messages extends Security_Controller {
         
         $message_group_id = $this->request->getPost('id');
 
-        $view_data['model_info'] = $this->Projects_model->get_one($message_group_id);
+        $view_data['model_info'] = $this->Message_groups_model->get_one($message_group_id);
 
         $groups_dropdown[] = app_lang('select_group');
 

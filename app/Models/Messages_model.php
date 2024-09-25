@@ -69,8 +69,10 @@ class Messages_model extends Crud_model {
         $offset = $offset ? $offset : "0";
 
         $sql = "SELECT * FROM 
-            (SELECT 0 AS reply_message_id, COALESCE($message_groups_table.group_name, '') AS group_name, 
-            COALESCE($message_groups_table.id, '') AS group_id, COALESCE($message_groups_table.project_id, '') AS project_id, 
+            (SELECT 0 AS reply_message_id,
+            COALESCE($message_groups_table.group_name, '') AS group_name, 
+            COALESCE($message_groups_table.id, '') AS group_id, 
+            COALESCE($message_groups_table.project_id, '') AS project_id, 
             $messages_table.*, 
             COALESCE($tasks_table.title, '') AS task_title,
             COALESCE($tasks_table.status, '') AS task_status,
