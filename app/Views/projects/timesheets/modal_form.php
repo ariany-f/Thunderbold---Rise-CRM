@@ -22,7 +22,7 @@
                     <label for="applicant_id" class=" col-md-3"><?php echo app_lang('team_member'); ?></label>
                     <div class=" col-md-9">
                         <?php
-                        $image_url = get_avatar($team_members_info->image);
+                        $image_url = get_avatar($team_members_info->image, ($team_members_info->first_name . " " . $team_members_info->last_name));
                         echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span>" . $team_members_info->first_name . " " . $team_members_info->last_name;
                         ?>
                     </div>

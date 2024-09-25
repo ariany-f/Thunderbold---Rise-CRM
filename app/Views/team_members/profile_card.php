@@ -19,7 +19,7 @@
             <div class="col-md-3 col-sm-6">
                 <div class="card  text-center ">
                     <div class="card-body">
-                        <span class="avatar avatar-md mt15"><img src="<?php echo get_avatar($team_member->image); ?>" alt="..."></span> 
+                        <span class="avatar avatar-md mt15"><img src="<?php echo get_avatar($team_member->image, ($team_member->first_name . " " . $team_member->last_name)); ?>" alt="..."></span> 
                         <h4><?php echo $team_member->first_name . " " . $team_member->last_name; ?></h4>
                         <p class="text-off"><?php echo $team_member->job_title ? $team_member->job_title : "Untitled"; ?></p>
                     </div>

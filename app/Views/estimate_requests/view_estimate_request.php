@@ -56,7 +56,7 @@
 
                 <?php
                 if ($show_assignee && $model_info->assigned_to) {
-                    $image_url = get_avatar($model_info->assigned_to_avatar);
+                    $image_url = get_avatar($model_info->assigned_to_avatar, $model_info->assigned_to_user);
                     $assigned_to_user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $model_info->assigned_to_user";
                     $assigned_to = get_team_member_profile_link($model_info->assigned_to, $assigned_to_user);
                     ?>
