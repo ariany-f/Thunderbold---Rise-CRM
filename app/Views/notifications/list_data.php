@@ -53,7 +53,7 @@ if (count($notifications)) {
 
                 $avatar = get_avatar(); //show default user image
             } else {
-                $avatar = get_avatar($notification->user_image);
+                $avatar = get_avatar($notification->user_image, ($notification->user_id ? $notification->user_name : ""));
                 $title = $notification->user_id ? $notification->user_name : get_setting("app_title");
             }
         }

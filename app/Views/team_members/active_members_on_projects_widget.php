@@ -9,7 +9,7 @@
             <div class = "message-row d-flex">
                 <div class = "flex-shrink-0">
                     <span class = "avatar avatar-xs">
-                        <img alt = "..." src = "<?php echo get_avatar($user_info->image); ?>">
+                        <img alt = "..." src = "<?php echo get_avatar($user_info->image, $user_info->member_name); ?>">
                     </span>
                 </div>
 

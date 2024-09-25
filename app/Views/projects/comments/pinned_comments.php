@@ -5,7 +5,7 @@ foreach ($pinned_comments as $comment) {
         <div id="pinned-comment-<?php echo $comment->project_comment_id; ?>" class="d-flex">
             <div class="flex-shrink-0">
                 <span class="avatar avatar-xs">
-                    <img src="<?php echo get_avatar($comment->pinned_by_avatar); ?>" alt="..." />
+                    <img src="<?php echo get_avatar($comment->pinned_by_avatar, $comment->pinned_by_user); ?>" alt="..." />
                 </span>
             </div>
             <div class="w-100 pl10">

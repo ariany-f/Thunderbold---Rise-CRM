@@ -5833,7 +5833,7 @@ class Projects extends Security_Controller {
         $user_result = array();
         foreach ($timesheet_users_result AS $user) {
             $time = convert_seconds_to_time_format($user->total_sec);
-            $user_result[] = "<div class='user-avatar avatar-30 avatar-circle' data-bs-toggle='tooltip' title='" . $user->user_name . " - " . $time . "'><img alt='' src='" . get_avatar($user->user_avatar) . "'></div>";
+            $user_result[] = "<div class='user-avatar avatar-30 avatar-circle' data-bs-toggle='tooltip' title='" . $user->user_name . " - " . $time . "'><img alt='' src='" . get_avatar($user->user_avatar, $user->user_name) . "'></div>";
         }
 
         $days_of_month = date("t", strtotime($start_date));

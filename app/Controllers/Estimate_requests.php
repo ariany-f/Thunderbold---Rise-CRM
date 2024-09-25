@@ -131,7 +131,7 @@ class Estimate_requests extends Security_Controller {
         $assigned_to = "-";
 
         if ($data->assigned_to) {
-            $image_url = get_avatar($data->assigned_to_avatar);
+            $image_url = get_avatar($data->assigned_to_avatar, $data->assigned_to_user);
             $assigned_to_user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->assigned_to_user";
             $assigned_to = get_team_member_profile_link($data->assigned_to, $assigned_to_user);
         }

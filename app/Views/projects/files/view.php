@@ -8,7 +8,7 @@
         <div class="mb15 pl15 pr15">
             <div class="d-flex">
                 <div class="flex-shrink-0">
-                    <span class='avatar avatar-xs mt5'><img src='<?php echo get_avatar($file_info->uploaded_by_user_image); ?>' alt='...'></span>
+                    <span class='avatar avatar-xs mt5'><img src='<?php echo get_avatar($file_info->uploaded_by_user_image, $file_info->uploaded_by_user_name); ?>' alt='...'></span>
                 </div>
                 <div class="w-100 ps-3">
                     <div><?php
