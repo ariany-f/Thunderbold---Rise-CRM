@@ -146,7 +146,7 @@
                                             <?php if((!$message_info->task_id) and $message_info->group_name != "" and $message_info->project_id) { ?>
                                                 <li role="presentation"><?php echo ajax_anchor(get_uri("messages/create_task/" . $message_info->id . ""), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('convert_task'), array("class" => "dropdown-item", "id" => "convert_task", "title" => app_lang('create_task'), "data-reload-on-success" => "1"));?></li>
                                             <?php } else { ?>
-                                                <li role="presentation"><?php echo modal_anchor(get_uri("messages/groups_modal_form/" . $message_info->group_id . ""), "<i data-feather='penedit-3' class='icon-16'></i> " . app_lang('change_group_name'), array("class" => "dropdown-item", "id" => "convert_task", "title" => app_lang('change_group_name'), "data-reload-on-success" => "1"));?></li>
+                                                <li role="presentation"><?php echo modal_anchor(get_uri("messages/groups_modal_form/" . $message_info->group_id . ""), "<i data-feather='edit-2' class='icon-16'></i> " . app_lang('change_group_name'), array("class" => "dropdown-item", "id" => "convert_task", "title" => app_lang('change_group_name'), "data-reload-on-success" => "1"));?></li>
                                             <?php } ?>
                                         <?php } ?>
                                     </ul>
