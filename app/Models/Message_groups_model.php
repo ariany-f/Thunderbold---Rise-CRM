@@ -177,7 +177,7 @@ class Message_groups_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    function get_groups_for_client_messaging($user_id = 0) {
+    function get_groups_for_member_messaging($user_id = 0) {
         $users_table = $this->db->prefixTable('users');
         $message_groups_table = $this->db->prefixTable('message_groups');
         $message_group_members_table = $this->db->prefixTable('message_group_members');

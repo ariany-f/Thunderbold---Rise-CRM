@@ -496,7 +496,7 @@ class Messages extends Security_Controller {
 
         $groups_dropdown[] = app_lang('select_group');
 
-        $groups = $this->Message_groups_model->get_groups_for_client_messaging($this->login_user->id)->getResult();
+        $groups = $this->Message_groups_model->get_groups_for_member_messaging($this->login_user->id)->getResult();
         
         foreach ($groups as $group) {
             $groups_dropdown[$group->id] = $group->group_name;
