@@ -4462,7 +4462,7 @@ class Projects extends Security_Controller {
                 $collaborator_id = get_array_value($collaborator_parts, 0);
                 $collaborator_name = get_array_value($collaborator_parts, 1);
 
-                $image_url = get_avatar(get_array_value($collaborator_parts, 2), get_array_value($collaborator_parts, 1));
+                $image_url = get_avatar(get_array_value($collaborator_parts, 2), $collaborator_name);
                 $user_type = get_array_value($collaborator_parts, 3);
 
                 $collaboratr_image = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span>";

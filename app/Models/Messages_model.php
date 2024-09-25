@@ -109,7 +109,6 @@ class Messages_model extends Crud_model {
     /*
      * prepare inbox/sent items list
      */
-
      function get_list($options = array()) {
         $messages_table = $this->db->prefixTable('messages');
         $users_table = $this->db->prefixTable('users');
@@ -138,6 +137,16 @@ class Messages_model extends Crud_model {
                 ON $message_group_members_table.message_group_id = $message_groups_table.id 
                 WHERE $message_group_members_table.user_id = $user_id
             )";
+        }
+
+        $group_id = $this->_get_clean_value($options, "group_id");
+        if ($group_id) {
+            $where_group .= " AND ($messages_table.to_group_id=$group_id) ";
+        }
+
+        $message_id = $this->_get_clean_value($options, "message_id");
+        if ($message_id) {
+            $where_group .= " AND ($messages_table.id=$message_id) ";
         }
     
         $where = "$where_user $where_group";
@@ -183,8 +192,8 @@ class Messages_model extends Crud_model {
         else
         {
             $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COUNT(DISTINCT CASE 
-                  WHEN $message_group_members_table.deleted = 0 THEN $message_group_members_table.user_id 
-               END) AS count_members,  COALESCE($message_groups_table.group_name, '') AS group_name, 
+                            WHEN $message_group_members_table.deleted = 0 THEN $message_group_members_table.user_id 
+                        END) AS count_members,  COALESCE($message_groups_table.group_name, '') AS group_name, 
                         $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files, $messages_table.ended, $messages_table.from_user_id,
                         CONCAT(another_user.first_name, ' ', another_user.last_name) AS another_user_name, 
                         another_user.image AS another_user_image,
