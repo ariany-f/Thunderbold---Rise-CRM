@@ -1546,7 +1546,7 @@ $lang["create_tickets_only_by_registered_emails"] = "Crie ingressos apenas por e
 $lang["icon"] = "Ícone";
 $lang["help_articles"] = "Artigos de ajuda";
 $lang["help_categories"] = "Categorias de ajuda";
-$lang["knowledge_base_articles"] = "artigos KB";
+$lang["knowledge_base_articles"] = "Artigos KB";
 $lang["knowledge_base_categories"] = "Categorias KB";
 
 $lang["rtl"] = "RTL";
