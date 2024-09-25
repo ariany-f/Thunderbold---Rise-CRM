@@ -61,9 +61,9 @@
 
                     $addProjectMemberLink.trigger("click");
 
-                    $("#message-group-table").appTable({newData: result.data, dataId: result.id});
+                    $("#message-table").appTable({newData: result.data[0], dataId: result.id});
                 } else {
-                    $("#message-group-table").appTable({newData: result.data, dataId: result.id});
+                    $("#message-table").appTable({newData: result.data[0], dataId: result.id});
 
                     window.projectForm.closeModal();
                 }

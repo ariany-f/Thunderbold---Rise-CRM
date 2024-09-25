@@ -267,10 +267,6 @@ class Messages extends Security_Controller {
             $optoins .= modal_anchor(get_uri("messages/groups_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_project'), "data-post-id" => $data->id));
         }
 
-        // if ($this->can_delete_projects($data->id)) {
-        //     $optoins .= js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_project'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("messages/delete_group"), "data-action" => "delete-confirmation"));
-        // }
-
         $row_data = array(
             $data->group_name,
         );
@@ -279,6 +275,139 @@ class Messages extends Security_Controller {
 
         return $row_data;
     }
+
+    function save_group_client_message() {
+
+        $id = $this->request->getPost('to_group_id');
+        $group_name = $this->request->getPost('group_name');
+        $message_id = 0;
+        $data = array();
+
+       $this->validate_submitted_data(array(
+           "subject" => "required",
+            "message" => "required",
+            "to_group_id" => "required"
+       ));
+
+
+       if (!$id) {
+            $data = array(
+                "group_name" => $this->login_user->first_name . " - Cliente",
+            );
+
+           $data["created_date"] = get_current_utc_time();
+           $data["created_by"] = $this->login_user->id;
+
+           $data = clean_data($data);
+    
+           $save_id = $this->Message_groups_model->ci_save($data, $id);
+       }
+       else
+       {
+            if($group_name)
+            {
+                $data = array(
+                    "group_name" => $group_name
+                );
+
+                $data = clean_data($data);
+    
+                $save_id = $this->Message_groups_model->ci_save($data, $id);
+            }
+            else
+            {
+                $save_id = $id;
+            }
+       }
+
+       if ($save_id) {
+           if (!$id) {
+               if ($this->login_user->user_type === "client") {
+                   //this is a new project and created by team members
+                   //add default project member after project creation
+                   $data = array(
+                       "message_group_id" => $save_id,
+                       "user_id" => $this->login_user->id
+                   );
+                   $this->Message_group_members_model->save_member($data);
+            
+                    // Adicionar o usuário role 3 (admin) ao grupo
+                    $admin_user = $this->Users_model->get_staff_member();
+                    if ($admin_user) {
+                        $admin_data = array(
+                            "message_group_id" => $save_id,
+                            "user_id" => $admin_user->id
+                        );
+                        $this->Message_group_members_model->save_member($admin_data);
+                    }
+               }
+
+               log_notification("message_group_created", array("message_group_id" => $save_id));
+
+                // Criar a mensagem "GRUPO CRIADO" no grupo
+                $message_data = array(
+                    "message" => $this->request->getPost('message'), // Mensagem que será enviada
+                    "subject" => $this->request->getPost('subject'), // Assunto da mensagem
+                    "from_user_id" => $this->login_user->id, // Quem criou a mensagem
+                    "to_group_id" => $save_id, // Grupo recém-criado
+                    "to_user_id" => 0,
+                    "created_at" => get_current_utc_time(),
+                    "status" => "unread", // Definir como não lida inicialmente
+                    "deleted" => 0
+                );
+                
+                $target_path = get_setting("timeline_file_path");
+                $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
+
+                $message_data = clean_data($message_data);
+                $message_data["files"] = $files_data; //don't clean serilized data
+
+                $this->Messages_model->ci_save($message_data); // Salvar a mensagem no grupo
+           }
+           else
+           {
+                $message_data = array(
+                    "message" => $this->request->getPost('message'), // Mensagem que será enviada
+                    "subject" => $this->request->getPost('subject'), // Assunto da mensagem
+                    "from_user_id" => $this->login_user->id, // Quem criou a mensagem
+                    "to_group_id" => $save_id, // Grupo recém-criado
+                    "to_user_id" => 0,
+                    "created_at" => get_current_utc_time(),
+                    "status" => "unread", // Definir como não lida inicialmente
+                    "deleted" => 0
+                );
+                
+                $target_path = get_setting("timeline_file_path");
+                $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
+
+                $message_data = clean_data($message_data);
+                $message_data["files"] = $files_data; //don't clean serilized data
+
+                $message_id = $this->Messages_model->ci_save($message_data); // Salvar a mensagem no grupo
+           }
+
+           if($message_id !== 0)
+           {
+                $options = array("message_id" => $message_id, "group_id" => $save_id, "user_id" => $this->login_user->id, "mode" => "list_groups", "user_ids" => $this->get_allowed_user_ids());
+           }
+           else
+           {
+                $options = array("group_id" => $save_id, "user_id" => $this->login_user->id, "mode" => "list_groups", "user_ids" => $this->get_allowed_user_ids());
+           }
+
+           $list_data = $this->Messages_model->get_list($options)->getResult();
+   
+           $result = array();
+   
+           foreach ($list_data as $data) {
+               $result[] = $this->_make_row($data, "list_groups");
+           }
+
+           echo json_encode(array("success" => true, "data" => $result, 'id' => $save_id, 'message' => app_lang('record_saved')));
+       } else {
+           echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+       }
+   }
     
     function save_group() {
 
@@ -314,9 +443,38 @@ class Messages extends Security_Controller {
                }
 
                log_notification("message_group_created", array("message_group_id" => $save_id));
+
+                // Criar a mensagem "GRUPO CRIADO" no grupo
+                $message_data = array(
+                    "message" => "Mensagem automática de criação de grupo", // Mensagem que será enviada
+                    "subject" => "Grupo criado", // Assunto da mensagem
+                    "from_user_id" => $this->login_user->id, // Quem criou a mensagem
+                    "to_group_id" => $save_id, // Grupo recém-criado
+                    "created_at" => get_current_utc_time(),
+                    "status" => "unread", // Definir como não lida inicialmente
+                    "deleted" => 0
+                );
+                
+                $target_path = get_setting("timeline_file_path");
+                $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
+
+                $message_data = clean_data($message_data);
+                $message_data["files"] = $files_data; //don't clean serilized data
+
+                $this->Messages_model->ci_save($message_data); // Salvar a mensagem no grupo
            }
 
-           echo json_encode(array("success" => true, "data" => $this->_group_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
+           
+           $options = array("group_id" => $save_id, "user_id" => $this->login_user->id, "mode" => "list_groups", "user_ids" => $this->get_allowed_user_ids());
+           $list_data = $this->Messages_model->get_list($options)->getResult();
+   
+           $result = array();
+   
+           foreach ($list_data as $data) {
+               $result[] = $this->_make_row($data, "list_groups");
+           }
+
+           echo json_encode(array("success" => true, "data" => $result, 'id' => $save_id, 'message' => app_lang('record_saved')));
        } else {
            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
        }
@@ -330,12 +488,31 @@ class Messages extends Security_Controller {
         return $this->template->view('messages/group_modal_form', $view_data);
     }
 
+    function client_groups_modal_form() {
+        
+        $message_group_id = $this->request->getPost('id');
+
+        $view_data['model_info'] = $this->Projects_model->get_one($message_group_id);
+
+        $groups_dropdown[] = app_lang('select_group');
+
+        $groups = $this->Message_groups_model->get_groups_for_client_messaging($this->login_user->id)->getResult();
+        
+        foreach ($groups as $group) {
+            $groups_dropdown[$group->id] = $group->group_name;
+        }
+
+        $view_data["groups_dropdown"] = $groups_dropdown;
+
+        return $this->template->view('messages/client_groups_modal_form', $view_data);
+    }
+
     /* show new message modal */
     function modal_form($user_id = 0) {
         validate_numeric_value($user_id);
         $this->check_message_user_permission();
-        
-        $users_dropdown = array(array("id" => "", "text" => "- " . app_lang('select') . " -"));
+       
+        $users_dropdown[] = app_lang('select');
 
         if ($user_id) {
             $view_data['message_user_info'] = $this->Users_model->get_one($user_id);
@@ -391,11 +568,11 @@ class Messages extends Security_Controller {
     }
 
     
-    /* show sent items */
+    /* show group items */
 
     function list_groups($auto_select_index = "") {
         $this->check_message_user_permission();
-        $this->check_module_availability("module_message");
+        $this->check_module_availability("module_message_group");
 
         $view_data['mode'] = "list_groups";
         $view_data['auto_select_index'] = clean_data($auto_select_index);
@@ -1131,6 +1308,7 @@ class Messages extends Security_Controller {
     function groups_list() {
         $options = ['user_id' => $this->login_user->id];
         $view_data["groups"] = $this->Message_groups_model->get_groups_for_messaging($options)->getResult();
+        $view_data["without_message_groups"] = $this->Message_groups_model->get_groups_without_messages($options)->getResult();
         $view_data["page_type"] = "groups-tab";
         return $this->template->view("messages/chat/groups", $view_data);
     }

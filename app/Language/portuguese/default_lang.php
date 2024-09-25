@@ -300,6 +300,8 @@ $lang["create_an_account_as_a_client_contact"] = "Criar uma conta como um contat
 
 /* messages */
 $lang["messages"] = "Mensagens";
+$lang["group"] = "Grupo";
+$lang["select_group"] = "Selecione um grupo";
 $lang["message"] = "Mensagem";
 $lang["compose"] = "Escrever";
 $lang["send_message"] = "Enviar mensagem";
