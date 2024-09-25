@@ -1176,6 +1176,8 @@ class Messages extends Security_Controller {
     function get_notifications() {
         $options = array("user_id" => $this->login_user->id, "mode" => "inbox", "user_ids" => $this->get_allowed_user_ids(), "is_notification" => true);
         $view_data['notifications'] = $this->Messages_model->get_list($options)->getResult();
+        $options = array("user_id" => $this->login_user->id, "mode" => "list_groups", "user_ids" => $this->get_allowed_user_ids(), "is_notification" => true);
+        $view_data['notifications'] = array_merge($view_data['notifications'], $this->Messages_model->get_list($options)->getResult());
         echo json_encode(array("success" => true, 'notification_list' => $this->template->view("messages/notifications", $view_data)));
     }
 
