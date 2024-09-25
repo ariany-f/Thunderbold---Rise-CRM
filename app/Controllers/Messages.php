@@ -1178,6 +1178,12 @@ class Messages extends Security_Controller {
         $view_data['notifications'] = $this->Messages_model->get_list($options)->getResult();
         $options = array("user_id" => $this->login_user->id, "mode" => "list_groups", "user_ids" => $this->get_allowed_user_ids(), "is_notification" => true);
         $view_data['notifications'] = array_merge($view_data['notifications'], $this->Messages_model->get_list($options)->getResult());
+
+
+        // Ordenando o array mesclado por created_at
+        usort($view_data['notifications'], function($a, $b) {
+            return strtotime($b->created_at) - strtotime($a->created_at); // Ordenação decrescente
+        });
         echo json_encode(array("success" => true, 'notification_list' => $this->template->view("messages/notifications", $view_data)));
     }
 
