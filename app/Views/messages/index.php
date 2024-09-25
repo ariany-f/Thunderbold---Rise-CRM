@@ -15,17 +15,18 @@
                     
                     <?php $count_inbox = count_unread_inbox_message(); ?>
                     
-                    <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
-                  
                     <?php if($login_user->user_type == 'staff') { ?>
-                        <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?>
                         <?php echo modal_anchor(get_uri("messages/client_groups_modal_form/"), app_lang("compose_for_group"), array("class" => "list-group-item", "title" => app_lang('compose_for_group')));?>
+                        <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+                        <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?>
                     <?php } else { ?>
+                        <?php if($count_inbox > 0) { ?>
+                            <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+                        <?php } ?>
                         <?php echo modal_anchor(get_uri("messages/client_groups_modal_form/"), app_lang("compose"), array("class" => "list-group-item", "title" => app_lang('compose')));?>
                     <?php } ?>
                     
                     <?php echo anchor(get_uri("messages/sent_items"), app_lang('sent_items'), array("class" => "list-group-item")); ?>
-                    
                 </ul>
             </div>
 

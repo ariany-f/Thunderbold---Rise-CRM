@@ -1930,7 +1930,7 @@ class Projects extends Security_Controller {
 
         $project_data = $this->_get_project_info_data($project_id);
 
-        $project_members = $this->Project_members_model->get_project_members_dropdown_list($project_id)->getResult();   
+        $project_members = $this->Project_members_model->get_project_members_dropdown_list($project_id, array(), true)->getResult();   
        
         $data = array(
             "group_name" => $project_data['project_info']->title,
@@ -1968,6 +1968,25 @@ class Projects extends Security_Controller {
             }
  
             log_notification("message_group_created", array("message_group_id" => $save_id));
+
+             // Criar a mensagem "GRUPO CRIADO" no grupo
+             $message_data = array(
+                "message" => "Mensagem automática de criação de grupo", // Mensagem que será enviada
+                "subject" => "Grupo criado", // Assunto da mensagem
+                "from_user_id" => $this->login_user->id, // Quem criou a mensagem
+                "to_group_id" => $save_id, // Grupo recém-criado
+                "created_at" => get_current_utc_time(),
+                "status" => "unread", // Definir como não lida inicialmente
+                "deleted" => 0
+            );
+            
+            $target_path = get_setting("timeline_file_path");
+            $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
+
+            $message_data = clean_data($message_data);
+            $message_data["files"] = $files_data; //don't clean serilized data
+
+            $this->Messages_model->ci_save($message_data); // Salvar a mensagem no grupo
         
             echo json_encode(array("success" => true, 'id' => $save_id, 'message' => app_lang('record_saved')));
         } else {
