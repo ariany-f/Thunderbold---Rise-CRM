@@ -352,6 +352,32 @@ class Help extends Security_Controller {
 
         $save_id = $this->Help_articles_model->ci_save($data, $id);
         if ($save_id) {
+
+            //send log notification
+            $category_info = $this->Help_categories_model->get_one($data["category_id"]);
+            $data_announcement = array(
+                "title" => $this->request->getPost('title'),
+                "description" => decode_ajax_post_data($this->request->getPost('description')),
+                "start_date" => get_current_utc_time(),
+                "end_date" => get_current_utc_time(),
+                "created_by" => $this->login_user->id,
+                "created_at" => get_current_utc_time(),
+                "share_with" => $category_info->share_with ? $category_info->share_with : ""
+            );
+    
+            $data_announcement["files"] = serialize($new_files);
+            $data_announcement["read_by"] = 0; //set default value
+    
+            $save_announcement_id = $this->Announcements_model->ci_save($data_announcement);
+    
+            if ($save_announcement_id) {
+                //send log notification
+                if ($data_announcement["share_with"]) {
+                    log_notification("new_announcement_created", array("announcement_id" => $save_announcement_id));
+                }
+            } 
+            // send log notification
+
             $this->session->setFlashdata("success_message", app_lang('record_saved'));
             app_redirect("help/article_form/" . $type . "/" . $save_id);
         } else {
