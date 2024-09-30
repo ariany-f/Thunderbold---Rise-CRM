@@ -1618,11 +1618,327 @@ class Projects extends Security_Controller {
         }
     }
 
+    function resources($project_id) {
+        validate_numeric_value($project_id);
+        $this->init_project_permission_checker($project_id);
+
+        $view_data['project_id'] = $project_id;
+       
+        return $this->template->view('projects/resources/index', $view_data);
+    }
+
+    /* load project resource manager add/edit modal */
+
+    function project_resource_manager_modal_form() {
+        $view_data['model_info'] = $this->Project_resources_model->get_one($this->request->getPost('id'));
+
+        $project_id = $this->request->getPost('project_id') ? $this->request->getPost('project_id') : $view_data['model_info']->project_id;
+     
+        $view_data['model_info'] = $this->Project_resources_model->get_details(array('project_id' => $project_id, 'is_leader' => 1))->getRow();
+
+        $this->init_project_permission_checker($project_id);
+
+        if (!$this->can_add_remove_project_members()) {
+            app_redirect("forbidden");
+        }
+
+        $view_data['project_id'] = $project_id;
+
+        $view_data["view_type"] = $this->request->getPost("view_type");
+
+        $add_user_type = $this->request->getPost("add_user_type");
+
+        $users_dropdown = array();
+ 
+        $users = $this->Project_resources_model->get_rest_team_resources_for_a_project($project_id)->getResult();
+        foreach ($users as $user) {
+            $users_dropdown[$user->id] = $user->resource_name;
+        }
+
+        $view_data["users_dropdown"] = $users_dropdown;
+        $view_data["add_user_type"] = $add_user_type;
+
+
+        return $this->template->view('projects/resources/modal_form', $view_data);
+    }
+
+
+    /* load project resource manager add/edit modal */
+
+    function project_resource_modal_form() {
+
+      
+
+        $view_data['model_info'] = $this->Project_resources_model->get_details(array("user_id" => $this->request->getPost('user_id'), "project_id" => $this->request->getPost('project_id')))->getRow();
+        
+        $project_id = $this->request->getPost('project_id') ? $this->request->getPost('project_id') : $view_data['model_info']->project_id;
+        $user_id = $this->request->getPost('user_id') ? $this->request->getPost('user_id') : $view_data['model_info']->user_id;
+
+        $this->init_project_permission_checker($project_id);
+
+        if (!$this->can_add_remove_project_members()) {
+            app_redirect("forbidden");
+        }
+
+        $view_data['project_id'] = $project_id;
+
+        $view_data['user_id'] = $user_id;
+
+        $view_data["view_type"] = $this->request->getPost("view_type");
+
+        $add_user_type = $this->request->getPost("add_user_type");
+
+        $users_dropdown = array();
+ 
+
+        $users = $this->Project_resources_model->get_rest_team_resources_for_a_project($project_id)->getResult();
+        foreach ($users as $user) {
+            $users_dropdown[$user->id] = $user->resource_name;
+        }
+
+        $view_data["users_dropdown"] = $users_dropdown;
+        $view_data["add_user_type"] = $add_user_type;
+
+
+        return $this->template->view('projects/resources/member_modal_form', $view_data);
+    }
+
+    
+    /* add a project resource manager  */
+
+    function save_project_resource_manager() {
+
+        $id = $this->request->getPost('id');
+        $project_id = $this->request->getPost('project_id');
+
+        $this->validate_submitted_data(array(
+            "user_id" => "required"
+        ));
+
+        $user_id = $this->request->getPost('user_id');
+        $hour_amount = $this->request->getPost('hour_amount');
+          
+        $member_data = array(
+            "user_id" => $user_id,
+            "project_id" => $project_id
+        );
+
+        $save_member_id = $this->Project_members_model->save_member($member_data);
+
+        if ($save_member_id && $save_member_id != "exists") {
+            log_notification("project_member_added", array("project_id" => $project_id, "to_user_id" => $user_id));
+        }
+
+        $data = array(
+            "project_id" => $project_id,
+            "user_id" => $user_id,
+            "hour_amount" => $hour_amount,
+            "is_leader" => 1
+        );
+
+        $save_id = $this->Project_resources_model->save_resource($data, $id);
+
+        if($save_id)
+        {
+            $project_member_row[] = $this->_project_resource_row_data($save_id);
+
+            $member = $this->Project_resources_model->get_details(array("user_id" => $user_id, "project_id" => $project_id))->getRow();
+
+            echo json_encode(array("success" => true, "data" => $project_member_row, 'name' => $member->resource_name, 'id' => $save_id, 'message' => app_lang('record_saved')));
+        }
+        else
+        {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+     
+    }
+
+    
+    /* add a project resource  */
+
+    function save_project_resource() {
+
+        $id = $this->request->getPost('id');
+        $project_id = $this->request->getPost('project_id');
+
+        $this->validate_submitted_data(array(
+            "user_id" => "required"
+        ));
+
+        $user_id = $this->request->getPost('user_id');
+        $hour_amount = $this->request->getPost('hour_amount');
+          
+        $member_data = array(
+            "user_id" => $user_id,
+            "project_id" => $project_id
+        );
+
+        $save_member_id = $this->Project_members_model->save_member($member_data);
+
+        if ($save_member_id && $save_member_id != "exists") {
+            log_notification("project_member_added", array("project_id" => $project_id, "to_user_id" => $user_id));
+        }
+
+        $data = array(
+            "project_id" => $project_id,
+            "user_id" => $user_id,
+            "hour_amount" => $hour_amount,
+            "is_leader" => 0
+        );
+
+        $save_id = $this->Project_resources_model->save_resource($data, $id);
+
+        if($save_id)
+        {
+            $project_member_row[] = $this->_project_resource_row_data($save_id);
+
+            $member = $this->Project_resources_model->get_details(array("user_id" => $user_id, "project_id" => $project_id))->getRow();
+
+            echo json_encode(array("success" => true, "data" => $project_member_row, 'name' => $member->resource_name, 'id' => $save_id, 'message' => app_lang('record_saved')));
+        }
+        else
+        {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+     
+    }
+
+    /* delete/undo a project members  */
+
+    function delete_project_resource_manager() {
+        $id = $this->request->getPost('id');
+        $project_resources_info = $this->Project_resources_model->get_one($id);
+
+        $this->init_project_permission_checker($project_resources_info->project_id);
+
+
+        if ($this->request->getPost('undo')) {
+            if ($this->Project_resources_model->delete($id, true)) {
+                echo json_encode(array("success" => true, "data" => $this->_project_resource_row_data($id), "message" => app_lang('record_undone')));
+            } else {
+                echo json_encode(array("success" => false, app_lang('error_occurred')));
+            }
+        } else {
+            if ($this->Project_resources_model->delete($id)) {
+
+                echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
+            } else {
+                echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+            }
+        }
+    }
+    
+
+    /* list of project resources, prepared for datatable  */
+    function project_resource_list_data($project_id = 0, $resource_type = "") {
+        validate_numeric_value($project_id);
+        $this->access_only_team_members();
+        $this->init_project_permission_checker($project_id);
+        
+        $options = array("project_id" => $project_id, "user_type" => 'staff', "show_user_wise" => true);
+        $list_data = $this->Project_members_model->get_details($options)->getResult();
+        $result = array();
+        foreach ($list_data as $data) {
+
+            $options_resources = array("project_id" => $project_id, "user_id" => $data->user_id);
+
+            if($resource_type == "manager")
+            {
+                $options_resources["is_leader"] = 1;
+            }
+            else
+            {
+                $options_resources["is_leader"] = 0;
+            }
+
+            $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+            
+            if($resource_type == "manager")
+            {
+                if(($resource))
+                {
+                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id);
+                }
+            }
+            else
+            {
+                if((!$resource) || ($resource && $resource->is_leader == 0))
+                {
+                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id);
+                }
+            }
+        }
+        
+        echo json_encode(array("data" => $result));
+    }
+
+    /* return a row of project resource list */
+    private function _project_resource_row_data($id) {
+        $options = array("id" => $id);
+        $resource = $this->Project_resources_model->get_details($options)->getRow();
+
+        $options_data = array("project_id" => $resource->project_id, "user_type" => 'staff', "show_user_wise" => true);
+
+        $data = $this->Project_members_model->get_details($options_data)->getRow();
+
+        return $this->_make_project_resource_row($data, $resource, $resource->project_id);
+    }
+
+    /* prepare a row of project resource list */
+    private function _make_project_resource_row($data, $resource, $project_id) {
+
+        $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image, $data->member_name) . "' alt='...'></span> ";
+
+        if ($data->user_type == "staff") {
+            $member = get_team_member_profile_link($data->user_id, $member_image);
+            $member_name = get_team_member_profile_link($data->user_id, $data->member_name, array("class" => "dark strong"));
+        } else {
+            $member = get_client_contact_profile_link($data->user_id, $member_image);
+            $member_name = get_client_contact_profile_link($data->user_id, $data->member_name, array("class" => "dark strong"));
+        }
+
+        $link = "";
+
+        if ($this->can_add_remove_project_members() && $resource && $resource->is_leader == 1) {
+            $delete_link = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_member'), "class" => "delete", "data-id" => $resource->id, "data-action-url" => get_uri("projects/delete_project_resource_manager"), "data-action" => "delete"));
+
+            if (!$this->can_manage_all_projects() && ($this->login_user->id === $data->user_id)) {
+                $delete_link = "";
+            }
+            $link .= $delete_link;
+        }
+
+        if($resource && $resource->is_leader)
+        {
+
+            $configure_link = modal_anchor(get_uri("projects/project_resource_manager_modal_form"), "<i data-feather='settings' class='icon-16'></i> ", array("class" => "btn btn-outline-light float-end add-member-button", "title" => app_lang('configure_resource'), "data-post-id" => $resource->id));
+        }
+        else
+        {
+            $configure_link = modal_anchor(get_uri("projects/project_resource_modal_form"), "<i data-feather='settings' class='icon-16'></i> ", array("class" => "btn btn-outline-light float-end add-member-button", "title" => app_lang('configure_resource'), "data-post-user_id" => $data->user_id, "data-post-project_id" => $project_id));
+        }
+
+       // $configure_link = js_anchor("<i data-feather='settings' class='icon-16'></i>", array('title' => app_lang('configure_resource'), "class" => "", "data-id" => $data->id, "data-action-url" => get_uri("projects/configure_resource")));
+
+        if (!$this->can_manage_all_projects() && ($this->login_user->id === $data->user_id)) {
+            $configure_link = "";
+        }
+
+        $link .= $configure_link;
+
+        $member = '<div class="d-flex"><div class="p-2 flex-shrink-1">' . $member . '</div><div class="p-2 w-100"><div>' . $member_name . '</div><label class="text-off">' . $data->job_title . '</label></div></div>';
+
+        return array($member, $link);
+    }
+
     /* load project members add/edit modal */
 
     function project_member_modal_form() {
+
         $view_data['model_info'] = $this->Project_members_model->get_one($this->request->getPost('id'));
+
         $project_id = $this->request->getPost('project_id') ? $this->request->getPost('project_id') : $view_data['model_info']->project_id;
+
         $this->init_project_permission_checker($project_id);
 
         if (!$this->can_add_remove_project_members()) {
@@ -1742,6 +2058,7 @@ class Projects extends Security_Controller {
             }
         }
     }
+    
 
     /* list of project members, prepared for datatable  */
 

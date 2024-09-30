@@ -9,6 +9,12 @@ class Outlook_smtp {
 
     private $responseCode = 0;
     private $ci;
+    protected $client_id;
+    protected $client_secret;
+    protected $resource_id;
+    protected $login_url;
+    protected $graph_url;
+    protected $redirect_uri;
     protected static $func_overload;
 
     public function __construct() {
