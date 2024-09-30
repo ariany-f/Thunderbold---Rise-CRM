@@ -11,7 +11,7 @@
                 <div class="col-md-9">
                     <div class="select-resource-field">
                         <div class="select-member-form clearfix pb10">
-                            <?php echo form_dropdown("user_id", $users_dropdown, $model_info->user_id, "class='select2 col-md-10 p0' id='user_id'"); ?>
+                            <?php echo form_dropdown("user_id", $users_dropdown, (isset($model_info->user_id) ? $model_info->user_id : ''), "class='select2 col-md-10 p0' id='user_id'"); ?>
                             <?php echo js_anchor("<i data-feather='x' class='icon-16'></i> ", array("class" => "remove-member delete ml20")); ?>
                         </div>                                
                     </div>
