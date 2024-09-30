@@ -54,7 +54,7 @@
                 {
                     $("#manager-table").appTable({newData: result.data[0], dataId: result.id});
                 }
-                if(result.name !== "<?php echo $model_info->resource_name; ?>")
+                if(result.name !== "<?php echo (isset($model_info->resource_name) ? $model_info->resource_name : ''); ?>")
                 {
                     location.reload();
                 }
