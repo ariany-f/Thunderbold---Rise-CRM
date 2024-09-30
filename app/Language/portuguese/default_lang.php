@@ -362,6 +362,10 @@ $lang["all_projects"] = "Todos os Projetos";
 $lang["member"] = "Membro";
 $lang["overview"] = "Visão geral";
 $lang["project_members"] = "Os membros do projeto";
+$lang["hour_amount"] = "Valor/Hora";
+$lang["add_manager"] = "Add Gerente";
+$lang["configure_resource"] = "Configurar Recurso";
+$lang["managers"] = "Gerentes";
 $lang["add_member"] = "Add membro";
 $lang["manage_members"] = "Gerenciar membros";
 $lang["members"] = "Membros";
@@ -417,6 +421,7 @@ $lang["history"] = "Histórico";
 
 /* timesheet */
 $lang["timesheets"] = "Gestão de Tempo";
+$lang["resources"] = "Gestão de Recursos";
 $lang["log_time"] = "Registro de Horário";
 $lang["timesheet_total"] = "Qtd Hr Registradas";
 $lang["edit_timelog"] = "Editar registro de horário";

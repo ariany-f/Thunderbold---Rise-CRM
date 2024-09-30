@@ -39,6 +39,7 @@ class App_Controller extends Controller {
     public $Project_files_model;
     public $Notes_model;
     public $Project_members_model;
+    public $Project_resources_model;
     public $Ticket_types_model;
     public $Tickets_model;
     public $Ticket_comments_model;
@@ -145,6 +146,7 @@ class App_Controller extends Controller {
             'Project_files_model',
             'Notes_model',
             'Project_members_model',
+            'Project_resources_model',
             'Ticket_types_model',
             'Tickets_model',
             'Ticket_comments_model',
