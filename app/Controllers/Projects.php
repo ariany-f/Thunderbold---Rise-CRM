@@ -1633,8 +1633,7 @@ class Projects extends Security_Controller {
         $view_data['model_info'] = $this->Project_resources_model->get_one($this->request->getPost('id'));
 
         $project_id = $this->request->getPost('project_id') ? $this->request->getPost('project_id') : $view_data['model_info']->project_id;
-     
-        $view_data['model_info'] = $this->Project_resources_model->get_details(array('project_id' => $project_id, 'is_leader' => 1))->getRow();
+        $is_leader = $this->request->getPost('is_leader') ? $this->request->getPost('is_leader') : 1;
 
         $this->init_project_permission_checker($project_id);
 
@@ -1643,6 +1642,7 @@ class Projects extends Security_Controller {
         }
 
         $view_data['project_id'] = $project_id;
+        $view_data['is_leader'] = $is_leader;
 
         $view_data["view_type"] = $this->request->getPost("view_type");
 
@@ -1666,8 +1666,6 @@ class Projects extends Security_Controller {
     /* load project resource manager add/edit modal */
 
     function project_resource_modal_form() {
-
-      
 
         $view_data['model_info'] = $this->Project_resources_model->get_details(array("user_id" => $this->request->getPost('user_id'), "project_id" => $this->request->getPost('project_id')))->getRow();
         
