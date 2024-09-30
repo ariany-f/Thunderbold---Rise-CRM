@@ -1,9 +1,9 @@
 <?php echo form_open(get_uri("projects/save_project_resource_manager"), array("id" => "project-resource-form", "class" => "general-form", "role" => "form")); ?>
 <div class="modal-body clearfix">
     <div class="container-fluid">
-        <input type="hidden" name="project_id" value="<?php echo ($model_info->project_id ? $model_info->project_id : $project_id); ?>" />
-        <input type="hidden" name="is_leader" value="<?php echo ($model_info->is_leader ? $model_info->is_leader : $is_leader); ?>" />
-        <input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
+        <input type="hidden" name="project_id" value="<?php echo (isset($model_info->project_id) ? $model_info->project_id : $project_id); ?>" />
+        <input type="hidden" name="is_leader" value="<?php echo (isset($model_info->is_leader) ? $model_info->is_leader : $is_leader); ?>" />
+        <input type="hidden" name="id" value="<?php echo (isset($model_info->id) ? $model_info->id : ''); ?>" />
 
         <div class="form-group" style="min-height: 50px">
             <div class="row">
@@ -26,7 +26,7 @@
                         echo form_input(array(
                             "id" => "hour_amount",
                             "name" => "hour_amount",
-                            "value" => $model_info->hour_amount ? $model_info->hour_amount : "",
+                            "value" => (isset($model_info->hour_amount) ? $model_info->hour_amount : ""),
                             "class" => "form-control",
                             "placeholder" => app_lang('amount'),
                             "data-rule-required" => true,
