@@ -9,7 +9,7 @@
     </div>
 
     <div class="table-responsive">
-        <table id="manager-table" class="b-b-only no-thead" width="100%">
+        <table id="manager-table" class="b-b-only" width="100%">
         </table>
     </div>
 </div>
@@ -20,27 +20,31 @@
     </div>
 
     <div class="table-responsive">
-        <table id="project-resource-table" class="b-b-only no-thead" width="100%">
+        <table id="project-resource-table" class="b-b-only" width="100%">
         </table>
     </div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function () {
+
+        $("#manager-table").appTable({
+            source: '<?php echo_uri("projects/project_resource_list_data/" . $project_id . "/manager") ?>',
+            hideTools: true,
+            columns: [
+                {title: 'Nome'},
+                {title: 'Valor/Hora'},
+                {title: '', "class": "text-center option w100"}
+            ]
+        });
+
         $("#project-resource-table").appTable({
             source: '<?php echo_uri("projects/project_resource_list_data/" . $project_id) ?>',
             hideTools: true,
             displayLength: 500,
             columns: [
-                {title: ''},
-                {title: '', "class": "text-center option w100"}
-            ]
-        });
-        $("#manager-table").appTable({
-            source: '<?php echo_uri("projects/project_resource_list_data/" . $project_id . "/manager") ?>',
-            hideTools: true,
-            columns: [
-                {title: ''},
+                {title: 'Membro'},
+                {title: 'Valor/Hora'},
                 {title: '', "class": "text-center option w100"}
             ]
         });
