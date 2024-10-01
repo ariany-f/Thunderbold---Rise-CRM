@@ -1,8 +1,8 @@
 <?php echo form_open(get_uri("projects/save_project_resource"), array("id" => "project-resource-form", "class" => "general-form", "role" => "form")); ?>
 <div class="modal-body clearfix">
     <div class="container-fluid">
-        <input type="hidden" name="project_id" value="<?php echo (isset($model_info->project_id) ? $model_info->project_id : $project_id); ?>" />
-        <input type="hidden" name="user_id" value="<?php echo (isset($model_info->user_id) ? $model_info->user_id : $user_id); ?>" />
+        <input type="hidden" name="project_id" value="<?php echo ((isset($model_info->project_id) && $model_info->project_id != '') ? $model_info->project_id : $project_id); ?>" />
+        <input type="hidden" name="user_id" value="<?php echo ((isset($model_info->user_id) && $model_info->user_id !== '') ? $model_info->user_id : $user_id); ?>" />
         <input type="hidden" name="is_leader" value="0" />
         <input type="hidden" name="id" value="<?php echo (isset($model_info->id) ? $model_info->id : ''); ?>" />
 
