@@ -1926,7 +1926,7 @@ class Projects extends Security_Controller {
 
         $member = '<div class="d-flex"><div class="p-2 flex-shrink-1">' . $member . '</div><div class="p-2 w-100"><div>' . $member_name . '</div><label class="text-off">' . $data->job_title . '</label></div></div>';
 
-        return array($member, ($resource ? $resource->hour_amount : ''), $link);
+        return array($member, ($resource ? $resource->hour_amount : 'Não configurado'), $link);
     }
 
     /* load project members add/edit modal */
