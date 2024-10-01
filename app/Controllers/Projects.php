@@ -1630,6 +1630,7 @@ class Projects extends Security_Controller {
     /* load project resource manager add/edit modal */
 
     function project_resource_manager_modal_form() {
+     
         $view_data['model_info'] = $this->Project_resources_model->get_one($this->request->getPost('id'));
 
         $project_id = $this->request->getPost('project_id') ? $this->request->getPost('project_id') : $view_data['model_info']->project_id;
@@ -1658,7 +1659,7 @@ class Projects extends Security_Controller {
         $view_data["users_dropdown"] = $users_dropdown;
         $view_data["add_user_type"] = $add_user_type;
 
-
+        print_r($view_data);
         return $this->template->view('projects/resources/modal_form', $view_data);
     }
 
@@ -1909,7 +1910,7 @@ class Projects extends Security_Controller {
         if($resource && $resource->is_leader)
         {
 
-            $configure_link = modal_anchor(get_uri("projects/project_resource_manager_modal_form"), "<i data-feather='settings' class='icon-16'></i> ", array("class" => "btn btn-outline-light float-end add-member-button", "title" => app_lang('configure_resource'), "data-post-id" => $resource->id));
+            $configure_link = modal_anchor(get_uri("projects/project_resource_manager_modal_form"), "<i data-feather='settings' class='icon-16'></i> ", array("class" => "btn btn-outline-light float-end add-member-button", "title" => app_lang('configure_resource'), "data-post-id" => $resource->id, "data-post-project_id" => $project_id));
         }
         else
         {
