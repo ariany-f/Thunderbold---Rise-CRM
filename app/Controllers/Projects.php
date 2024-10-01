@@ -1659,7 +1659,6 @@ class Projects extends Security_Controller {
         $view_data["users_dropdown"] = $users_dropdown;
         $view_data["add_user_type"] = $add_user_type;
 
-        print_r($view_data);
         return $this->template->view('projects/resources/modal_form', $view_data);
     }
 
