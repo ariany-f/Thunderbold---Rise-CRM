@@ -152,7 +152,7 @@ if (!function_exists("make_project_tabs_data")) {
                                 $project_tabs["tickets"] = "projects/tickets/" . $project_info->id;
                             }
 
-                            if ($show_timesheet_info) {
+                            if ($show_timesheet_info and $login_user->is_admin) {
                                 $project_tabs["resources"] = "projects/resources/" . $project_info->id;
                             }
 
