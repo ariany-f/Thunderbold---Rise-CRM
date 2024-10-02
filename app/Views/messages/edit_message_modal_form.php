@@ -54,13 +54,13 @@
     
 
     $(document).ready(function () {
-        var uploadUrl = "<?php echo get_uri("messages/upload_file"); ?>";
-        var validationUrl = "<?php echo get_uri("messages/validate_message_file"); ?>";
+        // var uploadUrl = "<?php echo get_uri("messages/upload_file"); ?>";
+        // var validationUrl = "<?php echo get_uri("messages/validate_message_file"); ?>";
 
 
-        var dropzoneFiles = []; // Array de arquivos
+        // var dropzoneFiles = []; // Array de arquivos
         // <?php //if (!empty($model_info->files)) : ?>
-        //     var existingFiles = <?php echo json_encode(unserialize($model_info->files)); ?>; // Converte os arquivos existentes em JSON
+        //     var existingFiles = <?php //echo json_encode(unserialize($model_info->files)); ?>; // Converte os arquivos existentes em JSON
            
         //     existingFiles.forEach(function(file) {
                 
