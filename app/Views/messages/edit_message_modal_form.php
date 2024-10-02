@@ -61,6 +61,8 @@
                 // dropzone.emit("complete", mockFile);  // Marca o arquivo como completo
                 // dropzone.files.push(mockFile);  // Adiciona o arquivo à lista de arquivos do Dropzone
                 dropzone.displayExistingFile(mockFile, thumbnailUrl);
+                // Opcional: se você quiser adicionar algum comportamento adicional, como marcar o arquivo como removível
+                mockFile.previewElement.classList.add("dz-complete");
 
             });
         <?php endif; ?>
