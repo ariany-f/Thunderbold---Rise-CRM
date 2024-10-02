@@ -23,7 +23,7 @@
                         </strong>
                         <span class="text-off float-end"><?php echo format_to_relative_time($reply_info->created_at); ?></span>
                         <!-- Permitir responder uma mensagem diretamente -->
-                        <?php if(!$ended) { ?>
+                        <?php if(isset($ended) && (!$ended)) { ?>
                             <span class="float-end dropdown">
                                 <div class="text-off dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true" >
                                     <i data-feather="chevron-down" class="icon"></i>
