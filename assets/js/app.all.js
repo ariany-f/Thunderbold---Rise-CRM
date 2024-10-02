@@ -25776,7 +25776,7 @@ getRandomAlphabet = function (length) {
 };
 
 
-attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, options, data = {}) {
+attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, options, files = {}) {
 	
     var $dropzonePreviewArea = $(dropzoneTarget),
             $dropzonePreviewScrollbar = $dropzonePreviewArea.find(".post-file-dropzone-scrollbar"),
@@ -25809,7 +25809,7 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
         thumbnailHeight: 80,
         parallelUploads: 20,
         maxFilesize: 3000,
-		autoProcessQueue : false,
+		autoProcessQueue : true,
         previewTemplate: previewTemplate,
         dictDefaultMessage: AppLanugage.fileUploadInstruction,
         autoQueue: true,
@@ -25823,38 +25823,49 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
         init: function () {
 					
 			var thisDropzone = this
-						
-			$.each(data, function(key, value){
-				
+			if(files.length > 0)
+			{
+				$.each(files, function(key, value){
+					
 					// Cria um mockFile com base nos dados existentes
-				var mockFile = { 
-					name: value.name, 
-					size: value.size,
-					type: value.type || 'image/png', // Define o tipo como 'image/png' ou o tipo real se estiver disponível
-					url: value.url // URL para exibição do arquivo
-				};
+					if(value.name != '')
+					{
+	
+						var mockFile = { 
+							name: value.name, 
+							size: value.size,
+							type: value.type, // Define o tipo como 'image/png' ou o tipo real se estiver disponível
+							url: value.url // URL para exibição do arquivo
+						};
+	
+						// Cria um Blob fictício a partir de um ArrayBuffer ou de qualquer outra fonte de dados
+						// Aqui, você deve ter os dados reais do arquivo. Por exemplo, você pode buscar o arquivo via AJAX ou ter os dados em um ArrayBuffer.
+						var imageData = new Uint8Array(mockFile.size); // Aqui você deve ter os dados reais do arquivo
+						var blob = new Blob([imageData], { type: mockFile.type });
+	
+						// Cria um novo arquivo com o Blob
+						var newFile = new File([blob], mockFile.name, { type: mockFile.type });
+	
+						// // Adiciona o arquivo ao Dropzone
+					
+						thisDropzone.addFile(newFile);
+					//	thisDropzone.emit("addedfile", newFile);
+					//	thisDropzone.emit("complete", newFile);
+						//thisDropzone.addFile(newFile);
+	
+						// Exibe o arquivo existente (se houver um URL)
+						thisDropzone.displayExistingFile(newFile, mockFile.url);
+					}
+				});
+			}
 
-				// Cria um Blob fictício a partir de um ArrayBuffer ou de qualquer outra fonte de dados
-				// Aqui, você deve ter os dados reais do arquivo. Por exemplo, você pode buscar o arquivo via AJAX ou ter os dados em um ArrayBuffer.
-				var imageData = new Uint8Array(mockFile.size); // Aqui você deve ter os dados reais do arquivo
-				var blob = new Blob([imageData], { type: mockFile.type });
-
-				// Cria um novo arquivo com o Blob
-				var newFile = new File([blob], mockFile.name, { type: mockFile.type });
-
-				// // Adiciona o arquivo ao Dropzone
-			
-				thisDropzone.addFile(newFile);
-				thisDropzone.emit("addedfile", newFile);
-				thisDropzone.emit("complete", newFile);
-			});
-
-            this.on("maxfilesexceeded", function (file) {
-                this.removeAllFiles();
-                this.addFile(file);
-            });
+            // this.on("maxfilesexceeded", function (file) {
+            //     this.removeAllFiles();
+            //     this.addFile(file);
+            // });
         },
         accept: function (file, done) {
+			
             if (file.name.length > 200) {
                 done(AppLanugage.fileNameTooLong);
             }
@@ -25925,6 +25936,7 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
             });
         },
         success: function (file) {
+			console.log(file)
             setTimeout(function () {
                 $(file.previewElement).find(".progress-bar-striped").removeClass("progress-bar-striped progress-bar-animated");
             }, 1000);
