@@ -25830,9 +25830,11 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
 					// Cria um mockFile com base nos dados existentes
 					if(value.name != '')
 					{
-	
+						console.log(value.url)
 						var mockFile = { 
 							name: value.name, 
+							dataURL: value.url,
+							path: value.url,
 							size: value.size,
 							type: value.type, // Define o tipo como 'image/png' ou o tipo real se estiver disponível
 							url: value.url // URL para exibição do arquivo
