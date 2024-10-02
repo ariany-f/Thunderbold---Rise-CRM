@@ -20,11 +20,11 @@
                     ?>
                 </div>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="col-md-12">
-                    <?php echo view("includes/dropzone_preview"); ?> 
+                    <?php //echo view("includes/dropzone_preview"); ?> 
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>
@@ -59,20 +59,20 @@
 
 
         var dropzoneFiles = []; // Array de arquivos
-        <?php if (!empty($model_info->files)) : ?>
-            var existingFiles = <?php echo json_encode(unserialize($model_info->files)); ?>; // Converte os arquivos existentes em JSON
+        // <?php //if (!empty($model_info->files)) : ?>
+        //     var existingFiles = <?php echo json_encode(unserialize($model_info->files)); ?>; // Converte os arquivos existentes em JSON
            
-            existingFiles.forEach(function(file) {
+        //     existingFiles.forEach(function(file) {
                 
-               // dropzone.emit("addedfile", mockFile);  // Simula que o arquivo foi adicionado ao Dropzone
-                <?php $target_path = get_setting("timeline_file_path");?>
+        //        // dropzone.emit("addedfile", mockFile);  // Simula que o arquivo foi adicionado ao Dropzone
+        //         <?php //$target_path = get_setting("timeline_file_path");?>
                 
-                var mockFile = { name: file.file_name, size: file.size, accepted: true, url: "<?php echo get_uri($target_path) ?>" + file.file_name, type: getFileType(file.file_name)}; // Cria um objeto mock do arquivo
-                dropzoneFiles.push(mockFile); // Adiciona o arquivo ao array de arquivos
-            });
-        <?php endif; ?>
+        //         var mockFile = { name: file.file_name, size: file.size, accepted: true, url: "<?php //echo get_uri($target_path) ?>" + file.file_name, type: getFileType(file.file_name)}; // Cria um objeto mock do arquivo
+        //         dropzoneFiles.push(mockFile); // Adiciona o arquivo ao array de arquivos
+        //     });
+        // <?php //endif; ?>
 
-        var dropzone = attachDropzoneWithForm("#new-message-dropzone", uploadUrl, validationUrl, {}, dropzoneFiles);
+        // var dropzone = attachDropzoneWithForm("#new-message-dropzone", uploadUrl, validationUrl, {}, dropzoneFiles);
 
 
         $("#message-form").appForm({

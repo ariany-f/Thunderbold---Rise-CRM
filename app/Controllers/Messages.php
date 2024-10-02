@@ -1054,8 +1054,8 @@ class Messages extends Security_Controller {
 
         $id = $this->request->getPost('id');
 
-        $target_path = get_setting("timeline_file_path");
-        $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
+        //$target_path = get_setting("timeline_file_path");
+        //$files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
 
         $message_data = array(
             "message" => $this->request->getPost('message'),
@@ -1063,7 +1063,7 @@ class Messages extends Security_Controller {
 
         $message_data = clean_data($message_data);
 
-        $message_data["files"] = $files_data; //don't clean serilized data
+        //$message_data["files"] = $files_data; //don't clean serilized data
 
         $save_id = $this->Messages_model->ci_save($message_data, $id);
 
