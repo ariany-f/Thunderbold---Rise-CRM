@@ -77,11 +77,34 @@
 
         $("#message-form").appForm({
             onSuccess: function (result) {
+               // $("#message-table").appTable({newData: result.data, dataId: result.id})
+
+                
+                if(result.data)
+                {
+                    // Adiciona ou atualiza a linha na tabela
+                    var messagesTable = $('#message-table').DataTable();
+
+                
+                    // Exemplo: Remover a linha com `data-post-id` específico após adicionar
+                    var rowToRemove = $("#message-details-section").find("[data-message_id='"+result.id+"']")
+                    rowToRemove.remove()
+
+                    $("#reply_message").val("");
+                    $(result.data).insertBefore("#reply-form-container");
+                    appAlert.success(result.message, {duration: 10000});
+                    if (dropzone) {
+                        dropzone.removeAllFiles();
+                    }
+                }
+                else
+                {
+                    location.reload();
+                }
 
                 appAlert.success(result.message, {duration: 10000});
-
-                location.reload();
-
+                    
+               
                 //we'll check if the single user chat list is open. 
                 //if so, we'll assume that, this message created from the view.
                 //and we'll open the chat automatically.
