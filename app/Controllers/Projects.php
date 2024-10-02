@@ -1753,30 +1753,19 @@ class Projects extends Security_Controller {
 
     
     /* add a project resource  */
-
     function save_project_resource() {
 
         $id = $this->request->getPost('id');
         $project_id = $this->request->getPost('project_id');
 
         $this->validate_submitted_data(array(
-            "user_id" => "required"
+            "user_id" => "required",
+            "project_id" => "required"
         ));
 
         $user_id = $this->request->getPost('user_id');
         $hour_amount = $this->request->getPost('hour_amount');
           
-        $member_data = array(
-            "user_id" => $user_id,
-            "project_id" => $project_id
-        );
-
-        $save_member_id = $this->Project_members_model->save_member($member_data);
-
-        if ($save_member_id && $save_member_id != "exists") {
-            log_notification("project_member_added", array("project_id" => $project_id, "to_user_id" => $user_id));
-        }
-
         $data = array(
             "project_id" => $project_id,
             "user_id" => $user_id,
@@ -2040,6 +2029,16 @@ class Projects extends Security_Controller {
 
         if ($this->request->getPost('undo')) {
             if ($this->Project_members_model->delete($id, true)) {
+               
+                $project_member_info = $this->Project_members_model->get_one($id);
+
+                $project_resources_info = $this->Project_resources_model->get_details(array("deleted" => 0, "user_id" => $project_member_info->user_id, "project_id" => $project_member_info->project_id))->getRow();
+        
+                if($project_resources_info)
+                {
+                    $this->Project_resources_model->delete($project_resources_info->id, true);
+                }
+
                 echo json_encode(array("success" => true, "data" => $this->_project_member_row_data($id), "message" => app_lang('record_undone')));
             } else {
                 echo json_encode(array("success" => false, app_lang('error_occurred')));
@@ -2050,6 +2049,14 @@ class Projects extends Security_Controller {
                 $project_member_info = $this->Project_members_model->get_one($id);
 
                 log_notification("project_member_deleted", array("project_id" => $project_member_info->project_id, "to_user_id" => $project_member_info->user_id));
+
+                $project_resources_info = $this->Project_resources_model->get_details(array("deleted" => 0,"user_id" => $project_member_info->user_id, "project_id" => $project_member_info->project_id))->getRow();
+        
+                if($project_resources_info)
+                {
+                    $this->Project_resources_model->delete($project_resources_info->id);
+                }
+
                 echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
             } else {
                 echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
