@@ -25824,12 +25824,22 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
 			
 			$.each(data, function(key, value){
 				
-				var mockFile = { 
+				 // Cria um mockFile com base nos dados existentes
+				 var mockFile = { 
 					name: value.name, 
 					size: value.size,
-					accepted: true
-				}
-                thisDropzone.addFile(mockFile);
+					accepted: true,
+					type: value.type || 'image/png' // Define o tipo como 'image/png' ou o tipo real se estiver disponível
+				};
+			
+				// Adiciona o arquivo existente ao Dropzone
+				thisDropzone.displayExistingFile(mockFile, value.url);
+				
+				// Adiciona o mockFile ao Dropzone
+				thisDropzone.addFile(mockFile);
+			
+				// Aqui você pode adicionar o arquivo ao array de arquivos
+				thisDropzone.files.push(mockFile);
 				// thisDropzone.files.push(mockFile);
 				// thisDropzone.displayExistingFile(mockFile, value.url)               
 			});

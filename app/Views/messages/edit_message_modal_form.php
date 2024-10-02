@@ -36,6 +36,22 @@
     <?php echo form_close(); ?>
 </div>
 <script type="text/javascript">
+
+
+    function getFileType(filename) {
+        var extension = filename.split('.').pop().toLowerCase(); // Obtém a extensão em minúsculas
+        var mimeTypes = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'pdf': 'application/pdf',
+            // Adicione mais tipos conforme necessário
+        };
+
+        return mimeTypes[extension] || 'application/octet-stream'; // Tipo padrão
+    }
+
     $(document).ready(function () {
         var uploadUrl = "<?php echo get_uri("messages/upload_file"); ?>";
         var validationUrl = "<?php echo get_uri("messages/validate_message_file"); ?>";
@@ -49,7 +65,8 @@
                 
                // dropzone.emit("addedfile", mockFile);  // Simula que o arquivo foi adicionado ao Dropzone
                 <?php $target_path = get_setting("timeline_file_path");?>
-                var mockFile = { name: file.file_name, size: file.size, accepted: true, url: "<?php echo get_uri($target_path) ?>" + file.file_name }; // Cria um objeto mock do arquivo
+                
+                var mockFile = { name: file.file_name, size: file.size, accepted: true, url: "<?php echo get_uri($target_path) ?>" + file.file_name, type: getFileType(file.file_name)}; // Cria um objeto mock do arquivo
                 dropzoneFiles.push(mockFile); // Adiciona o arquivo ao array de arquivos
             });
         <?php endif; ?>
