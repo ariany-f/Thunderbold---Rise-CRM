@@ -93,9 +93,9 @@
                     $("#reply_message").val("");
                     $(result.data).insertBefore("#reply-form-container");
                     appAlert.success(result.message, {duration: 10000});
-                    if (dropzone) {
-                        dropzone.removeAllFiles();
-                    }
+                    // if (dropzone) {
+                    //     dropzone.removeAllFiles();
+                    // }
                 }
                 else
                 {
