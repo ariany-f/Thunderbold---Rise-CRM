@@ -42,6 +42,26 @@
 
         var dropzone = attachDropzoneWithForm("#new-message-dropzone", uploadUrl, validationUrl);
 
+        <?php if (!empty($model_info->files)) : ?>
+            var existingFiles = <?php echo json_encode(unserialize($model_info->files)); ?>; // Converte os arquivos existentes em JSON
+            
+            existingFiles.forEach(function(file) {
+                var mockFile = { name: file.file_name, size: file.size }; // Cria um objeto mock do arquivo
+                dropzone.emit("addedfile", mockFile);  // Simula que o arquivo foi adicionado ao Dropzone
+                
+                // Ajuste o caminho da miniatura se necessário
+                var thumbnailUrl = "<?php echo get_uri('uploads/messages/' . $model_info->id . '/'); ?>" + file.file_name;
+                
+                // Se o arquivo for uma imagem, carregue a miniatura
+                if (file.is_image) {  // Supondo que exista uma propriedade 'is_image' indicando se é uma imagem
+                    dropzone.emit("thumbnail", mockFile, thumbnailUrl); // Exibe a miniatura
+                }
+                
+                dropzone.emit("complete", mockFile);  // Marca o arquivo como completo
+                dropzone.files.push(mockFile);  // Adiciona o arquivo à lista de arquivos do Dropzone
+            });
+        <?php endif; ?>
+
         $("#message-form").appForm({
             onSuccess: function (result) {
 
