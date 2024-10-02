@@ -25776,7 +25776,7 @@ getRandomAlphabet = function (length) {
 };
 
 
-attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, options) {
+attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, options, data = {}) {
     var $dropzonePreviewArea = $(dropzoneTarget),
             $dropzonePreviewScrollbar = $dropzonePreviewArea.find(".post-file-dropzone-scrollbar"),
             $previews = $dropzonePreviewArea.find(".post-file-previews"),
@@ -25819,6 +25819,19 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
             formData.append(AppHelper.csrfTokenName, AppHelper.csrfHash);
         },
         init: function () {
+					
+			var thisDropzone = this
+			
+			$.each(data, function(key, value){           
+				var mockFile = { 
+					name: value.name, 
+					size: value.size,
+					accepted: true
+				}
+				thisDropzone.files.push(mockFile);
+				thisDropzone.displayExistingFile(mockFile, value.url)               
+			});
+
             this.on("maxfilesexceeded", function (file) {
                 this.removeAllFiles();
                 this.addFile(file);

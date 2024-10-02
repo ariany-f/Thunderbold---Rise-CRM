@@ -40,32 +40,22 @@
         var uploadUrl = "<?php echo get_uri("messages/upload_file"); ?>";
         var validationUrl = "<?php echo get_uri("messages/validate_message_file"); ?>";
 
-        var dropzone = attachDropzoneWithForm("#new-message-dropzone", uploadUrl, validationUrl);
 
+        var dropzoneFiles = []; // Array de arquivos
         <?php if (!empty($model_info->files)) : ?>
             var existingFiles = <?php echo json_encode(unserialize($model_info->files)); ?>; // Converte os arquivos existentes em JSON
            
             existingFiles.forEach(function(file) {
-                var mockFile = { name: file.file_name, size: file.size }; // Cria um objeto mock do arquivo
-                // dropzone.emit("addedfile", mockFile);  // Simula que o arquivo foi adicionado ao Dropzone
                 
-                // // Ajuste o caminho da miniatura se necessário
+               // dropzone.emit("addedfile", mockFile);  // Simula que o arquivo foi adicionado ao Dropzone
                 <?php $target_path = get_setting("timeline_file_path");?>
-                var thumbnailUrl = "<?php echo get_uri($target_path); ?>" + file.file_name;
-                
-                // // Se o arquivo for uma imagem, carregue a miniatura
-                // if (file.is_image) {  // Supondo que exista uma propriedade 'is_image' indicando se é uma imagem
-                //     dropzone.emit("thumbnail", mockFile, thumbnailUrl); // Exibe a miniatura
-                // }
-                
-                // dropzone.emit("complete", mockFile);  // Marca o arquivo como completo
-                // dropzone.files.push(mockFile);  // Adiciona o arquivo à lista de arquivos do Dropzone
-                dropzone.displayExistingFile(mockFile, thumbnailUrl);
-                // Opcional: se você quiser adicionar algum comportamento adicional, como marcar o arquivo como removível
-                mockFile.previewElement.classList.add("dz-complete");
-
+                var mockFile = { name: file.file_name, size: file.size, accepted: true, url: "<?php echo get_uri($target_path) ?>" + file.file_name }; // Cria um objeto mock do arquivo
+                dropzoneFiles.push(mockFile); // Adiciona o arquivo ao array de arquivos
             });
         <?php endif; ?>
+
+        var dropzone = attachDropzoneWithForm("#new-message-dropzone", uploadUrl, validationUrl, {}, dropzoneFiles);
+
 
         $("#message-form").appForm({
             onSuccess: function (result) {
