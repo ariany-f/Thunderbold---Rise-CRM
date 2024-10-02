@@ -7,7 +7,6 @@
         }
         ?>
     </div>
-
     <div class="table-responsive">
         <table id="manager-table" class="b-b-only" width="100%">
         </table>
@@ -32,7 +31,7 @@
             source: '<?php echo_uri("projects/project_resource_list_data/" . $project_id . "/manager") ?>',
             hideTools: true,
             columns: [
-                {title: 'Nome'},
+                {title: 'Nome', "class":"text-left w400"},
                 {title: 'Valor/Hora'},
                 {title: '', "class": "text-center option w100"}
             ]
@@ -43,7 +42,7 @@
             hideTools: true,
             displayLength: 500,
             columns: [
-                {title: 'Membro'},
+                {title: 'Membro', "class":"text-left w400"},
                 {title: 'Valor/Hora'},
                 {title: '', "class": "text-center option w100"}
             ]
