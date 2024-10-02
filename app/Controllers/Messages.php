@@ -1027,6 +1027,46 @@ class Messages extends Security_Controller {
         }
     }
 
+    function edit_message_modal_form($id) {
+
+        $this->check_message_user_permission();
+
+        $view_data['model_info'] = $this->Messages_model->get_one($id);
+
+        return $this->template->view('messages/edit_message_modal_form', $view_data);
+    }
+
+
+     /* send new message*/
+
+     function edit_message() {
+    
+        $this->validate_submitted_data(array(
+            "message" => "required",
+        ));
+
+        $id = $this->request->getPost('id');
+
+        $target_path = get_setting("timeline_file_path");
+        $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "message");
+
+        $message_data = array(
+            "message" => $this->request->getPost('message'),
+        );
+
+        $message_data = clean_data($message_data);
+
+        $message_data["files"] = $files_data; //don't clean serilized data
+
+        $save_id = $this->Messages_model->ci_save($message_data, $id);
+
+        if ($save_id) {
+            echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), "id" => $save_id));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
 
     /* reply to an existing message */
 

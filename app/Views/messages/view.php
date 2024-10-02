@@ -234,11 +234,11 @@
     }
 
 
-
+    
 
     foreach ($replies as $reply_info) {
         ?>
-        <?php echo view("messages/reply_row", array("reply_info" => $reply_info)); ?>
+        <?php echo view("messages/reply_row", array("reply_info" => $reply_info, "ended" => $message_info->ended)); ?>
     <?php } ?>
 
     <?php if(!$message_info->ended) { ?>
