@@ -25804,6 +25804,7 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
 
     var postFilesDropzone = new Dropzone(dropzoneTarget, {
         url: uploadUrl,
+		autoDiscover: false,
         thumbnailWidth: 80,
         thumbnailHeight: 80,
         parallelUploads: 20,
@@ -25824,42 +25825,22 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
 			
 			$.each(data, function(key, value){
 				
-				// Cria um mockFile com base nos dados existentes
-				var mockFile = { 
+				 // Cria um mockFile com base nos dados existentes
+				 var mockFile = { 
 					name: value.name, 
 					size: value.size,
 					accepted: true,
-					dataURL: value.url, 
-					url: value.url, 
-					kind: 'image',
-					path: value.url, 
-					type: value.type // Define o tipo como 'image/png' ou o tipo real se estiver disponível
+					type: value.type || 'image/png' // Define o tipo como 'image/png' ou o tipo real se estiver disponível
 				};
-
-				// Cria um Blob fictício a partir de um ArrayBuffer ou de qualquer outra fonte de dados
-				// Para este exemplo, vamos supor que você tenha algum ArrayBuffer ou dados de imagem
-				var imageData = new Uint8Array(mockFile.size); // Aqui você deve ter os dados reais do arquivo
-				var blob = new Blob([imageData], { type: mockFile.type });
-
-				// Adiciona uma string aleatória ao nome da imagem
-				// var imageName = "image_" + getRandomAlphabet(5) + ".png"; 
-				var newImage = new File([blob], mockFile.name, { type: mockFile.type });
-
-
-				console.log(newImage)
-				console.log(mockFile)
-				// Adiciona a nova imagem ao Dropzone
-				thisDropzone.addFile(newImage);
 			
 				// Adiciona o arquivo existente ao Dropzone
 				
 				// Adiciona o mockFile ao Dropzone
-				//thisDropzone.addFile(mockFile);
-				//thisDropzone.
+				thisDropzone.addFile(mockFile);
 			
 				// Aqui você pode adicionar o arquivo ao array de arquivos
 				//thisDropzone.files.push(mockFile);
-				//thisDropzone.displayExistingFile(mockFile, value.url);
+				thisDropzone.displayExistingFile(mockFile, value.url);
 				// thisDropzone.files.push(mockFile);
 				// thisDropzone.displayExistingFile(mockFile, value.url)               
 			});
