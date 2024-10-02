@@ -51,6 +51,7 @@
 
         return mimeTypes[extension] || 'application/octet-stream'; // Tipo padrão
     }
+    
 
     $(document).ready(function () {
         var uploadUrl = "<?php echo get_uri("messages/upload_file"); ?>";
@@ -66,7 +67,7 @@
                // dropzone.emit("addedfile", mockFile);  // Simula que o arquivo foi adicionado ao Dropzone
                 <?php $target_path = get_setting("timeline_file_path");?>
                 
-                var mockFile = { name: file.file_name, size: file.size, accepted: true, url: "<?php echo get_uri($target_path) ?>" + file.file_name, type: getFileType(file.file_name)}; // Cria um objeto mock do arquivo
+                var mockFile = { name: file.file_name, size: file.size, accepted: true, url: file.file_name, type: getFileType(file.file_name)}; // Cria um objeto mock do arquivo
                 dropzoneFiles.push(mockFile); // Adiciona o arquivo ao array de arquivos
             });
         <?php endif; ?>

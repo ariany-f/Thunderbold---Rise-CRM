@@ -25777,6 +25777,7 @@ getRandomAlphabet = function (length) {
 
 
 attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, options, data = {}) {
+	
     var $dropzonePreviewArea = $(dropzoneTarget),
             $dropzonePreviewScrollbar = $dropzonePreviewArea.find(".post-file-dropzone-scrollbar"),
             $previews = $dropzonePreviewArea.find(".post-file-previews"),
@@ -25804,11 +25805,11 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
 
     var postFilesDropzone = new Dropzone(dropzoneTarget, {
         url: uploadUrl,
-		autoDiscover: false,
         thumbnailWidth: 80,
         thumbnailHeight: 80,
         parallelUploads: 20,
         maxFilesize: 3000,
+		autoProcessQueue : false,
         previewTemplate: previewTemplate,
         dictDefaultMessage: AppLanugage.fileUploadInstruction,
         autoQueue: true,
@@ -25822,27 +25823,30 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
         init: function () {
 					
 			var thisDropzone = this
-			
+						
 			$.each(data, function(key, value){
 				
-				 // Cria um mockFile com base nos dados existentes
-				 var mockFile = { 
+					// Cria um mockFile com base nos dados existentes
+				var mockFile = { 
 					name: value.name, 
 					size: value.size,
-					accepted: true,
-					type: value.type || 'image/png' // Define o tipo como 'image/png' ou o tipo real se estiver disponível
+					type: value.type || 'image/png', // Define o tipo como 'image/png' ou o tipo real se estiver disponível
+					url: value.url // URL para exibição do arquivo
 				};
+
+				// Cria um Blob fictício a partir de um ArrayBuffer ou de qualquer outra fonte de dados
+				// Aqui, você deve ter os dados reais do arquivo. Por exemplo, você pode buscar o arquivo via AJAX ou ter os dados em um ArrayBuffer.
+				var imageData = new Uint8Array(mockFile.size); // Aqui você deve ter os dados reais do arquivo
+				var blob = new Blob([imageData], { type: mockFile.type });
+
+				// Cria um novo arquivo com o Blob
+				var newFile = new File([blob], mockFile.name, { type: mockFile.type });
+
+				// // Adiciona o arquivo ao Dropzone
 			
-				// Adiciona o arquivo existente ao Dropzone
-				
-				// Adiciona o mockFile ao Dropzone
-				thisDropzone.addFile(mockFile);
-			
-				// Aqui você pode adicionar o arquivo ao array de arquivos
-				//thisDropzone.files.push(mockFile);
-				thisDropzone.displayExistingFile(mockFile, value.url);
-				// thisDropzone.files.push(mockFile);
-				// thisDropzone.displayExistingFile(mockFile, value.url)               
+				thisDropzone.addFile(newFile);
+				thisDropzone.emit("addedfile", newFile);
+				thisDropzone.emit("complete", newFile);
 			});
 
             this.on("maxfilesexceeded", function (file) {
