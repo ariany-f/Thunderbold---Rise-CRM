@@ -25827,37 +25827,36 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
 			{
 				$.each(files, function(key, value){
 					
-					// Cria um mockFile com base nos dados existentes
-					if(value.name != '')
-					{
-						console.log(value.url)
-						var mockFile = { 
-							name: value.name, 
-							dataURL: value.url,
-							path: value.url,
-							size: value.size,
-							type: value.type, // Define o tipo como 'image/png' ou o tipo real se estiver disponível
-							url: value.url // URL para exibição do arquivo
-						};
-	
-						// Cria um Blob fictício a partir de um ArrayBuffer ou de qualquer outra fonte de dados
-						// Aqui, você deve ter os dados reais do arquivo. Por exemplo, você pode buscar o arquivo via AJAX ou ter os dados em um ArrayBuffer.
-						var imageData = new Uint8Array(mockFile.size); // Aqui você deve ter os dados reais do arquivo
-						var blob = new Blob([imageData], { type: mockFile.type });
-	
-						// Cria um novo arquivo com o Blob
-						var newFile = new File([blob], mockFile.name, { type: mockFile.type });
-	
-						// // Adiciona o arquivo ao Dropzone
-					
-						thisDropzone.addFile(newFile);
-					//	thisDropzone.emit("addedfile", newFile);
-					//	thisDropzone.emit("complete", newFile);
-						//thisDropzone.addFile(newFile);
-	
-						// Exibe o arquivo existente (se houver um URL)
-						thisDropzone.displayExistingFile(newFile, mockFile.url);
-					}
+					var mockFile = { 
+						name: value.name, 
+						dataURL: value.url,
+						path: value.url,
+						size: value.size,
+						type: value.type, // Define o tipo como 'image/png' ou o tipo real se estiver disponível
+						url: value.url // URL para exibição do arquivo
+					};
+
+					 // Usar fetch para obter a imagem
+					 fetch(mockFile.url)
+					 .then(response => {
+						 if (!response.ok) {
+							 throw new Error('Network response was not ok');
+						 }
+						 return response.blob(); // Retorna a resposta como um Blob
+					 })
+					 .then(blob => {
+						 // Cria um novo arquivo com o Blob
+						 var newFile = new File([blob], mockFile.name, { type: mockFile.type });
+		 
+						 // Adiciona o arquivo ao Dropzone
+						 thisDropzone.addFile(newFile);
+		 
+						 // Exibe o arquivo existente (se houver um URL)
+						 thisDropzone.displayExistingFile(newFile, mockFile.url);
+					 })
+					 .catch(error => {
+						 console.error('There was a problem with the fetch operation:', error);
+					 });
 				});
 			}
 
