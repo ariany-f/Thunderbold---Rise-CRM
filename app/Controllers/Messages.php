@@ -1068,7 +1068,10 @@ class Messages extends Security_Controller {
         $save_id = $this->Messages_model->ci_save($message_data, $id);
 
         if ($save_id) {
-            echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), "id" => $save_id));
+            $options = array("id" => $save_id, "user_id" => $this->login_user->id);
+            $view_data['reply_info'] = $this->Messages_model->get_details($options)->row;
+
+            echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), "id" => $save_id, 'data' => $this->template->view("messages/reply_row", $view_data)));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
