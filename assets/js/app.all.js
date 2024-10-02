@@ -25822,14 +25822,16 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
 					
 			var thisDropzone = this
 			
-			$.each(data, function(key, value){           
+			$.each(data, function(key, value){
+				
 				var mockFile = { 
 					name: value.name, 
 					size: value.size,
 					accepted: true
 				}
-				thisDropzone.files.push(mockFile);
-				thisDropzone.displayExistingFile(mockFile, value.url)               
+                thisDropzone.addFile(mockFile);
+				// thisDropzone.files.push(mockFile);
+				// thisDropzone.displayExistingFile(mockFile, value.url)               
 			});
 
             this.on("maxfilesexceeded", function (file) {
