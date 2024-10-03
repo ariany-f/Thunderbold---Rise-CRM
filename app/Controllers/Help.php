@@ -373,7 +373,9 @@ class Help extends Security_Controller {
             if ($save_announcement_id) {
                 //send log notification
                 if ($data_announcement["share_with"]) {
-                    log_notification("new_announcement_created", array("announcement_id" => $save_announcement_id));
+                    if (!$id) {
+                        log_notification("new_announcement_created", array("announcement_id" => $save_announcement_id));
+                    }
                 }
             } 
             // send log notification
