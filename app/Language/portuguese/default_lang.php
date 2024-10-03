@@ -300,6 +300,9 @@ $lang["create_an_account_as_a_client_contact"] = "Criar uma conta como um contat
 
 /* messages */
 $lang["messages"] = "Mensagens";
+$lang["compose_for_group"] = "Criar assunto em um grupo";
+$lang["group"] = "Grupo de chamados";
+$lang["select_group"] = "Selecione um grupo";
 $lang["message"] = "Mensagem";
 $lang["compose"] = "Escrever";
 $lang["send_message"] = "Enviar mensagem";
@@ -359,6 +362,10 @@ $lang["all_projects"] = "Todos os Projetos";
 $lang["member"] = "Membro";
 $lang["overview"] = "Visão geral";
 $lang["project_members"] = "Os membros do projeto";
+$lang["hour_amount"] = "Valor/Hora";
+$lang["add_manager"] = "Add Gerente";
+$lang["configure_resource"] = "Configurar Recurso";
+$lang["managers"] = "Gerentes";
 $lang["add_member"] = "Add membro";
 $lang["manage_members"] = "Gerenciar membros";
 $lang["members"] = "Membros";
@@ -372,7 +379,7 @@ $lang["staff"] = "Usuário do sistema";
 $lang["group_name"] = "Nome do Grupo";
 $lang["create_conversation"] = "Criar Chat da Tarefa no Grupo";
 $lang["enter_conversation"] = "Entrar no Chat da Tarefa";
-$lang["convert_task"] = "Tarefa";
+$lang["convert_task"] = "Criar Tarefa";
 $lang["project_timeline"] = "Cronograma do projeto";
 $lang["open_projects"] = "Projetos abertos";
 $lang["projects_completed"] = "Projetos completos";
@@ -384,6 +391,7 @@ $lang["project_comment_reply"] = "Respostas dos comentários do projeto";
 $lang["task_comment_reply"] = "Respostas dos comentários das tarefas";
 $lang["file_comment_reply"] = "Respostas dos comentários com arquivo";
 $lang["customer_feedback_reply"] = "Resposta dos feedback dos clientes";
+$lang["change_group_name"] = "Alterar nome do grupo";
 
 /* expense */
 $lang["add_category"] = "Add categoria";
@@ -413,6 +421,7 @@ $lang["history"] = "Histórico";
 
 /* timesheet */
 $lang["timesheets"] = "Gestão de Tempo";
+$lang["resources"] = "Gestão de Recursos";
 $lang["log_time"] = "Registro de Horário";
 $lang["timesheet_total"] = "Qtd Hr Registradas";
 $lang["edit_timelog"] = "Editar registro de horário";
@@ -1542,7 +1551,7 @@ $lang["create_tickets_only_by_registered_emails"] = "Crie ingressos apenas por e
 $lang["icon"] = "Ícone";
 $lang["help_articles"] = "Artigos de ajuda";
 $lang["help_categories"] = "Categorias de ajuda";
-$lang["knowledge_base_articles"] = "artigos KB";
+$lang["knowledge_base_articles"] = "Artigos KB";
 $lang["knowledge_base_categories"] = "Categorias KB";
 
 $lang["rtl"] = "RTL";

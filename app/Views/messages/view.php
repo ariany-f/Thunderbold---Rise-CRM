@@ -133,7 +133,7 @@
 
                                 <span class="float-end dropdown">
                                     <div class="text-off dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true" >
-                                        <i data-feather="chevron-down" class="icon"></i>
+                                        <i data-feather="settings" class="icon"></i>
                                     </div>
                                     <ul class="dropdown-menu" role="menu">
                                         <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete'), array("class" => "dropdown-item", "title" => app_lang('delete'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
@@ -141,10 +141,12 @@
                                             <?php if($message_info->ended) { ?>
                                                 <li role="presentation"><?php echo ajax_anchor(get_uri("messages/reactive_my_messages/$message_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reactive_conversation'), array("class" => "dropdown-item", "title" => app_lang('reactive_conversation'), "data-reload-on-success" => "1")); ?> </li>
                                             <?php } else { ?>
-                                                <li role="presentation"><?php echo ajax_anchor(get_uri("messages/end_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('end_conversation'), array("class" => "dropdown-item", "title" => app_lang('end_conversation'), "data-reload-on-success" => "1")); ?> </li>
+                                                <li role="presentation"><?php echo ajax_anchor(get_uri("messages/end_my_messages/$message_info->id"), "<i data-feather='wifi-off' class='icon-16'></i> " . app_lang('end_conversation'), array("class" => "dropdown-item", "title" => app_lang('end_conversation'), "data-reload-on-success" => "1")); ?> </li>
                                             <?php } ?>
-                                            <?php if((!$message_info->task_id) and $message_info->group_name != "") { ?>
+                                            <?php if((!$message_info->task_id) and $message_info->group_name != "" and $message_info->project_id) { ?>
                                                 <li role="presentation"><?php echo ajax_anchor(get_uri("messages/create_task/" . $message_info->id . ""), "<i data-feather='check-circle' class='icon-16'></i> " . app_lang('convert_task'), array("class" => "dropdown-item", "id" => "convert_task", "title" => app_lang('create_task'), "data-reload-on-success" => "1"));?></li>
+                                            <?php } else if((!$message_info->task_id) and $message_info->group_name != "" and (!$message_info->project_id)) { ?>
+                                                <li role="presentation"><?php echo modal_anchor(get_uri("messages/groups_modal_form/" . $message_info->group_id . ""), "<i data-feather='edit-2' class='icon-16'></i> " . app_lang('change_group_name'), array("class" => "dropdown-item", "id" => "convert_task", "title" => app_lang('change_group_name'), "data-reload-on-success" => "1"));?></li>
                                             <?php } ?>
                                         <?php } ?>
                                     </ul>
@@ -232,11 +234,11 @@
     }
 
 
-
+    
 
     foreach ($replies as $reply_info) {
         ?>
-        <?php echo view("messages/reply_row", array("reply_info" => $reply_info)); ?>
+        <?php echo view("messages/reply_row", array("reply_info" => $reply_info, "ended" => $message_info->ended)); ?>
     <?php } ?>
 
     <?php if(!$message_info->ended) { ?>

@@ -4,7 +4,7 @@
             <div class="d-flex bg-white">
                 <div class="flex-shrink-0">
                     <span class="avatar avatar-sm">
-                        <img src="<?php echo get_avatar($leave_info->applicant_avatar); ?>" alt="..." />
+                        <img src="<?php echo get_avatar($leave_info->applicant_avatar, $leave_info->applicant_name); ?>" alt="..." />
                     </span>
                 </div>
                 <div class="ps-2 w-100 pt5">
@@ -41,7 +41,7 @@
                     <tr>
                         <td> <?php echo app_lang('rejected_by'); ?></td>
                         <td><?php
-                            $image_url = get_avatar($leave_info->checker_avatar);
+                            $image_url = get_avatar($leave_info->checker_avatar, $leave_info->checker_name);
                             echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span><span>" . $leave_info->checker_name . "</span>";
                             ?>
                         </td>
@@ -51,7 +51,7 @@
                     <tr>
                         <td> <?php echo app_lang('approved_by'); ?></td>
                         <td><?php
-                            $image_url = get_avatar($leave_info->checker_avatar);
+                            $image_url = get_avatar($leave_info->checker_avatar, $leave_info->checker_name);
                             echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span><span>" . $leave_info->checker_name . "</span>";
                             ?>
                         </td>

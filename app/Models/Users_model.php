@@ -470,6 +470,18 @@ class Users_model extends Crud_model {
         return $this->db->query($sql)->getRow();
     }
 
+    function get_staff_member() {
+        $users_table = $this->db->prefixTable('users');
+        
+        $sql = "SELECT $users_table.id
+                FROM $users_table
+                WHERE $users_table.deleted = 0 
+                  AND $users_table.user_type = 'staff' 
+                  AND $users_table.role_id = 3 LIMIT 1";
+                  
+        return $this->db->query($sql)->getRow();
+    }
+
     function get_other_clients_of_this_client_contact($email, $id) {
         $users_table = $this->db->prefixTable('users');
         $clients_table = $this->db->prefixTable('clients');

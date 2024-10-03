@@ -6,7 +6,7 @@
                 <div class="d-flex pb10 b-b">
                     <div class="flex-shrink-0 pl15">
                         <span class="avatar avatar-xs">
-                            <img src="<?php echo get_avatar($member->image); ?>" alt="..." />
+                            <img src="<?php echo get_avatar($member->image, ($member->first_name . " " . $member->last_name)); ?>" alt="..." />
                         </span>
                     </div>
                     <div class="w-100 ps-2">

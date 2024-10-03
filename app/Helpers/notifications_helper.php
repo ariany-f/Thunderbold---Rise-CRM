@@ -1041,7 +1041,7 @@ if (!function_exists('send_push_notifications')) {
             $data = array(
                 "message" => $message,
                 "title" => $user_id ? $user_info->first_name . " " . $user_info->last_name : get_setting('app_title'),
-                "icon" => get_avatar($user_id ? $user_info->image : "system_bot"),
+                "icon" => get_avatar($user_id ? $user_info->image : "system_bot", ($user_id ? ($user_info->first_name . " " . $user_info->last_name) : "")),
                 "notification_id" => $notification_id,
                 "url_attributes" => $url_attributes
             );
@@ -1191,7 +1191,7 @@ if (!function_exists('send_slack_notification')) {
 
             $user_info = $ci->Users_model->get_one($user_id);
             $title = $user_id ? ($user_info->first_name . " " . $user_info->last_name) : get_setting('app_title');
-            $avatar = get_avatar($user_id ? $user_info->image : "system_bot");
+            $avatar = get_avatar($user_id ? $user_info->image : "system_bot", ($user_id ? ($user_info->first_name . " " . $user_info->last_name) : ""));
 
             $data = array(
                 "text" => "$title $message",

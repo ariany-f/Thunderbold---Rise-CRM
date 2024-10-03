@@ -265,7 +265,7 @@ class Attendance extends Security_Controller {
 
     //prepare a row of attendance list
     private function _make_row($data) {
-        $image_url = get_avatar($data->created_by_avatar);
+        $image_url = get_avatar($data->created_by_avatar, $data->created_by_user);
         $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->created_by_user";
         $out_time = $data->out_time;
         if (!is_date_exists($out_time)) {
@@ -377,7 +377,7 @@ class Attendance extends Security_Controller {
 
         $result = array();
         foreach ($list_data as $data) {
-            $image_url = get_avatar($data->created_by_avatar);
+            $image_url = get_avatar($data->created_by_avatar, $data->created_by_user);
             $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->created_by_user";
 
             $duration = convert_seconds_to_time_format(abs($data->total_duration));
@@ -427,7 +427,7 @@ class Attendance extends Security_Controller {
         $has_data = false;
 
         foreach ($list_data as $data) {
-            $image_url = get_avatar($data->created_by_avatar);
+            $image_url = get_avatar($data->created_by_avatar, $data->created_by_user);
             $user = "<span class='avatar avatar-xs mr10'><img src='$image_url'></span> $data->created_by_user";
 
 

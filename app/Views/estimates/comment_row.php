@@ -2,7 +2,7 @@
     <div class="d-flex bg-white">
         <div class="flex-shrink-0 pl10 mr10">
             <span class="avatar avatar-xs">
-                <img src="<?php echo get_avatar($comment->created_by_avatar); ?>" alt="..." />
+                <img src="<?php echo get_avatar($comment->created_by_avatar, $comment->created_by_user); ?>" alt="..." />
             </span>
         </div>
         <div class="w-100">

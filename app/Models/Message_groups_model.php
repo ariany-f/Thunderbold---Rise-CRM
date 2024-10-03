@@ -100,6 +100,41 @@ class Message_groups_model extends Crud_model {
         return $raw_query;
     }
 
+    function get_groups_without_messages($options = array()) {
+        $groups_table = $this->db->prefixTable('message_groups');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+        $messages_table = $this->db->prefixTable('messages');
+        $projects_table = $this->db->prefixTable('projects');
+    
+        $where = "1=1";
+    
+        $user_id = $this->_get_clean_value($options, "user_id");
+        if ($user_id) {
+            $where .= " AND $message_group_members_table.user_id=$user_id";
+        }
+    
+        $sql = "SELECT 
+                    $groups_table.id, 
+                    $groups_table.group_name, 
+                    $groups_table.project_id, 
+                    $projects_table.is_ticket as is_ticket,
+                    (SELECT COUNT(*) FROM $message_group_members_table WHERE $message_group_members_table.message_group_id = $groups_table.id) as member_count
+                FROM 
+                    $groups_table
+                LEFT JOIN 
+                    $message_group_members_table 
+                    ON $message_group_members_table.message_group_id = $groups_table.id
+                LEFT JOIN 
+                    $projects_table 
+                    ON $projects_table.id = $groups_table.project_id
+                WHERE 
+                    $where 
+                GROUP BY 
+                    $groups_table.id 
+                ORDER BY $groups_table.id ASC";
+    
+        return $this->db->query($sql);
+    }
 
     function get_groups_for_messaging($options = array()) {
         $groups_table = $this->db->prefixTable('message_groups');
@@ -139,6 +174,29 @@ class Message_groups_model extends Crud_model {
                 ORDER BY 
                     last_message_date DESC, $groups_table.id ASC";
     
+        return $this->db->query($sql);
+    }
+
+    function get_groups_for_member_messaging($user_id = 0) {
+        $users_table = $this->db->prefixTable('users');
+        $message_groups_table = $this->db->prefixTable('message_groups');
+        $message_group_members_table = $this->db->prefixTable('message_group_members');
+        $projects_table = $this->db->prefixTable('projects');
+
+        $where = "";
+
+        if($user_id != 0)
+        {
+            $where = " AND $message_group_members_table.user_id = $user_id";
+        }
+
+        $sql = "SELECT $message_groups_table.id, $message_groups_table.group_name
+        FROM $message_groups_table
+        INNER JOIN $message_group_members_table ON $message_group_members_table.message_group_id = $message_groups_table.id
+        INNER JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
+        WHERE $message_groups_table.deleted=0 AND $projects_table.is_ticket $where 
+        GROUP BY $message_groups_table.id ORDER BY $message_groups_table.group_name ASC";
+
         return $this->db->query($sql);
     }
 }

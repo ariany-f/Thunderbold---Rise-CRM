@@ -22,6 +22,22 @@
                             ?>
                         </strong>
                         <span class="text-off float-end"><?php echo format_to_relative_time($reply_info->created_at); ?></span>
+                        <!-- Permitir responder uma mensagem diretamente -->
+                        <?php if(isset($ended) && (!$ended)) { ?>
+                            <span class="float-end dropdown">
+                                <div class="text-off dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true" >
+                                    <i data-feather="chevron-down" class="icon"></i>
+                                </div>
+                                <ul class="dropdown-menu" role="menu">
+                                    <?php if($reply_info->from_user_id === $login_user->id) { ?>
+                                        <li role="presentation"><?php echo modal_anchor(get_uri("messages/edit_message_modal_form/$reply_info->id"), "<i data-feather='edit-2' class='icon-16'></i> " . app_lang('edit'), array("class" => "dropdown-item", "title" => app_lang('edit'), "data-post-id" => $reply_info->id)); ?> </li>
+                                    <?php } else { ?>
+                                        <li role="presentation"><?php //echo ajax_anchor(get_uri("messages/reply_reply_message/$reply_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reply'), array("class" => "dropdown-item", "title" => app_lang('reply'))); ?> </li>
+                                    <?php } ?>
+                                </ul>
+                            </span>
+                        <?php } ?>
+                        <!-- Permitir responder uma mensagem diretamente -->
                     </div>
                     <p><?php echo nl2br(link_it(process_images_from_content($reply_info->message))); ?></p>
 

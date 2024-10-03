@@ -152,6 +152,10 @@ if (!function_exists("make_project_tabs_data")) {
                                 $project_tabs["tickets"] = "projects/tickets/" . $project_info->id;
                             }
 
+                            if ($show_timesheet_info and $login_user->is_admin) {
+                                $project_tabs["resources"] = "projects/resources/" . $project_info->id;
+                            }
+
                             $project_tabs_of_hook_of_staff = array();
                             $project_tabs_of_hook_of_staff = app_hooks()->apply_filters('app_filter_team_members_project_details_tab', $project_tabs_of_hook_of_staff, $project_info->id);
                             $project_tabs_of_hook_of_staff = is_array($project_tabs_of_hook_of_staff) ? $project_tabs_of_hook_of_staff : array();
@@ -186,6 +190,11 @@ if (!function_exists("make_project_tabs_data")) {
                             if ($show_timesheet_info) {
                                 $project_tabs["timesheets"] = "projects/timesheets/" . $project_info->id;
                             }
+                            
+                            if ($show_timesheet_info) {
+                                $project_tabs["resources"] = "projects/resources/" . $project_info->id;
+                            }
+
 
                             if (get_setting("module_invoice") && !$project_info->is_ticket) {
                                 //check left menu settings
@@ -223,6 +232,8 @@ if (!function_exists("make_project_tabs_data")) {
                     <div role="tabpanel" class="tab-pane fade" id="project-expenses-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-contracts-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-tickets-section"></div>
+                    <div role="tabpanel" class="tab-pane fade" id="project-resources-section"></div>
+
 
                     <?php
                     if ($login_user->user_type === "staff") {

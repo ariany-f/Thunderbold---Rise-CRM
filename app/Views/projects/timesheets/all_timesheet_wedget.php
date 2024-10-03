@@ -17,7 +17,7 @@
                 $time = convert_seconds_to_time_format($user->total_sec);
                 ?>
                 <div class="user-avatar avatar-30 avatar-circle" data-bs-toggle='tooltip' title='<?php echo $user->user_name . " - " . $time; ?>'>
-                    <img alt="" src="<?php echo get_avatar($user->user_avatar); ?>">
+                    <img alt="" src="<?php echo get_avatar($user->user_avatar, $user->user_name); ?>">
                 </div>
                 <?php
             }

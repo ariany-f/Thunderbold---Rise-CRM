@@ -61,10 +61,23 @@
 
                     $addProjectMemberLink.trigger("click");
 
-                    $("#message-group-table").appTable({newData: result.data, dataId: result.id});
+                    if(result.data[0])
+                    {
+                        $("#message-table").appTable({newData: result.data[0], dataId: result.id});
+                    }
+                    else
+                    {
+                        location.reload();
+                    }
                 } else {
-                    $("#message-group-table").appTable({newData: result.data, dataId: result.id});
-
+                    if(result.data[0])
+                    {
+                        $("#message-table").appTable({newData: result.data[0], dataId: result.id});
+                    }
+                    else
+                    {
+                        location.reload();
+                    }
                     window.projectForm.closeModal();
                 }
             }

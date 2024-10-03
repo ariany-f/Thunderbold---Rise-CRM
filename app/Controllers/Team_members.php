@@ -945,7 +945,7 @@ class Team_members extends Security_Controller {
     private function _make_file_row($data) {
         $file_icon = get_file_icon(strtolower(pathinfo($data->file_name, PATHINFO_EXTENSION)));
 
-        $image_url = get_avatar($data->uploaded_by_user_image);
+        $image_url = get_avatar($data->uploaded_by_user_image, $data->uploaded_by_user_name);
         $uploaded_by = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->uploaded_by_user_name";
 
         $uploaded_by = get_team_member_profile_link($data->uploaded_by, $uploaded_by);

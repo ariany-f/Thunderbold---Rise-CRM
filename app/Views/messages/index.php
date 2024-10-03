@@ -5,9 +5,6 @@
         <div class="box">
             <div class="box-content message-button-list">
                 <ul class="list-group ">
-
-                   
-                   
                     <?php if(get_setting('module_message_group')) { ?>
 
                         <?php $count_group = count_unread_group_message(); ?>
@@ -15,19 +12,23 @@
                         <?php echo anchor(get_uri("messages/list_groups"), app_lang('groups') . ' <span class="badge '. ($count_group > 0 ? "bg-danger" : "badge-light") .'">' . $count_group . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
 
                     <?php } ?>
-
                     
                     <?php $count_inbox = count_unread_inbox_message(); ?>
                     
-                    <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
-                    
-                    <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?> 
+                    <?php if($login_user->user_type == 'staff') { ?>
+                        <?php echo modal_anchor(get_uri("messages/client_groups_modal_form/"), app_lang("compose_for_group"), array("class" => "list-group-item", "title" => app_lang('compose_for_group')));?>
+                        <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+                        <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?>
+                    <?php } else { ?>
+                        <?php if($count_inbox > 0) { ?>
+                            <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+                        <?php } ?>
+                        <?php echo modal_anchor(get_uri("messages/client_groups_modal_form/"), app_lang("compose"), array("class" => "list-group-item", "title" => app_lang('compose')));?>
+                    <?php } ?>
                     
                     <?php echo anchor(get_uri("messages/sent_items"), app_lang('sent_items'), array("class" => "list-group-item")); ?>
-                    
                 </ul>
             </div>
-
 
             <div class="box-content message-view ps-3" >
                 <div class="row">
@@ -47,11 +48,19 @@
                                 </div>
                                 <div class="tab-title clearfix no-border">
                                     <?php if ($mode === "inbox" || $mode === "sent_items") { ?>
-                                        <input type="text" id="search-messages" class="datatable-search" placeholder="<?php echo app_lang('search') ?>">
-                                    <?php } else if ($mode === "list_groups") { ?>
+                                        <div class="title-button-group ">
+                                            <input type="text" id="search-messages" class="datatable-search" placeholder="<?php echo app_lang('search') ?>">
+                                            <?php echo modal_anchor(get_uri("messages/modal_form/"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("compose"), array("class" => "btn btn-default", "title" => app_lang('compose')));?>
+                                        </div>
+                                    <?php } else if ($mode === "list_groups" and $login_user->user_type == 'staff') { ?>
                                         <div class="title-button-group ">
                                             <input type="text" id="search-messages" class="datatable-search" placeholder="<?php echo app_lang('search') ?>">
                                             <?php echo modal_anchor(get_uri("messages/groups_modal_form/"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("new_group"), array("class" => "btn btn-default", "title" => app_lang('new_group')));?>
+                                        </div>
+                                    <?php } else if ($mode === "list_groups" and $login_user->user_type != 'staff') { ?>
+                                        <div class="title-button-group ">
+                                            <input type="text" id="search-messages" class="datatable-search" placeholder="<?php echo app_lang('search') ?>">
+                                            <?php echo modal_anchor(get_uri("messages/client_groups_modal_form/"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang("compose"), array("class" => "btn btn-default", "title" => app_lang('compose')));?>
                                         </div>
                                     <?php } ?>
                                 </div>
@@ -113,10 +122,10 @@
         });
 
         var messagesTable = $('#message-table').DataTable();
+
         $('#search-messages').keyup(function () {
             messagesTable.search($(this).val()).draw();
         });
-
 
         /*load a message details*/
         $("body").on("click", "tr", function () {

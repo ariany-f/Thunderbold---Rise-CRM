@@ -299,7 +299,7 @@ class Leaves extends Security_Controller {
 
     //return required style/format for a application
     private function _prepare_leave_info($data) {
-        $image_url = get_avatar($data->applicant_avatar);
+        $image_url = get_avatar($data->applicant_avatar, $data->applicant_name);
         $data->applicant_meta = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span>" . $data->applicant_name;
 
         if (isset($data->status)) {

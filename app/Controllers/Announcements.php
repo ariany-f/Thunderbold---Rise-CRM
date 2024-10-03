@@ -233,7 +233,7 @@ class Announcements extends Security_Controller {
 
     //make a row of announcement list
     private function _make_row($data) {
-        $image_url = get_avatar($data->created_by_avatar);
+        $image_url = get_avatar($data->created_by_avatar, $data->created_by_user);
         $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->created_by_user";
         $option = "";
         if ($this->access_type === "all") {

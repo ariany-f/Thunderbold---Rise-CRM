@@ -72,7 +72,7 @@
 
             <div class="col-md-12 pt10 pb10">
                 <?php
-                $image_url = get_avatar($model_info->created_by_avatar);
+                $image_url = get_avatar($model_info->created_by_avatar, $model_info->created_by_name);
                 echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span><span>" . get_team_member_profile_link($model_info->created_by, $model_info->created_by_name, array("class" => "dark strong")) . "</span>";
                 ?>
             </div>

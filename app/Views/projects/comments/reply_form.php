@@ -8,7 +8,7 @@ if (isset($comment_id)) {
 <div class="mb15 pr15 d-flex">
     <div class="flex-shrink-0">
         <div class="avatar avatar-sm pr15">
-            <img src="<?php echo get_avatar($login_user->image); ?>" alt="..." />
+            <img src="<?php echo get_avatar($login_user->image, ($login_user->first_name . ' '. $login_user->last_name)); ?>" alt="..." />
         </div>
     </div>
 

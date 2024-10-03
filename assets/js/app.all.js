@@ -25776,7 +25776,8 @@ getRandomAlphabet = function (length) {
 };
 
 
-attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, options) {
+attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, options, files = {}) {
+	
     var $dropzonePreviewArea = $(dropzoneTarget),
             $dropzonePreviewScrollbar = $dropzonePreviewArea.find(".post-file-dropzone-scrollbar"),
             $previews = $dropzonePreviewArea.find(".post-file-previews"),
@@ -25808,6 +25809,7 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
         thumbnailHeight: 80,
         parallelUploads: 20,
         maxFilesize: 3000,
+		autoProcessQueue : true,
         previewTemplate: previewTemplate,
         dictDefaultMessage: AppLanugage.fileUploadInstruction,
         autoQueue: true,
@@ -25819,12 +25821,52 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
             formData.append(AppHelper.csrfTokenName, AppHelper.csrfHash);
         },
         init: function () {
-            this.on("maxfilesexceeded", function (file) {
-                this.removeAllFiles();
-                this.addFile(file);
-            });
+					
+			var thisDropzone = this
+			if(files.length > 0)
+			{
+				$.each(files, function(key, value){
+					
+					var mockFile = { 
+						name: value.name, 
+						dataURL: value.url,
+						path: value.url,
+						size: value.size,
+						type: value.type, // Define o tipo como 'image/png' ou o tipo real se estiver disponível
+						url: value.url // URL para exibição do arquivo
+					};
+
+					 // Usar fetch para obter a imagem
+					 fetch(mockFile.url)
+					 .then(response => {
+						 if (!response.ok) {
+							 throw new Error('Network response was not ok');
+						 }
+						 return response.blob(); // Retorna a resposta como um Blob
+					 })
+					 .then(blob => {
+						 // Cria um novo arquivo com o Blob
+						 var newFile = new File([blob], mockFile.name, { type: mockFile.type });
+		 
+						 // Adiciona o arquivo ao Dropzone
+						 thisDropzone.addFile(newFile);
+		 
+						 // Exibe o arquivo existente (se houver um URL)
+						 thisDropzone.displayExistingFile(newFile, mockFile.url);
+					 })
+					 .catch(error => {
+						 console.error('There was a problem with the fetch operation:', error);
+					 });
+				});
+			}
+
+            // this.on("maxfilesexceeded", function (file) {
+            //     this.removeAllFiles();
+            //     this.addFile(file);
+            // });
         },
         accept: function (file, done) {
+			
             if (file.name.length > 200) {
                 done(AppLanugage.fileNameTooLong);
             }
@@ -25895,6 +25937,7 @@ attachDropzoneWithForm = function (dropzoneTarget, uploadUrl, validationUrl, opt
             });
         },
         success: function (file) {
+			console.log(file)
             setTimeout(function () {
                 $(file.previewElement).find(".progress-bar-striped").removeClass("progress-bar-striped progress-bar-animated");
             }, 1000);
