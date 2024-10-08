@@ -236,6 +236,25 @@ if (!function_exists('convert_time_to_12hours_format')) {
 
 }
 
+if (!function_exists('is_valid_time_format')) {
+    // Função para validar se o horário está no formato correto
+    function is_valid_time_format($time) {
+        // Define o padrão para horas no formato 24 horas (HH:MM)
+        $pattern = '/^(?:2[0-3]|[01][0-9]):[0-5][0-9]$/';
+        return preg_match($pattern, $time);
+    }
+}
+
+if (!function_exists('calculate_hours_diff')) {
+    // Função para calcular a diferença em horas entre duas datas
+    function calculate_hours_diff($start_time, $end_time) {
+        $start_timestamp = strtotime($start_time);
+        $end_timestamp = strtotime($end_time);
+        $diff_in_seconds = $end_timestamp - $start_timestamp;
+        return $diff_in_seconds / 3600; // Convertendo para horas
+    }
+}
+
 /**
  * prepare a decimal value from a time string
  * 
@@ -298,6 +317,19 @@ if (!function_exists('convert_time_string_to_second')) {
 
 }
 
+
+/**
+ * get seconds form a given time string
+ * 
+ * @param string $time
+ * @return seconds
+ */
+if (!function_exists('convert_seconds_to_hours')) {
+    // Função para converter segundos em horas
+    function convert_seconds_to_hours($seconds) {
+        return $seconds / 3600;
+    }
+}
 
 /**
  * convert a datetime string to relative time 
