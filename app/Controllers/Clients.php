@@ -252,6 +252,8 @@ class Clients extends Security_Controller {
 
     private function _make_row($data, $custom_fields) {
 
+        $image_logo_url = get_avatar($data->image, ($data->company_name));
+        $user_logo_avatar = "<span class='avatar avatar-xs'><img src='$image_logo_url' alt='...'></span>";
 
         $image_url = get_avatar($data->contact_avatar, $data->primary_contact);
         $contact = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->primary_contact";
@@ -277,7 +279,9 @@ class Clients extends Security_Controller {
             $due = ignor_minor_value($data->invoice_value - $data->payment_received);
         }
 
-        $row_data = array($data->id,
+        $row_data = array(
+            $user_logo_avatar,
+            $data->id,
             anchor(get_uri("clients/view/" . $data->id), $data->company_name),
             $data->primary_contact ? $primary_contact : "",
             $group_list,
@@ -901,6 +905,48 @@ class Clients extends Security_Controller {
             return $this->template->view('clients/contacts/company_info_tab', $view_data);
         }
     }
+    
+    //save logo
+    function save_logo_image($client_id = 0) {
+        if (!$this->can_edit_clients()) {
+            app_redirect("forbidden");
+        }
+
+        //process the the file which has uploaded by dropzone
+        $profile_image = str_replace("~", ":", $this->request->getPost("profile_image"));
+
+        if ($profile_image) {
+            $profile_image = serialize(move_temp_file("avatar.png", get_setting("profile_image_path"), "", $profile_image));
+
+            //delete old file
+            delete_app_files(get_setting("profile_image_path"), array(@unserialize($client_info->image)));
+
+            $image_data = array("image" => $profile_image);
+            $this->Clients_model->ci_save($image_data, $client_id);
+            echo json_encode(array("success" => true, 'message' => app_lang('profile_image_changed')));
+        }
+
+        //process the the file which has uploaded using manual file submit
+        if ($_FILES) {
+            $profile_image_file = get_array_value($_FILES, "profile_image_file");
+            $image_file_name = get_array_value($profile_image_file, "tmp_name");
+            if ($image_file_name) {
+                if (!$this->check_profile_image_dimension($image_file_name)) {
+                    echo json_encode(array("success" => false, 'message' => app_lang('profile_image_error_message')));
+                    exit();
+                }
+
+                $profile_image = serialize(move_temp_file("avatar.png", get_setting("profile_image_path"), "", $image_file_name));
+
+                //delete old file
+                delete_app_files(get_setting("profile_image_path"), array(@unserialize($client_info->image)));
+
+                $image_data = array("image" => $profile_image);
+                $this->Clients_model->ci_save($image_data, $client_id);
+                echo json_encode(array("success" => true, 'message' => app_lang('profile_image_changed'), "reload_page" => true));
+            }
+        }
+    }
 
     /* load contact's social links tab view */
 
@@ -1125,6 +1171,7 @@ class Clients extends Security_Controller {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
     }
+
 
     //save profile image of a contact
     function save_profile_image($user_id = 0) {

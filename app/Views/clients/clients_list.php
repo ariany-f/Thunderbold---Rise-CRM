@@ -38,6 +38,7 @@
 <?php echo $custom_field_filters; ?>
             ],
             columns: [
+            {title: '', "class": "w50 text-center all"},
             {title: "<?php echo app_lang("id") ?>", "class": "text-center w50 all", order_by: "id"},
             {title: "<?php echo app_lang("name") ?>", "class": "all", order_by: "company_name"},
             {title: "<?php echo app_lang("primary_contact") ?>", order_by: "primary_contact"},
