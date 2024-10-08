@@ -1542,7 +1542,15 @@ class Projects extends Security_Controller {
         }
 
         $info = $this->Timesheets_model->count_total_time($options);
-        $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
+
+        $duration = abs($info->timesheet_total); // Mantém o valor em segundos
+        $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
+
+      //  $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
+
+    
+
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours');
 
         return $this->template->view('projects/overview', $view_data);
     }
@@ -1624,7 +1632,12 @@ class Projects extends Security_Controller {
        
         $options = array("project_id" => $project_id);
         $timesheet_info = $this->Timesheets_model->count_total_time($options);
-        $view_data["total_project_hours"] = to_decimal_format($timesheet_info->timesheet_total / 60 / 60);
+        
+        
+        $duration = abs($timesheet_info->timesheet_total); // Mantém o valor em segundos
+        $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
+
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours');
         
         $view_data['project_id'] = $project_id;
        
@@ -5880,6 +5893,8 @@ class Projects extends Security_Controller {
             $settings[] = "project_enable_slack";
             $settings[] = "project_slack_webhook_url";
         }
+
+        $settings[] = "project_limit_hours";
 
         if ($can_create_projects) {
             $settings[] = "remove_task_statuses";
