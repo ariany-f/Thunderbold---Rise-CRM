@@ -1782,11 +1782,13 @@ class Projects extends Security_Controller {
 
         $user_id = $this->request->getPost('user_id');
         $hour_amount = $this->request->getPost('hour_amount');
+        $hour_limit = $this->request->getPost('hour_limit');
           
         $data = array(
             "project_id" => $project_id,
             "user_id" => $user_id,
             "hour_amount" => $hour_amount,
+            "hour_limit" => $hour_limit,
             "is_leader" => 0
         );
 
@@ -1985,12 +1987,22 @@ class Projects extends Security_Controller {
 
         if($resource)
         {
-            $hour_amount = $resource->hour_amount;
+            if($resource->is_leader)
+            {
+                $hour_amount = $resource->hour_amount;
+                $hour_limit = 0;
+            }
+            else
+            {
+                $hour_amount = $resource->hour_amount;
+                $hour_limit = $resource->hour_limit;
+            }
         }
         else
         {
             $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
             $hour_amount = $user->salary;
+            $hour_limit = app_lang('not_set');
         }
         
         // Convertendo $duration para horas (se estiver em segundos)
@@ -1999,8 +2011,7 @@ class Projects extends Security_Controller {
         // Multiplicação de $hour_amount por $duration em horas
         $total_amount = $hour_amount * $duration_in_hours;
         
-
-        return array($member, ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : app_lang('not_set'))), $formatted_duration, to_currency($total_amount), $link);
+        return array($member,  $hour_limit, ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : app_lang('not_set'))), $formatted_duration, to_currency($total_amount), $link);
     }
 
     /* load project members add/edit modal */
