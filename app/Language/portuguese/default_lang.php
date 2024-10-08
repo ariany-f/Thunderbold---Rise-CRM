@@ -183,6 +183,10 @@ $lang["total_project_hours"] = "Horas totais do projeto";
 $lang["project_limit_hours_help_message"] = "Ajuste em configurações";
 $lang["not_set"] = "Não definido";
 $lang["hour_limit"] = "Limite de horas";
+$lang["invalid_time_format_error_message"] = "Formato de hora inválido";
+$lang["hour_log_exceeds_project_limit"] = "O registro excede o limite de horas do projeto";
+$lang["hour_log_exceeds_resource_limit"] = "O registro excede o limite de horas do recurso no projeto";
+$lang["hour_log_exceeds_project_limit_plus_registered_hours"] = "O registro excede o limite de horas do projeto somado às horas já registradas";
 
 
 /* leave types */
