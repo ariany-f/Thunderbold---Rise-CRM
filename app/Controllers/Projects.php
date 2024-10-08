@@ -1621,7 +1621,11 @@ class Projects extends Security_Controller {
     function resources($project_id) {
         validate_numeric_value($project_id);
         $this->init_project_permission_checker($project_id);
-
+       
+        $options = array("project_id" => $project_id);
+        $timesheet_info = $this->Timesheets_model->count_total_time($options);
+        $view_data["total_project_hours"] = to_decimal_format($timesheet_info->timesheet_total / 60 / 60);
+        
         $view_data['project_id'] = $project_id;
        
         return $this->template->view('projects/resources/index', $view_data);
@@ -1839,21 +1843,26 @@ class Projects extends Security_Controller {
             }
 
             $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+
+            $options_timesheet = array("project_id" => $data->project_id, "user_id" => $data->user_id, "group_by" => "member");
+
+            $timesheet = $this->Timesheets_model->get_summary_details($options_timesheet)->getRow();
             
             if($resource_type == "manager")
             {
                 if(($resource))
                 {
-                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id);
+                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id, $timesheet);
                 }
             }
             else
             {
                 if((!$resource) || ($resource && $resource->is_leader == 0))
                 {
-                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id);
+                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id, $timesheet);
                 }
             }
+
         }
         
         echo json_encode(array("data" => $result));
@@ -1862,17 +1871,22 @@ class Projects extends Security_Controller {
     /* return a row of project resource list */
     private function _project_resource_row_data($id) {
         $options = array("id" => $id);
+
         $resource = $this->Project_resources_model->get_details($options)->getRow();
 
         $options_data = array("project_id" => $resource->project_id, "user_type" => 'staff', "show_user_wise" => true);
 
         $data = $this->Project_members_model->get_details($options_data)->getRow();
 
-        return $this->_make_project_resource_row($data, $resource, $resource->project_id);
+        $options_timesheet = array("project_id" => $data->project_id, "user_id" => $data->user_id, "group_by" => "member");
+
+        $timesheet = $this->Timesheets_model->get_summary_details($options_timesheet)->getRow();
+
+        return $this->_make_project_resource_row($data, $resource, $resource->project_id, $timesheet);
     }
 
     /* prepare a row of project resource list */
-    private function _make_project_resource_row($data, $resource, $project_id) {
+    private function _make_project_resource_row($data, $resource, $project_id, $timesheet = null) {
 
         $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image, $data->member_name) . "' alt='...'></span> ";
 
@@ -1897,7 +1911,6 @@ class Projects extends Security_Controller {
 
         if($resource && $resource->is_leader)
         {
-
             $configure_link = modal_anchor(get_uri("projects/project_resource_manager_modal_form"), "<i data-feather='settings' class='icon-16'></i> ", array("class" => "btn btn-outline-light float-end add-member-button", "title" => app_lang('configure_resource'), "data-post-id" => $resource->id, "data-post-project_id" => $project_id));
         }
         else
@@ -1915,7 +1928,32 @@ class Projects extends Security_Controller {
 
         $member = '<div class="d-flex"><div class="p-2 flex-shrink-1">' . $member . '</div><div class="p-2 w-100"><div>' . $member_name . '</div><label class="text-off">' . $data->job_title . '</label></div></div>';
 
-        return array($member, ($resource ? $resource->hour_amount : 'Não configurado'), $link);
+        if ($timesheet && $timesheet->total_duration) {
+            $duration = abs($timesheet->total_duration); // Mantém o valor em segundos
+            $formatted_duration = convert_seconds_to_time_format($duration); // Para exibição formatada
+        } else {
+            $duration = 0;
+            $formatted_duration = 0;
+        }
+
+        if($resource)
+        {
+            $hour_amount = $resource->hour_amount;
+        }
+        else
+        {
+            $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+            $hour_amount = $user->salary;
+        }
+        
+        // Convertendo $duration para horas (se estiver em segundos)
+        $duration_in_hours = $duration / 3600; // 3600 segundos = 1 hora
+        
+        // Multiplicação de $hour_amount por $duration em horas
+        $total_amount = $hour_amount * $duration_in_hours;
+        
+
+        return array($member, ($resource ? to_currency($resource->hour_amount) : 'Não configurado'), $formatted_duration, to_currency($total_amount), $link);
     }
 
     /* load project members add/edit modal */
