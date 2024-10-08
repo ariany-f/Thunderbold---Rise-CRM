@@ -1542,7 +1542,15 @@ class Projects extends Security_Controller {
         }
 
         $info = $this->Timesheets_model->count_total_time($options);
-        $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
+
+        $duration = abs($info->timesheet_total); // Mantém o valor em segundos
+        $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
+
+      //  $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
+
+    
+
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
 
         return $this->template->view('projects/overview', $view_data);
     }
@@ -1621,7 +1629,16 @@ class Projects extends Security_Controller {
     function resources($project_id) {
         validate_numeric_value($project_id);
         $this->init_project_permission_checker($project_id);
+       
+        $options = array("project_id" => $project_id);
+        $timesheet_info = $this->Timesheets_model->count_total_time($options);
+        
+        
+        $duration = abs($timesheet_info->timesheet_total); // Mantém o valor em segundos
+        $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
 
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
+        
         $view_data['project_id'] = $project_id;
        
         return $this->template->view('projects/resources/index', $view_data);
@@ -1765,11 +1782,13 @@ class Projects extends Security_Controller {
 
         $user_id = $this->request->getPost('user_id');
         $hour_amount = $this->request->getPost('hour_amount');
+        $hour_limit = $this->request->getPost('hour_limit');
           
         $data = array(
             "project_id" => $project_id,
             "user_id" => $user_id,
             "hour_amount" => $hour_amount,
+            "hour_limit" => $hour_limit,
             "is_leader" => 0
         );
 
@@ -1788,6 +1807,32 @@ class Projects extends Security_Controller {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
      
+    }
+
+    
+
+    /* delete/undo a resource register */
+    function delete_project_resource() {
+        $id = $this->request->getPost('id');
+        $project_resources_info = $this->Project_resources_model->get_one($id);
+
+        $this->init_project_permission_checker($project_resources_info->project_id);
+
+
+        if ($this->request->getPost('undo')) {
+            if ($this->Project_resources_model->delete($id, true)) {
+                echo json_encode(array("success" => true, "data" => $this->_project_resource_row_data($id), "message" => app_lang('record_undone')));
+            } else {
+                echo json_encode(array("success" => false, app_lang('error_occurred')));
+            }
+        } else {
+            if ($this->Project_resources_model->delete($id)) {
+
+                echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
+            } else {
+                echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+            }
+        }
     }
 
     /* delete/undo a project members  */
@@ -1839,21 +1884,26 @@ class Projects extends Security_Controller {
             }
 
             $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+
+            $options_timesheet = array("project_id" => $data->project_id, "user_id" => $data->user_id, "group_by" => "member");
+
+            $timesheet = $this->Timesheets_model->get_summary_details($options_timesheet)->getRow();
             
             if($resource_type == "manager")
             {
                 if(($resource))
                 {
-                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id);
+                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id, $timesheet);
                 }
             }
             else
             {
                 if((!$resource) || ($resource && $resource->is_leader == 0))
                 {
-                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id);
+                    $result[] = $this->_make_project_resource_row($data, $resource, $project_id, $timesheet);
                 }
             }
+
         }
         
         echo json_encode(array("data" => $result));
@@ -1862,17 +1912,22 @@ class Projects extends Security_Controller {
     /* return a row of project resource list */
     private function _project_resource_row_data($id) {
         $options = array("id" => $id);
+
         $resource = $this->Project_resources_model->get_details($options)->getRow();
 
         $options_data = array("project_id" => $resource->project_id, "user_type" => 'staff', "show_user_wise" => true);
 
         $data = $this->Project_members_model->get_details($options_data)->getRow();
 
-        return $this->_make_project_resource_row($data, $resource, $resource->project_id);
+        $options_timesheet = array("project_id" => $data->project_id, "user_id" => $data->user_id, "group_by" => "member");
+
+        $timesheet = $this->Timesheets_model->get_summary_details($options_timesheet)->getRow();
+
+        return $this->_make_project_resource_row($data, $resource, $resource->project_id, $timesheet);
     }
 
     /* prepare a row of project resource list */
-    private function _make_project_resource_row($data, $resource, $project_id) {
+    private function _make_project_resource_row($data, $resource, $project_id, $timesheet = null) {
 
         $member_image = "<span class='avatar avatar-sm'><img src='" . get_avatar($data->member_image, $data->member_name) . "' alt='...'></span> ";
 
@@ -1894,10 +1949,17 @@ class Projects extends Security_Controller {
             }
             $link .= $delete_link;
         }
+        else if($resource){
+            $delete_link = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_member'), "class" => "delete", "data-id" => $resource->id, "data-action-url" => get_uri("projects/delete_project_resource"), "data-action" => "delete", "data-reload-on-success" => "1"));
+
+            if (!$this->can_manage_all_projects() && ($this->login_user->id === $data->user_id)) {
+                $delete_link = "";
+            }
+            $link .= $delete_link;
+        }
 
         if($resource && $resource->is_leader)
         {
-
             $configure_link = modal_anchor(get_uri("projects/project_resource_manager_modal_form"), "<i data-feather='settings' class='icon-16'></i> ", array("class" => "btn btn-outline-light float-end add-member-button", "title" => app_lang('configure_resource'), "data-post-id" => $resource->id, "data-post-project_id" => $project_id));
         }
         else
@@ -1915,7 +1977,41 @@ class Projects extends Security_Controller {
 
         $member = '<div class="d-flex"><div class="p-2 flex-shrink-1">' . $member . '</div><div class="p-2 w-100"><div>' . $member_name . '</div><label class="text-off">' . $data->job_title . '</label></div></div>';
 
-        return array($member, ($resource ? $resource->hour_amount : 'Não configurado'), $link);
+        if ($timesheet && $timesheet->total_duration) {
+            $duration = abs($timesheet->total_duration); // Mantém o valor em segundos
+            $formatted_duration = convert_seconds_to_time_format($duration); // Para exibição formatada
+        } else {
+            $duration = 0;
+            $formatted_duration = 0;
+        }
+
+        if($resource)
+        {
+            if($resource->is_leader)
+            {
+                $hour_amount = $resource->hour_amount;
+                $hour_limit = 0;
+            }
+            else
+            {
+                $hour_amount = $resource->hour_amount;
+                $hour_limit = $resource->hour_limit;
+            }
+        }
+        else
+        {
+            $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+            $hour_amount = $user->salary;
+            $hour_limit = app_lang('not_set');
+        }
+        
+        // Convertendo $duration para horas (se estiver em segundos)
+        $duration_in_hours = $duration / 3600; // 3600 segundos = 1 hora
+        
+        // Multiplicação de $hour_amount por $duration em horas
+        $total_amount = $hour_amount * $duration_in_hours;
+        
+        return array($member,  $hour_limit, ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : app_lang('not_set'))), $formatted_duration, to_currency($total_amount), $link);
     }
 
     /* load project members add/edit modal */
@@ -5808,6 +5904,8 @@ class Projects extends Security_Controller {
             $settings[] = "project_enable_slack";
             $settings[] = "project_slack_webhook_url";
         }
+
+        $settings[] = "project_limit_hours";
 
         if ($can_create_projects) {
             $settings[] = "remove_task_statuses";

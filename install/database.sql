@@ -808,6 +808,7 @@ CREATE TABLE IF NOT EXISTS `project_resources` (
   `project_id` int(11) NOT NULL DEFAULT '0',
   `user_id` int(11) NOT NULL,
   `hour_amount` double NULL,
+  `hour_limit` int(11) NULL,
   `is_leader` tinyint(1) DEFAULT '0',
   `created_at` datetime NULL,
   `created_by` int(11) NOT NULL DEFAULT '0',

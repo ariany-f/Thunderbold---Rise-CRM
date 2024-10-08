@@ -78,6 +78,24 @@
             </div>
         <?php } ?>
 
+        <?php if ($can_create_projects) { ?>
+            <div class="form-group">
+                <div class="row">
+                    <label for="project_limit_hours" class=" col-md-3"><?php echo app_lang('project_limit_hours'); ?></label>
+                    <div class="col-md-9">
+                        <?php
+                        echo form_input(array(
+                            "id" => "project_limit_hours",
+                            "name" => "project_limit_hours",
+                            "value" => get_setting("project_limit_hours"),
+                            "class" => "form-control",
+                            "placeholder" => app_lang('project_limit_hours')
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
     </div>
 </div>
 
