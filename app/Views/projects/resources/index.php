@@ -62,6 +62,7 @@
             displayLength: 500,
             columns: [
                 {title: 'Membro', "class":"text-left w400"},
+                {title: 'Limite de Horas'},
                 {title: 'Valor/Hora'},
                 {title: 'Horas Trabalhadas'},
                 {title: 'Total'},

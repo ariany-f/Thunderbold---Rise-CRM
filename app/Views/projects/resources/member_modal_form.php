@@ -24,6 +24,24 @@
                 </div>
             </div>
         </div>
+        <div class="form-group">
+            <div class="row">
+                <label for="hour_limit" class=" col-md-3"><?php echo app_lang('hour_limit'); ?></label>
+                <div class="col-md-9">
+                    <?php
+                        echo form_input(array(
+                            "id" => "hour_limit",
+                            "name" => "hour_limit",
+                            "value" => (isset($model_info->hour_limit) ? $model_info->hour_limit : ""),
+                            "class" => "form-control",
+                            "placeholder" => app_lang('hour_limit'),
+                            "data-rule-required" => true,
+                            "data-msg-required" => app_lang("field_required"),
+                        ));
+                    ?>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
