@@ -180,6 +180,7 @@ $lang["my_time_cards"] = "Meu controle de jornada";
 $lang["timecard_statistics"] = "Estatísticas de Controle de Jornada";
 $lang["total_hours_worked"] = "Total de horas trabalhadas";
 $lang["total_project_hours"] = "Horas totais do projeto";
+$lang["project_limit_hours_help_message"] = "Ajuste em configurações";
 
 /* leave types */
 $lang["add_leave_type"] = "Adicionar tipo de licença";
