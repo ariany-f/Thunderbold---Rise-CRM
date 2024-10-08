@@ -1,10 +1,10 @@
 
 <div class="card">
-    <?php if (get_setting('module_project_timesheet')) { ?>
+    <!-- <?php //if (get_setting('module_project_timesheet')) { ?>
       
-            <?php echo view("projects/widgets/total_hours_worked_widget"); ?>
+            <?php// echo view("projects/widgets/total_hours_worked_widget"); ?>
         
-    <?php } ?>
+    <?php //} ?> -->
 </div>
 
 <div class="card">
