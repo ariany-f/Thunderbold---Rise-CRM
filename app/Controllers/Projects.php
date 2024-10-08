@@ -1548,8 +1548,6 @@ class Projects extends Security_Controller {
 
       //  $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
 
-    
-
         $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
 
         return $this->template->view('projects/overview', $view_data);
@@ -2595,6 +2593,12 @@ class Projects extends Security_Controller {
         $task_id = $this->request->getPost("task_id");
 
         if ($start_time) {
+
+            if (!is_valid_time_format($start_time) || !is_valid_time_format($end_time)) {
+                echo json_encode(array("success" => false, 'message' => app_lang("invalid_time_format_error_message")));
+                return false;
+            }
+
             //start time and end time mode
             //convert to 24hrs time format
             if (get_setting("time_format") != "24_hours") {
@@ -2626,6 +2630,47 @@ class Projects extends Security_Controller {
         }
 
         $project_id = $this->request->getPost('project_id');
+        $project_hour_limit = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours');
+
+        if($project_hour_limit)
+        {
+            // Calcular o tempo registrado em horas
+            $hours_logged = calculate_hours_diff($start_date_time, $end_date_time);
+    
+            // Verificar se o tempo registrado excede o limite de horas do projeto
+            if ($hours_logged > $project_hour_limit) {
+                echo json_encode(array("success" => false, 'message' =>  $hours_logged . ' ' . app_lang("hour_log_exceeds_project_limit") . ': ' . $project_hour_limit));
+                return false;
+            }
+    
+            // Verificar se o tempo registrado excede o limite de horas do recurso
+            $resource = $this->Project_resources_model->get_details(array("project_id" => $project_id, "user_id" => $this->login_user->id))->getRow();
+            if ($resource) {
+                $resource_hour_limit = $resource->hour_limit;
+                $resource_hour_logged = $this->Timesheets_model->get_summary_details(array("project_id" => $project_id, "user_id" => $this->login_user->id, "group_by" => "member"))->getRow();
+                if($resource_hour_logged)
+                {
+                    $resource_hour_logged = convert_seconds_to_hours($resource_hour_logged->total_duration);
+                    if ($resource_hour_limit && ($resource_hour_logged + $hours_logged) > $resource_hour_limit) {
+                        echo json_encode(array("success" => false, 'message' => app_lang("hour_log_exceeds_resource_limit") . ': ' . $resource_hour_limit));
+                        return false;
+                    }
+                }
+            }
+    
+            // Verificar se a soma de todos os tempos registrados excede o limite de horas do projeto
+            $project_hour_logged = $this->Timesheets_model->get_summary_details(array("project_id" => $project_id, "group_by" => "project"))->getRow();
+            if($project_hour_logged)
+            {
+                $project_hour_logged = convert_seconds_to_hours($project_hour_logged->total_duration);
+                if ($project_hour_limit && ($project_hour_logged + $hours_logged) > $project_hour_limit) {
+                    echo json_encode(array("success" => false, 'message' => app_lang("hour_log_exceeds_project_limit_plus_registered_hours") . ': ' . $project_hour_logged . '<br/>Limite(' . $project_hour_limit . ')'));
+                    return false;
+                }
+            }
+        }
+
+
         $data = array(
             "project_id" => $project_id,
             "start_time" => $start_date_time,
