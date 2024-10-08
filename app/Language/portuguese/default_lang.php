@@ -1439,15 +1439,15 @@ $lang["the_invoices_id_must_be_larger_then_last_invoice_id"] = "O ID das faturas
 
 $lang["client_dashboard_help_message"] = "Este será o painel padrão para todos os clientes. Observe que as informações que você vê aqui nos widgets não são informações reais de clientes.";
 
-$lang["send_to_lead"] = "Enviar para liderar";
-$lang["lead"] = "Liderar";
-$lang["leads"] = "Conduz";
-$lang["add_lead"] = "Adicionar chumbo";
+$lang["send_to_lead"] = "Enviar para lead";
+$lang["lead"] = "Lead";
+$lang["leads"] = "Lead";
+$lang["add_lead"] = "Adicionar lead";
 $lang["edit_lead"] = "Editar lead";
 $lang["delete_lead"] = "Excluir lead";
 $lang["lead_details"] = "Detalhes do lead";
 $lang["can_access_leads_information"] = "Pode acessar as informações do lead?";
-$lang["lead_info"] = "Informações de chumbo";
+$lang["lead_info"] = "Informações de lead";
 
 $lang["send_task_reminder_on_the_day_of_deadline"] = "Enviar lembrete de tarefa no dia do prazo";
 $lang["send_task_deadline_pre_reminder"] = "Enviar lembrete antes do prazo da tarefa";
