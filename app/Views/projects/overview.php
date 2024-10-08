@@ -11,8 +11,14 @@
                 </div>
 
                 <?php if (get_setting('module_project_timesheet')) { ?>
-                    <div class="col-md-12 col-sm-12">
+                    <div class="col-md-6 col-sm-12">
                         <?php echo view("projects/widgets/total_hours_worked_widget"); ?>
+                    </div>
+                <?php } ?>
+
+                <?php if (get_setting('module_project_timesheet')) { ?>
+                    <div class="col-md-6 col-sm-12">
+                        <?php echo view("attendance/project_limit_hours"); ?>
                     </div>
                 <?php } ?>
 

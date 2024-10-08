@@ -198,6 +198,7 @@ class Dashboard extends Security_Controller {
 
         if (get_setting("module_project_timesheet") == "1" && ($this->login_user->is_admin || ($access_timesheets->access_type && !$this->has_all_projects_restricted_role()))) {
             $widget["total_project_hours"] = true;
+            $widget["project_limit_hours"] = true;
         }
 
         if ($this->login_user->is_admin || (get_array_value($this->login_user->permissions, "can_manage_all_projects") === "1" && !$this->has_all_projects_restricted_role())) {
@@ -840,6 +841,7 @@ class Dashboard extends Security_Controller {
                 "my_timesheet_statistics",
                 "all_timesheets_statistics",
                 "total_hours_worked",
+                "project_limit_hours",
                 "timecard_statistics",
                 "total_invoices",
                 "total_payments",
@@ -1146,6 +1148,8 @@ class Dashboard extends Security_Controller {
                 return pending_leave_approval_widget(array("access_type" => $this->access_type, "allowed_members" => $this->allowed_members));
             } else if ($widget == "total_hours_worked" || $widget == "total_project_hours") {
                 return count_total_time_widget_small(0, $widget);
+            } else if ($widget == "project_limit_hours") {
+                return limit_project_time_widget_small(0, $widget);
             } else if ($widget == "active_members_on_projects") {
                 return active_members_on_projects_widget();
             } else if ($widget == "draft_invoices") {

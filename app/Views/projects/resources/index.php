@@ -1,10 +1,15 @@
 
 <div class="card">
-    <!-- <?php //if (get_setting('module_project_timesheet')) { ?>
-      
-            <?php// echo view("projects/widgets/total_hours_worked_widget"); ?>
-        
-    <?php //} ?> -->
+    <div class="row">
+        <?php if (get_setting('module_project_timesheet')) { ?>
+            <div class="col-md-6 col-sm-12">
+                <?php echo view("projects/widgets/total_hours_worked_widget"); ?>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <?php echo view("attendance/project_limit_hours"); ?>
+            </div>
+        <?php } ?>
+    </div>
 </div>
 
 <div class="card">

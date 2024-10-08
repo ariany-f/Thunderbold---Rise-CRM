@@ -666,6 +666,24 @@ if (!function_exists('count_total_time_widget_small')) {
 
 
 /**
+ * limit hours per project widget
+ * @param integer $project_id
+ * @param string $widget_type
+ * 
+ * @return html
+ */
+if (!function_exists('limit_project_time_widget_small')) {
+
+    function limit_project_time_widget_small($project_id = 0, $widget_type = "") {
+        $ci = new Security_Controller(false);
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours');
+        $template = new Template();
+        return $template->view("attendance/project_limit_hours", $view_data);
+    }
+}
+
+
+/**
  * get social links widget
  * @param object $weblinks
  * 
