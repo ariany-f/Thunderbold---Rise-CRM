@@ -1794,6 +1794,32 @@ class Projects extends Security_Controller {
      
     }
 
+    
+
+    /* delete/undo a resource register */
+    function delete_project_resource() {
+        $id = $this->request->getPost('id');
+        $project_resources_info = $this->Project_resources_model->get_one($id);
+
+        $this->init_project_permission_checker($project_resources_info->project_id);
+
+
+        if ($this->request->getPost('undo')) {
+            if ($this->Project_resources_model->delete($id, true)) {
+                echo json_encode(array("success" => true, "data" => $this->_project_resource_row_data($id), "message" => app_lang('record_undone')));
+            } else {
+                echo json_encode(array("success" => false, app_lang('error_occurred')));
+            }
+        } else {
+            if ($this->Project_resources_model->delete($id)) {
+
+                echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
+            } else {
+                echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+            }
+        }
+    }
+
     /* delete/undo a project members  */
 
     function delete_project_resource_manager() {
@@ -1902,6 +1928,14 @@ class Projects extends Security_Controller {
 
         if ($this->can_add_remove_project_members() && $resource && $resource->is_leader == 1) {
             $delete_link = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_member'), "class" => "delete", "data-id" => $resource->id, "data-action-url" => get_uri("projects/delete_project_resource_manager"), "data-action" => "delete"));
+
+            if (!$this->can_manage_all_projects() && ($this->login_user->id === $data->user_id)) {
+                $delete_link = "";
+            }
+            $link .= $delete_link;
+        }
+        else if($resource){
+            $delete_link = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_member'), "class" => "delete", "data-id" => $resource->id, "data-action-url" => get_uri("projects/delete_project_resource"), "data-action" => "delete", "data-reload-on-success" => "1"));
 
             if (!$this->can_manage_all_projects() && ($this->login_user->id === $data->user_id)) {
                 $delete_link = "";
