@@ -2,6 +2,27 @@
     <div class="container-fluid  full-width-button">
         <div class="row clients-view-button">
             <div class="col-md-12">
+                <?php echo view("includes/cropbox"); ?>
+                <div id="page-content" class="clearfix">
+                    <div class="bg-success clearfix">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row p20">
+                                        <?php echo view("clients/logo_image_section"); ?>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 text-center cover-widget">
+                                    <div class="row p20">
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="page-title clearfix no-border no-border-top-radius no-bg">
                     <h1 class="pl0">
                         <?php echo app_lang('client_details') . " - " . $client_info->company_name ?>
@@ -127,6 +148,37 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
+        $(".upload").change(function () {
+            if (typeof FileReader == 'function' && !$(this).hasClass("hidden-input-file")) {
+                showCropBox(this);
+            } else {
+                $("#profile-image-form").submit();
+            }
+        });
+        $("#profile_image").change(function () {
+            $("#profile-image-form").submit();
+        });
+
+
+        $("#profile-image-form").appForm({
+            isModal: false,
+            beforeAjaxSubmit: function (data) {
+                $.each(data, function (index, obj) {
+                    if (obj.name === "profile_image") {
+                        var profile_image = replaceAll(":", "~", data[index]["value"]);
+                        data[index]["value"] = profile_image;
+                    }
+                });
+            },
+            onSuccess: function (result) {
+                if (typeof FileReader == 'function' && !result.reload_page) {
+                    appAlert.success(result.message, {duration: 10000});
+                } else {
+                    location.reload();
+                }
+            }
+        });
 
         setTimeout(function () {
             var tab = "<?php echo $tab; ?>";
