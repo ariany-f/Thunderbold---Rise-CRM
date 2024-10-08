@@ -1550,7 +1550,7 @@ class Projects extends Security_Controller {
 
     
 
-        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours');
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 'Não configurado';
 
         return $this->template->view('projects/overview', $view_data);
     }
@@ -1637,7 +1637,7 @@ class Projects extends Security_Controller {
         $duration = abs($timesheet_info->timesheet_total); // Mantém o valor em segundos
         $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
 
-        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours');
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 'Não configurado';
         
         $view_data['project_id'] = $project_id;
        
