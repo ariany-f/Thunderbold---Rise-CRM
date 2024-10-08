@@ -1550,7 +1550,7 @@ class Projects extends Security_Controller {
 
     
 
-        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 'Não configurado';
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
 
         return $this->template->view('projects/overview', $view_data);
     }
@@ -1637,7 +1637,7 @@ class Projects extends Security_Controller {
         $duration = abs($timesheet_info->timesheet_total); // Mantém o valor em segundos
         $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
 
-        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 'Não configurado';
+        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
         
         $view_data['project_id'] = $project_id;
        
@@ -2000,7 +2000,7 @@ class Projects extends Security_Controller {
         $total_amount = $hour_amount * $duration_in_hours;
         
 
-        return array($member, ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : 'Não configurado')), $formatted_duration, to_currency($total_amount), $link);
+        return array($member, ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : app_lang('not_set'))), $formatted_duration, to_currency($total_amount), $link);
     }
 
     /* load project members add/edit modal */
