@@ -1953,7 +1953,7 @@ class Projects extends Security_Controller {
         $total_amount = $hour_amount * $duration_in_hours;
         
 
-        return array($member, ($resource ? to_currency($resource->hour_amount) : 'Não configurado'), $formatted_duration, to_currency($total_amount), $link);
+        return array($member, ($resource ? (to_currency($resource->hour_amount) . ' valor para o projeto') : (($hour_amount) ? to_currency($hour_amount) . ' valor consultor' : 'Não configurado')), $formatted_duration, to_currency($total_amount), $link);
     }
 
     /* load project members add/edit modal */
