@@ -23,22 +23,41 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <label for="salary" class=" col-md-2"><?php echo app_lang('salary'); ?></label>
-                    <div class="col-md-10">
-                        <?php
-                        echo form_input(array(
-                            "id" => "salary",
-                            "name" => "salary",
-                            "value" => $job_info->salary ? to_decimal_format($job_info->salary) : "",
-                            "class" => "form-control",
-                            "placeholder" => app_lang('salary')
-                        ));
-                        ?>
+            <?php if($login_user->is_admin){ ?> 
+                <div class="form-group">
+                    <div class="row">
+                        <label for="salary" class=" col-md-2"><?php echo app_lang('hour_amount'); ?></label>
+                        <div class="col-md-10">
+                            <?php
+                            echo form_input(array(
+                                "id" => "salary",
+                                "name" => "salary",
+                                "value" => $job_info->salary ? to_decimal_format($job_info->salary) : "",
+                                "class" => "form-control",
+                                "placeholder" => app_lang('hour_amount')
+                            ));
+                            ?>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php } else if($login_user->user_type !== "client"){ ?>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="salary" class=" col-md-2"><?php echo app_lang('salary'); ?></label>
+                        <div class="col-md-10">
+                            <?php
+                            echo form_input(array(
+                                "id" => "salary",
+                                "name" => "salary",
+                                "value" => $job_info->salary ? to_decimal_format($job_info->salary) : "",
+                                "class" => "form-control",
+                                "placeholder" => app_lang('salary')
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
             <div class="form-group">
                 <div class="row">
                     <label for="salary_term" class=" col-md-2"><?php echo app_lang('salary_term'); ?></label>
