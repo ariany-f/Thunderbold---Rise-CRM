@@ -17,6 +17,7 @@ class Projects_model extends Crud_model {
         $clients_table = $this->db->prefixTable('clients');
         $tasks_table = $this->db->prefixTable('tasks');
         $tasks_status_table = $this->db->prefixTable('task_status');
+        $users_table = $this->db->prefixTable('users');
         $where = "";
 
         $id = $this->_get_clean_value($options, "id");
@@ -146,7 +147,33 @@ class Projects_model extends Crud_model {
 
         $this->db->query('SET SQL_BIG_SELECTS=1');
         
-        $sql = "SELECT $projects_table.*, $clients_table.company_name, $clients_table.currency_symbol,  total_points_table.total_points, completed_points_table.completed_points,  $status_columns_str, $select_labels_data_query $select_custom_fieds
+        $sql = "SELECT 
+            $projects_table.*, 
+            $clients_table.company_name, 
+            $clients_table.currency_symbol, 
+            total_points_table.total_points, 
+            completed_points_table.completed_points, 
+           (SELECT 
+                GROUP_CONCAT(
+                    $users_table.id, 
+                    '--::--', 
+                    $users_table.first_name, ' ', $users_table.last_name, 
+                    '--::--', 
+                    IFNULL($users_table.image,''), 
+                    '--::--', 
+                    $users_table.user_type
+                ) 
+            FROM 
+                $project_members_table
+            JOIN 
+                $users_table 
+                ON $project_members_table.user_id = $users_table.id
+            WHERE 
+                $users_table.deleted = 0 
+                AND $project_members_table.project_id = $projects_table.id
+            ) AS collaborator_list,
+            $status_columns_str, 
+            $select_labels_data_query $select_custom_fieds
         FROM $projects_table
         LEFT JOIN $clients_table ON $clients_table.id= $projects_table.client_id
         LEFT JOIN (SELECT project_id, SUM(points) AS total_points FROM $tasks_table WHERE deleted=0 GROUP BY project_id) AS  total_points_table ON total_points_table.project_id= $projects_table.id

@@ -69,6 +69,7 @@
                 // {visible: false, searchable: false},
                 // {title: '<?php// echo app_lang("start_date") ?>', "class": "w10p", "iDataSort": 4},
                 <?php echo $status_columns; ?> // Colunas de status dinamicamente geradas
+                {title: '<?php echo app_lang("members") ?>', "class": "w10p"},
                 {title: '<?php echo app_lang("progress") ?>', "class": "w10p"},
                 {title: '<?php echo app_lang("status") ?>', "class": "w10p"}
                 <?php echo $custom_field_headers; ?>,
