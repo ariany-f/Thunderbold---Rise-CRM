@@ -1260,11 +1260,19 @@ class Projects extends Security_Controller {
         {
             $first_column = anchor(get_uri("projects/view/" . $data->id), $data->id);
         }
+
+        $collaborators = $this->_get_collaborators($data->collaborator_list);
+
+        if (!$collaborators) {
+            $collaborators = "-";
+        }
+
         $row_data = array(
             $first_column,
             $title,
             $client_name,
             $price,
+            $collaborators,
             $data->start_date,
             $start_date,
             $data->deadline,
@@ -1365,6 +1373,12 @@ class Projects extends Security_Controller {
             }
         }
         
+        $collaborators = $this->_get_collaborators($data->collaborator_list);
+
+        if (!$collaborators) {
+            $collaborators = "-";
+        }
+        
         $row_data = array(
             $first_column,
             $title,
@@ -1376,15 +1390,20 @@ class Projects extends Security_Controller {
         // Adicione os status individualmente ao array $row_data
         $row_data = array_merge($row_data, $status_columns);
         
+
+        $row_data[] = $collaborators;
         $row_data[] = $progress_bar;
         $row_data[] = app_lang($data->status);
         
         foreach ($custom_fields as $field) {
             $cf_id = "cfv_" . $field->id;
             $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
+            
+            
         }
         
         $row_data[] = $optoins;
+        
         return $row_data;
     }
 
