@@ -51,7 +51,10 @@
             hideTools: true,
             columns: [
                 {title: 'Nome', "class":"text-left w400"},
+                {visible: false},
                 {title: 'Valor/Hora'},
+                {title: 'Horas'},
+                {title: 'Total'},
                 {title: '', "class": "text-center option w100"}
             ]
         });

@@ -1875,15 +1875,17 @@ class Projects extends Security_Controller {
             if($resource_type == "manager")
             {
                 $options_resources["is_leader"] = 1;
+
+                $options_timesheet = array("project_id" => $data->project_id, "group_by" => "member");
             }
             else
             {
                 $options_resources["is_leader"] = 0;
+
+                $options_timesheet = array("project_id" => $data->project_id, "user_id" => $data->user_id, "group_by" => "member");
             }
 
             $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
-
-            $options_timesheet = array("project_id" => $data->project_id, "user_id" => $data->user_id, "group_by" => "member");
 
             $timesheet = $this->Timesheets_model->get_summary_details($options_timesheet)->getRow();
             
