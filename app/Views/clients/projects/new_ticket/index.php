@@ -105,6 +105,7 @@ if (isset($page_type) && $page_type === 'dashboard') {
                 {title: '<?php echo app_lang("id") ?>', "class": "w50"},
                 {title: '<?php echo app_lang("title") ?>'},
                 <?php echo $status_columns; ?> // Colunas de status dinamicamente geradas
+                {visible: false, searchable: false},
                 {title: '<?php echo app_lang("progress") ?>', "class": "w15p"},
                 {title: '<?php echo app_lang("status") ?>', "class": "w10p"}
 <?php echo $custom_field_headers; ?>,
