@@ -1567,7 +1567,9 @@ class Projects extends Security_Controller {
 
       //  $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
 
-        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
+        $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+
+        $view_data['balance'] = convert_seconds_to_time_format(convert_time_string_to_second($view_data['limit']) - convert_time_string_to_second($view_data["total_project_hours"]));
 
         return $this->template->view('projects/overview', $view_data);
     }
@@ -1654,7 +1656,9 @@ class Projects extends Security_Controller {
         $duration = abs($timesheet_info->timesheet_total); // Mantém o valor em segundos
         $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
 
-        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
+        $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+
+        $view_data['balance'] = convert_seconds_to_time_format(convert_time_string_to_second($view_data['limit']) - convert_time_string_to_second($view_data["total_project_hours"]));
         
         $view_data['project_id'] = $project_id;
        
