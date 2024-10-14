@@ -1658,7 +1658,7 @@ class Projects extends Security_Controller {
 
         $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
 
-        $view_data['balance'] = ($view_data['limit'] !== 0) ? (convert_seconds_to_time_format(convert_time_string_to_second($view_data['limit']) - convert_time_string_to_second($view_data["total_project_hours"]))) : 0;
+        $view_data['balance'] = ($view_data['limit'] != '00:00:00') ? (convert_seconds_to_time_format(convert_time_string_to_second($view_data['limit']) - convert_time_string_to_second($view_data["total_project_hours"]))) : 0;
         
         $view_data['project_id'] = $project_id;
        
