@@ -1895,7 +1895,7 @@ class Projects extends Security_Controller {
             {
                 $options_resources["is_leader"] = 1;
 
-                $options_timesheet = array("project_id" => $data->project_id, "group_by" => "member");
+                $options_timesheet = array("project_id" => $data->project_id, "group_by" => "project");
             }
             else
             {
