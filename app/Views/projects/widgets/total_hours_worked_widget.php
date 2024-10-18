@@ -9,8 +9,5 @@
                 <?php echo app_lang("total_hours_worked"); ?>
             </div>
         </div>
-        <div class="text-off">
-            <span><?php echo app_lang('project_worked_hours_help_message'); ?></span>
-        </div>
     </div>
 </div>
