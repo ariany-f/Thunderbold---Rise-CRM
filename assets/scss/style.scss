@@ -20,6 +20,14 @@ html, body {
     overflow: hidden;
     overflow-x: hidden;
 }
+.limited-column {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 7.5em;
+}
 h1, h2, h3, h4{
     font-weight: normal;
 }
