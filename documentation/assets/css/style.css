@@ -17,6 +17,15 @@ code{
     border-radius: 5px;
 }
 
+.limited-column {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 7.5em;
+}
+
 /*topbar*/
 
 .header-section{

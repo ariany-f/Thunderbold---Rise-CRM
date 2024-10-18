@@ -55,7 +55,7 @@
                 {visible: false, searchable: false},
                 {title: "<?php echo app_lang('task') ?>", order_by: "task_title", "class": "text-left w400"},
                 {visible: false, searchable: false, order_by: "start_time"},
-                {title: '<?php echo app_lang('note'); ?>', "class": "text-center w200"},
+                {title: '<?php echo app_lang('note'); ?>', "class": "text-center w200 limited-column"},
                 {title: "<?php echo (get_setting("users_can_input_only_total_hours_instead_of_period") ? app_lang("date") : app_lang('start_time')) ?>", "iDataSort": 4, order_by: "start_time"},
                 {visible: false, searchable: false, order_by: "end_time"},
                 {title: "<?php echo app_lang('end_time') ?>", "iDataSort": 6, visible: endTimeVisibility, order_by: "end_time"},
