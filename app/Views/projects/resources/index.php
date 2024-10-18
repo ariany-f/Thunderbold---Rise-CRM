@@ -55,7 +55,7 @@
             source: '<?php echo_uri("projects/project_resource_list_data/" . $project_id . "/manager") ?>',
             hideTools: true,
             columns: [
-                {title: 'Nome', "class":"text-left w400"},
+                {title: 'Nome', "class":"text-left w550"},
                 {visible: false},
                 {title: 'Valor/Hora'},
                 {title: 'Horas'},
@@ -70,7 +70,7 @@
             displayLength: 500,
             columns: [
                 {title: 'Membro', "class":"text-left w400"},
-                {title: 'Limite de Horas'},
+                {title: 'Limite de Horas', 'class': 'w450'},
                 {title: 'Valor/Hora'},
                 {title: 'Horas Trabalhadas'},
                 {title: 'Total'},
