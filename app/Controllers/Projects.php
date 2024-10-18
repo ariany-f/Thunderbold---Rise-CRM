@@ -2905,8 +2905,8 @@ class Projects extends Security_Controller {
         }
         else
         {
-            $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
-            $hour_amount = $user->salary;
+            $user_for_hour = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+            $hour_amount = $user_for_hour->salary;
         }
         
         // Convertendo $duration para horas (se estiver em segundos)

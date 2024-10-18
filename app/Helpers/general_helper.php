@@ -860,7 +860,7 @@ if (!function_exists('get_team_member_profile_link')) {
     function get_team_member_profile_link($id = 0, $name = "", $attributes = array()) {
         $ci = new Security_Controller(false);
         if ($ci->login_user->user_type === "staff") {
-            return anchor("team_members/view/" . $id, $name ? $name : "", $attributes);
+            return anchor("team_members/view/" . $id, ($name ? $name : ""), $attributes);
         } else {
             return js_anchor($name, $attributes);
         }
