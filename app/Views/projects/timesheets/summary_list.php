@@ -20,15 +20,15 @@
                 {title: "<?php echo app_lang("member"); ?>"},
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
+                {title: "<?php echo app_lang("amount"); ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("hours"); ?>", "class": "w15p text-right"}
             ],
-            printColumns: [2, 3, 4, 5],
-            xlsColumns: [2, 3, 4, 5],
-            summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'number'}],
+            printColumns: [2, 3, 4, 5, 6],
+            xlsColumns: [2, 3, 4, 5, 6],
+            summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'currency'}, {column: 6, dataType: 'number'}],
             onRelaodCallback: function (tableInstance, filterParams) {
 
                 //we'll show/hide the task/member column based on the group by status
-
                 if (filterParams && filterParams.group_by === "member") {
                     showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, false);

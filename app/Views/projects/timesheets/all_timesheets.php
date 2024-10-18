@@ -54,7 +54,7 @@
                 {title: "<?php echo get_setting("users_can_input_only_total_hours_instead_of_period") ? app_lang("date") : app_lang('start_time') ?>", "iDataSort": 4, order_by: "start_time"},
                 {visible: false, searchable: false, order_by: "end_time"},
                 {title: "<?php echo app_lang('end_time') ?>", "iDataSort": 6, visible: endTimeVisibility, order_by: "end_time"},
-                {title: "<?php echo app_lang('total') ?>", "class": "text-right"},
+                {title: "<?php echo app_lang('duration') ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('hours') ?>", "class": "text-right"},
                 {title: '<i data-feather="message-circle" class="icon-16"></i>', "class": "text-center w50"}
 <?php echo $custom_field_headers; ?>,

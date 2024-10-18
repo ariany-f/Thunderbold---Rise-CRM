@@ -2845,7 +2845,12 @@ class Projects extends Security_Controller {
 
         $result_data = array();
         foreach ($list_data as $data) {
-            $result_data[] = $this->_make_timesheet_row($data, $custom_fields);
+
+            $options_resources = array("project_id" => $project_id, "user_id" => $data->user_id, "is_leader" => 0);
+
+            $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+
+            $result_data[] = $this->_make_timesheet_row($data, $custom_fields, $resource);
         }
 
         $result["data"] = $result_data;
@@ -2860,12 +2865,18 @@ class Projects extends Security_Controller {
 
         $options = array("id" => $id, "custom_fields" => $custom_fields);
         $data = $this->Timesheets_model->get_details($options)->getRow();
-        return $this->_make_timesheet_row($data, $custom_fields);
+
+        $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
+
+        $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+
+        return $this->_make_timesheet_row($data, $custom_fields, $resource);
     }
 
     /* prepare a row of timesheet list table */
 
-    private function _make_timesheet_row($data, $custom_fields) {
+    private function _make_timesheet_row($data, $custom_fields, $resource = null) {
+
         $image_url = get_avatar($data->logged_by_avatar, $data->logged_by_user);
         $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
 
@@ -2881,18 +2892,42 @@ class Projects extends Security_Controller {
 
         $duration = convert_seconds_to_time_format($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time))));
 
+
+        $duration_for_resource = ($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time)))); // Mantém o valor em segundos
+       
+
+        if($resource)
+        {
+            if(!$resource->is_leader)
+            {
+                $hour_amount = $resource->hour_amount;
+            }
+        }
+        else
+        {
+            $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+            $hour_amount = $user->salary;
+        }
+        
+        // Convertendo $duration para horas (se estiver em segundos)
+        $duration_in_hours = $duration_for_resource / 3600; // 3600 segundos = 1 hora
+        
+        // Multiplicação de $hour_amount por $duration em horas
+        $total_amount = $hour_amount * $duration_in_hours;
+        
         $row_data = array(
             get_team_member_profile_link($data->user_id, $user),
             $project_title,
             $client_name,
             $task_title,
             $data->start_time,
+            $data->note,
             ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
             $data->end_time,
             $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
             $duration,
             to_decimal_format(convert_time_string_to_decimal($duration)),
-            $data->note
+            to_currency($total_amount)
         );
 
         foreach ($custom_fields as $field) {
@@ -3019,12 +3054,36 @@ class Projects extends Security_Controller {
                 $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
             }
 
+            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
+
+            $resource = $this->Project_resources_model->get_details($options_resources)->getRow();    
+
+            if($resource)
+            {
+                if(!$resource->is_leader)
+                {
+                    $hour_amount = $resource->hour_amount;
+                }
+            }
+            else
+            {
+                $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+                $hour_amount = $user->salary;
+            }
+            
+            // Convertendo $duration para horas (se estiver em segundos)
+            $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+            
+            // Multiplicação de $hour_amount por $duration em horas
+            $total_amount = $hour_amount * $duration_in_hours;
+
             $result[] = array(
                 $project_title,
                 $client_name,
                 $member,
                 $task_title,
                 $duration,
+                to_currency($total_amount),
                 to_decimal_format(convert_time_string_to_decimal($duration))
             );
         }
