@@ -4551,6 +4551,14 @@ body.modal-open {
   background: transparent;
   color: #4e5e6a;
 }
+.limited-column {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 7.5em;
+}
 .message-button-list .list-group-item:hover, .message-button-list .list-group-item.active {
   background: rgba(0, 0, 0, 0.02);
 }
