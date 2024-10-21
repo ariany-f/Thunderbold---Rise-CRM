@@ -22,11 +22,12 @@
                 {title: "<?php echo app_lang("member"); ?>"},
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
-                {title: "<?php echo app_lang("hours"); ?>", "class": "w15p  text-right"}
+                {visible: false, title: "<?php echo app_lang("hours"); ?>"},
+                {title: "<?php echo app_lang('amount') ?>", "class": "text-right"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
             xlsColumns: [0, 1, 2, 3, 4, 5],
-            summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'number'}],
+            summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'number'}, {column: 6, dataType: 'currency'}],
             onRelaodCallback: function (tableInstance, filterParams) {
 
                 //we'll show/hide the task/member column based on the group by status
