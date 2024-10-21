@@ -3083,8 +3083,8 @@ class Projects extends Security_Controller {
                 $member,
                 $task_title,
                 $duration,
-                to_currency($total_amount),
-                to_decimal_format(convert_time_string_to_decimal($duration))
+                to_decimal_format(convert_time_string_to_decimal($duration)),
+                to_currency($total_amount)
             );
         }
         echo json_encode(array("data" => $result));

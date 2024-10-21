@@ -16,9 +16,7 @@
                             "name" => "hour_amount",
                             "value" => (isset($model_info->hour_amount) ? $model_info->hour_amount : ""),
                             "class" => "form-control",
-                            "placeholder" => app_lang('amount'),
-                            "data-rule-required" => true,
-                            "data-msg-required" => app_lang("field_required"),
+                            "placeholder" => app_lang('amount')
                         ));
                     ?>
                 </div>
