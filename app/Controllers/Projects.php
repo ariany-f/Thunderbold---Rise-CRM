@@ -2947,6 +2947,12 @@ class Projects extends Security_Controller {
         // Convertendo $duration para horas (se estiver em segundos)
         $duration_in_hours = $duration_for_resource / 3600; // 3600 segundos = 1 hora
         
+
+        if($this->login_user->user_type === 'client')
+        {
+            $hour_amount = get_setting('project_amount_charge', $data->project_id);
+        }
+
         // Multiplicação de $hour_amount por $duration em horas
         $total_amount = $hour_amount * $duration_in_hours;
         
@@ -3108,6 +3114,11 @@ class Projects extends Security_Controller {
             
             // Convertendo $duration para horas (se estiver em segundos)
             $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+
+            if($this->login_user->user_type === 'client')
+            {
+                $hour_amount = get_setting('project_amount_charge', $data->project_id);
+            }
             
             // Multiplicação de $hour_amount por $duration em horas
             $total_amount = $hour_amount * $duration_in_hours;
@@ -6070,6 +6081,7 @@ class Projects extends Security_Controller {
         }
 
         $settings[] = "project_limit_hours";
+        $settings[] = "project_amount_charge";
 
         if ($can_create_projects) {
             $settings[] = "remove_task_statuses";

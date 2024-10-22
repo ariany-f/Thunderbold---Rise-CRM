@@ -1459,6 +1459,7 @@ $lang["lead_details"] = "Detalhes do lead";
 $lang["can_access_leads_information"] = "Pode acessar as informações do lead?";
 $lang["lead_info"] = "Informações de lead";
 $lang["project_limit_hours"] = "Limite de horas de desenvolvimento";
+$lang["project_amount_charge"] = "Valor Cobrança Projeto";
 $lang["project_balance_hours"] = "Saldo de horas de desenvolvimento";
 
 $lang["send_task_reminder_on_the_day_of_deadline"] = "Enviar lembrete de tarefa no dia do prazo";

@@ -24,7 +24,7 @@ if (!function_exists("make_project_tabs_data")) {
         }
 
         $final_projects_tabs = $final_projects_tabs ? $final_projects_tabs : $default_project_tabs;
-
+       
         foreach ($final_projects_tabs as $key => $value) {
             $exibition_key = $key;
             if($is_ticket)
@@ -209,7 +209,7 @@ if (!function_exists("make_project_tabs_data")) {
                             $project_tabs_of_hook_of_client = app_hooks()->apply_filters('app_filter_clients_project_details_tab', $project_tabs_of_hook_of_client, $project_info->id);
                             $project_tabs_of_hook_of_client = is_array($project_tabs_of_hook_of_client) ? $project_tabs_of_hook_of_client : array();
                             $project_tabs = array_merge($project_tabs, $project_tabs_of_hook_of_client);
-
+                            
                             make_project_tabs_data($project_tabs, true, $project_info->is_ticket);
                         }
                         ?>
