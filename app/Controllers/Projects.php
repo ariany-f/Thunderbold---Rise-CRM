@@ -2950,7 +2950,7 @@ class Projects extends Security_Controller {
 
         if($this->login_user->user_type === 'client')
         {
-            $hour_amount = get_setting('project_amount_charge', $data->project_id);
+            $hour_amount = (get_setting('project_amount_charge', $data->project_id) ?? 0);
         }
 
         // Multiplicação de $hour_amount por $duration em horas
@@ -3117,7 +3117,7 @@ class Projects extends Security_Controller {
 
             if($this->login_user->user_type === 'client')
             {
-                $hour_amount = get_setting('project_amount_charge', $data->project_id);
+                $hour_amount = (get_setting('project_amount_charge', $data->project_id) ?? 0);
             }
             
             // Multiplicação de $hour_amount por $duration em horas
