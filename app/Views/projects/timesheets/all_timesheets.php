@@ -44,7 +44,8 @@
                 , <?php echo $custom_field_filters; ?>
             ],
 
-            rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
+            //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
+            dateRangeType: "monthly",
             columns: [
                 {title: "<?php echo app_lang('member') ?>", order_by: "member_name"},
                 {title: "<?php echo app_lang('project') ?>", order_by: "project"},
