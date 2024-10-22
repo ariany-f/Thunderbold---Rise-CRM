@@ -78,7 +78,7 @@
             </div>
         <?php } ?>
 
-        <?php if ($can_create_projects) { ?>
+        <?php if ($can_create_projects and $login_user->is_admin) { ?>
             <div class="form-group">
                 <div class="row">
                     <label for="project_limit_hours" class=" col-md-3"><?php echo app_lang('project_limit_hours'); ?></label>
@@ -90,6 +90,25 @@
                             "value" => get_setting("project_limit_hours"),
                             "class" => "form-control",
                             "placeholder" => app_lang('project_limit_hours')
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+
+        <?php if ($can_create_projects and $login_user->is_admin) { ?>
+            <div class="form-group">
+                <div class="row">
+                    <label for="project_amount_charge" class=" col-md-3"><?php echo app_lang('project_amount_charge'); ?></label>
+                    <div class="col-md-9">
+                        <?php
+                        echo form_input(array(
+                            "id" => "project_amount_charge",
+                            "name" => "project_amount_charge",
+                            "value" => get_setting("project_amount_charge"),
+                            "class" => "form-control",
+                            "placeholder" => app_lang('project_amount_charge')
                         ));
                         ?>
                     </div>
