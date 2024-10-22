@@ -13,7 +13,8 @@
                 {name: "group_by", class: "w200", options: <?php echo $group_by_dropdown; ?>},
                 <?php echo $custom_field_filters; ?>
             ],
-            rangeDatepicker: [{startDate: {name: "start_date", value: ""}, endDate: {name: "end_date", value: ""}, showClearButton: true}],
+            //rangeDatepicker: [{startDate: {name: "start_date", value: ""}, endDate: {name: "end_date", value: ""}, showClearButton: true}],
+            dateRangeType: "monthly",
             columns: [
                 {visible: false, searchable: false},
                 {visible: false, searchable: false},

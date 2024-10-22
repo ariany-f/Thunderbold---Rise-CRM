@@ -15,7 +15,8 @@
                 {name: "group_by", class: "w200", options: <?php echo $group_by_dropdown; ?>},
                 <?php echo $custom_field_filters; ?>
             ],
-            rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
+            //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
+            dateRangeType: "monthly",
             columns: [
                 {title: "<?php echo app_lang("project"); ?>"},
                 {title: "<?php echo app_lang('client') ?>"},

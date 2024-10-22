@@ -48,7 +48,8 @@
             filterParams: {project_id: "<?php echo $project_id; ?>"},
             order: [[3, "desc"]],
             filterDropdown: [{name: "user_id", class: "w200", options: <?php echo $project_members_dropdown; ?>}, {name: "task_id", class: "w200", options: <?php echo $tasks_dropdown; ?>}, <?php echo $custom_field_filters; ?>],
-            rangeDatepicker: [{startDate: {name: "start_date", value: ""}, endDate: {name: "end_date", value: ""}, showClearButton: true}],
+            //rangeDatepicker: [{startDate: {name: "start_date", value: ""}, endDate: {name: "end_date", value: ""}, showClearButton: true}],
+            dateRangeType: "monthly",
             columns: [
                 {title: "<?php echo app_lang('member') ?>", order_by: "member_name", "class": "text-left w200"},
                 {visible: false, searchable: false},
