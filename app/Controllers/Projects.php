@@ -1565,9 +1565,26 @@ class Projects extends Security_Controller {
         $duration = abs($info->timesheet_total); // Mantém o valor em segundos
         $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
 
-      //  $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
-
-        $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+        
+        if($this->login_user->is_admin)
+        {
+            $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+        }
+        else
+        {
+            $options_resource = array("project_id" => $project_id, "user_id" => $this->login_user->id);
+            $info_resource = $this->Project_resources_model->get_details($options_resource)->getRow();
+            if($info_resource)
+            {
+                $view_data['limit'] = convert_time_to_24hours_format($info_resource->hour_limit ?? 0);
+            }
+            else
+            {
+                $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+            }
+        }
+      
+        //  $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
 
         $view_data['balance'] = ($view_data['limit'] != '00:00:00') ? (convert_seconds_to_time_format(convert_time_string_to_second($view_data['limit']) - convert_time_string_to_second($view_data["total_project_hours"]))) : 0;
 
@@ -1656,7 +1673,23 @@ class Projects extends Security_Controller {
         $duration = abs($timesheet_info->timesheet_total); // Mantém o valor em segundos
         $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
 
-        $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+        if($this->login_user->is_admin)
+        {
+            $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+        }
+        else
+        {
+            $options_resource = array("project_id" => $project_id, "user_id" => $this->login_user->id);
+            $info_resource = $this->Project_resources_model->get_details($options_resource)->getRow();
+            if($info_resource)
+            {
+                $view_data['limit'] = convert_time_to_24hours_format($info_resource->hour_limit ?? 0);
+            }
+            else
+            {
+                $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+            }
+        }
 
         $view_data['balance'] = ($view_data['limit'] != '00:00:00') ? (convert_seconds_to_time_format(convert_time_string_to_second($view_data['limit']) - convert_time_string_to_second($view_data["total_project_hours"]))) : 0;
         
@@ -2034,7 +2067,7 @@ class Projects extends Security_Controller {
         // Multiplicação de $hour_amount por $duration em horas
         $total_amount = $hour_amount * $duration_in_hours;
         
-        return array($member,  $hour_limit, ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : app_lang('not_set'))), $formatted_duration, to_currency($total_amount), $link);
+        return array($member,  ($hour_limit. ":00:00"), ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : app_lang('not_set'))), $formatted_duration, to_currency($total_amount), $link);
     }
 
     /* load project members add/edit modal */
