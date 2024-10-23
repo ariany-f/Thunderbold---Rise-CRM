@@ -2950,26 +2950,52 @@ class Projects extends Security_Controller {
 
         if($this->login_user->user_type === 'client')
         {
-            $hour_amount = (get_setting('project_amount_charge', $data->project_id) ?? 0);
+            $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
         }
 
         // Multiplicação de $hour_amount por $duration em horas
         $total_amount = $hour_amount * $duration_in_hours;
+
+        $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+
+        $project_total_amount = $project_amount * $duration_in_hours;
         
-        $row_data = array(
-            get_team_member_profile_link($data->user_id, $user),
-            $project_title,
-            $client_name,
-            $task_title,
-            $data->start_time,
-            $data->note,
-            ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
-            $data->end_time,
-            $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
-            $duration,
-            to_decimal_format(convert_time_string_to_decimal($duration)),
-            to_currency($total_amount)
-        );
+        if($this->login_user->is_admin)
+        {
+            $row_data = array(
+                get_team_member_profile_link($data->user_id, $user),
+                $project_title,
+                $client_name,
+                $task_title,
+                $data->start_time,
+                $data->note,
+                ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
+                $data->end_time,
+                $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
+                $duration,
+                to_decimal_format(convert_time_string_to_decimal($duration)),
+                to_currency($total_amount),
+                to_currency($project_total_amount),
+                to_currency(($project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)
+            );
+        }
+        else
+        {
+            $row_data = array(
+                get_team_member_profile_link($data->user_id, $user),
+                $project_title,
+                $client_name,
+                $task_title,
+                $data->start_time,
+                $data->note,
+                ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
+                $data->end_time,
+                $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
+                $duration,
+                to_decimal_format(convert_time_string_to_decimal($duration)),
+                to_currency($total_amount)
+            );
+        }
 
         foreach ($custom_fields as $field) {
             $cf_id = "cfv_" . $field->id;
@@ -3117,7 +3143,7 @@ class Projects extends Security_Controller {
 
             if($this->login_user->user_type === 'client')
             {
-                $hour_amount = (get_setting('project_amount_charge', $data->project_id) ?? 0);
+                $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
             }
             
             // Multiplicação de $hour_amount por $duration em horas

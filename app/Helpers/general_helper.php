@@ -684,8 +684,8 @@ if (!function_exists('send_app_mail')) {
         $email_protocol = get_setting("email_protocol");
         if ($email_protocol === "microsoft_outlook") {
            
-                $Outlook_smtp = new Outlook_smtp();
-                return $Outlook_smtp->send_app_mail($to, $subject, $message, $optoins, $convert_message_to_html);
+                // $Outlook_smtp = new Outlook_smtp();
+                // return $Outlook_smtp->send_app_mail($to, $subject, $message, $optoins, $convert_message_to_html);
           
                 return true;
         } else {
