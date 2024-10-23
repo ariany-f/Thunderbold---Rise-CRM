@@ -35,7 +35,7 @@
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
             xlsColumns: [0, 1, 2, 3, 4, 5],
-            summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'number'}, {column: 6, dataType: 'currency'}],
+            summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'number'}, {column: 6, dataType: 'currency'}, {column: 7, dataType: 'currency'},  {column: 8, dataType: 'currency'}],
             onRelaodCallback: function (tableInstance, filterParams) {
 
                 //we'll show/hide the task/member column based on the group by status
