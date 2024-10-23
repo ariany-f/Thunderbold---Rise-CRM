@@ -2879,7 +2879,7 @@ class Projects extends Security_Controller {
         $result_data = array();
         foreach ($list_data as $data) {
 
-            $options_resources = array("project_id" => $project_id, "user_id" => $data->user_id, "is_leader" => 0);
+            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
 
             $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
 
@@ -2927,9 +2927,7 @@ class Projects extends Security_Controller {
 
         $duration = convert_seconds_to_time_format($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time))));
 
-
         $duration_for_resource = ($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time)))); // Mantém o valor em segundos
-       
 
         if($resource)
         {
