@@ -27,8 +27,8 @@
                 {title: "<?php echo app_lang("task"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
                 {title: "<?php echo app_lang("hours"); ?>", "class": "w15p text-right"},
-                {title: "<?php echo app_lang("consultant"); ?>", "class": "text-center"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge') ?>", "class": "text-center w50"},
+                {title: "<?php echo app_lang("consultant"); ?>", "class": "text-center"},
                 {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center w50"}
             ],
             printColumns: [2, 3, 4, 5, 6],
