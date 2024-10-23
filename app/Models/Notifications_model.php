@@ -602,7 +602,7 @@ class Notifications_model extends Crud_model {
             $extra_data["notification_multiple_tasks_user_wise"] = get_array_value($notification_multiple_tasks_users, "user_wise_tasks");
         }
 
-        log_message('error', '[ERROR] {exception}', ['exception' => 'vai mandar e-mail aqui']);
+      
         //notification saved. send emails
         if ($notification_id && $email_notify_to) {
             send_notification_emails($notification_id, $email_notify_to, $extra_data);
