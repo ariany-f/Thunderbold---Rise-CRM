@@ -24,7 +24,7 @@
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
-                {title: "<?php echo app_lang('amount') ?>", "class": "text-right"}
+                {title: "<?php echo app_lang('consultant') ?>", "class": "text-right"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
             xlsColumns: [0, 1, 2, 3, 4, 5],
