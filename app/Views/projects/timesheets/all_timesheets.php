@@ -29,9 +29,15 @@
 <?php } ?>
     
     var optionVisibility = false;
-<?php if ($login_user->user_type === "staff" && ($login_user->is_admin || get_array_value($login_user->permissions, "timesheet_manage_permission"))) { ?>
-            optionVisibility = true;
-<?php } ?>
+    <?php if ($login_user->user_type === "staff" && ($login_user->is_admin || get_array_value($login_user->permissions, "timesheet_manage_permission"))) { ?>
+                optionVisibility = true;
+    <?php } ?>
+    
+    
+        var projectAmount = false;
+        <?php if ($login_user->is_admin) { ?>
+                projectAmount = true;
+        <?php } ?>
 
         $("#all-project-timesheet-table").appTable({
             source: '<?php echo_uri("projects/timesheet_list_data/") ?>',
@@ -52,14 +58,16 @@
                 {title: "<?php echo app_lang('client') ?>", order_by: "client"},
                 {title: "<?php echo app_lang('task') ?>", order_by: "task_title"},
                 {visible: false, searchable: false, order_by: "start_time"},
-                {title: '<i data-feather="message-circle" class="icon-16"></i>', "class": "text-center w50"},
+                {title: "<?php echo app_lang('note')?>", "class": "text-center w200 limited-column"},
                 {title: "<?php echo get_setting("users_can_input_only_total_hours_instead_of_period") ? app_lang("date") : app_lang('start_time') ?>", "iDataSort": 4, order_by: "start_time"},
                 {visible: false, searchable: false, order_by: "end_time"},
                 {title: "<?php echo app_lang('end_time') ?>", "iDataSort": 6, visible: endTimeVisibility, order_by: "end_time"},
                 {title: "<?php echo app_lang('duration') ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('hours') ?>", "class": "text-right"},
-                {title: "<?php echo app_lang('amount') ?>", "class": "text-right"}
-<?php echo $custom_field_headers; ?>,
+                {title: "<?php echo app_lang('consultant') ?>", "class": "text-right"},
+                {visible: projectAmount, title: "<?php echo app_lang('charge') ?>", "class": "text-center w50"},
+                {visible: projectAmount, title: "<?php echo app_lang('profit') ?>", "class": "text-center w50"}
+                <?php echo $custom_field_headers; ?>,
                 {visible: optionVisibility, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],
             printColumns: combineCustomFieldsColumns([0, 1, 2, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),

@@ -1065,7 +1065,8 @@ $lang["created_from"] = "Criado a partir de:"; //Ex. Created from Invoice#1
 $lang["recommended_execution_interval"] = "Intervalo de execução recomendado";
 
 /* Version 1.8 */
-
+$lang['consultant'] = 'Consultor(Custo)';
+$lang['charge'] = 'Cliente';
 $lang["integration"] = "Integração";
 $lang["get_your_key_from_here"] = "Consiga sua chave de acesso aqui:";
 $lang["re_captcha_site_key"] = "Chave de acesso do site";
