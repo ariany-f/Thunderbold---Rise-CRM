@@ -72,7 +72,7 @@
             ],
             printColumns: combineCustomFieldsColumns([0, 1, 2, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([0, 1, 2, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
-            summation: [{column: 9, dataType: 'time'}, {column: 11, dataType: 'currency'}]
+            summation: [{column: 9, dataType: 'time'}, {column: 11, dataType: 'currency'}, {column: 12, dataType: 'currency'},  {column: 13, dataType: 'currency'}]
         });
     });
 </script>
