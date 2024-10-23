@@ -961,6 +961,7 @@ if (!function_exists('send_notification_emails')) {
                     $parser_data["LOGO_URL"] = get_logo_url();
                     $parser_data["EVENT_TITLE"] = $notification->user_name . " " . sprintf(app_lang("notification_" . $notification->event), $notification->to_user_name);
 
+                    log_message('error', '[ERROR] {exception}', ['exception' => '5']);
                     send_app_mail($user_email_address, $subject, $message, $email_options);
                 }
             } else if ($email_notify_to) { //keep previous method
