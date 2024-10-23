@@ -22,7 +22,7 @@
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
                 {title: "<?php echo app_lang("hours"); ?>", "class": "w15p text-right"},
-                {title: "<?php echo app_lang("amount"); ?>", "class": "text-center"}
+                {title: "<?php echo app_lang("consultant"); ?>", "class": "text-center"}
             ],
             printColumns: [2, 3, 4, 5, 6],
             xlsColumns: [2, 3, 4, 5, 6],

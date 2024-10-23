@@ -1135,6 +1135,8 @@ $lang["notification_new_announcement_created"] = "Criou um aviso.";
 
 $lang["month"] = "Mês";
 $lang["profit"] = "Lucro";
+$lang["liquid"] = "Liquido";
+
 
 $lang["invoice_due_reminder_before_due_date"] = "Lembrete de fatura próxima do vencimento";
 $lang["send_due_invoice_reminder_notification_before"] = "Enviar lembrete de vencimento de fatura em breve";
