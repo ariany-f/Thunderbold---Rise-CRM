@@ -3,6 +3,11 @@
     </table>
 </div>
 <script type="text/javascript">
+    var projectAmount = false;
+    <?php if ($login_user->is_admin) { ?>
+            projectAmount = true;
+    <?php } ?>
+
     $(document).ready(function () {
         $("#all-timesheet-summary-table").appTable({
             source: '<?php echo_uri("projects/timesheet_summary_list_data/"); ?>',
@@ -24,7 +29,9 @@
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
-                {title: "<?php echo app_lang('consultant') ?>", "class": "text-right"}
+                {title: "<?php echo app_lang('consultant') ?>", "class": "text-right"},
+                {visible: projectAmount, title: "<?php echo app_lang('charge') ?>", "class": "text-center w50"},
+                {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center w50"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
             xlsColumns: [0, 1, 2, 3, 4, 5],

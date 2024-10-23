@@ -3149,15 +3149,36 @@ class Projects extends Security_Controller {
             // Multiplicação de $hour_amount por $duration em horas
             $total_amount = $hour_amount * $duration_in_hours;
 
-            $result[] = array(
-                $project_title,
-                $client_name,
-                $member,
-                $task_title,
-                $duration,
-                to_decimal_format(convert_time_string_to_decimal($duration)),
-                to_currency($total_amount)
-            );
+            $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+
+            $project_total_amount = $project_amount * $duration_in_hours;    
+
+            if($this->login_user->is_admin)
+            {
+                $result[] = array(
+                    $project_title,
+                    $client_name,
+                    $member,
+                    $task_title,
+                    $duration,
+                    to_decimal_format(convert_time_string_to_decimal($duration)),
+                    to_currency($total_amount),
+                    to_currency($project_total_amount),
+                    to_currency(($project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)
+                );
+            }
+            else
+            {
+                $result[] = array(
+                    $project_title,
+                    $client_name,
+                    $member,
+                    $task_title,
+                    $duration,
+                    to_decimal_format(convert_time_string_to_decimal($duration)),
+                    to_currency($total_amount)
+                );
+            }
         }
         echo json_encode(array("data" => $result));
     }
