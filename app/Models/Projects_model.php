@@ -170,6 +170,7 @@ class Projects_model extends Crud_model {
                 ON $project_members_table.user_id = $users_table.id
             WHERE 
                 $users_table.deleted = 0 
+                AND $users_table.user_type = 'staff'
                 AND $project_members_table.project_id = $projects_table.id
             ) AS collaborator_list,
             $status_columns_str, 

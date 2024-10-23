@@ -23,8 +23,8 @@
             columns: [
                 {visible: false, searchable: false},
                 {visible: false, searchable: false},
-                {title: "<?php echo app_lang("member"); ?>"},
-                {title: "<?php echo app_lang("task"); ?>"},
+                {title: "<?php echo app_lang("member"); ?>", "class": "w15p"},
+                {title: "<?php echo app_lang("task"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
                 {title: "<?php echo app_lang("hours"); ?>", "class": "w15p text-right"},
                 {title: "<?php echo app_lang("consultant"); ?>", "class": "text-center"},
@@ -33,7 +33,7 @@
             ],
             printColumns: [2, 3, 4, 5, 6],
             xlsColumns: [2, 3, 4, 5, 6],
-            summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'number'}, {column: 6, dataType: 'currency'}],
+            summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'number'}, {column: 6, dataType: 'currency'}, {column: 7, dataType: 'currency'},  {column: 8, dataType: 'currency'}],
             onRelaodCallback: function (tableInstance, filterParams) {
 
                 //we'll show/hide the task/member column based on the group by status
