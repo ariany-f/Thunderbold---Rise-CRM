@@ -2999,7 +2999,9 @@ class Projects extends Security_Controller {
                 $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
                 $duration,
                 to_decimal_format(convert_time_string_to_decimal($duration)),
-                to_currency($total_amount)
+                "",
+                to_currency($total_amount),
+                ""
             );
         }
 
@@ -3189,7 +3191,9 @@ class Projects extends Security_Controller {
                     $task_title,
                     $duration,
                     to_decimal_format(convert_time_string_to_decimal($duration)),
-                    to_currency($total_amount)
+                    "",
+                    to_currency($total_amount),
+                    ""
                 );
             }
         }
