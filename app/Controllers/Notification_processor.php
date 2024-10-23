@@ -25,7 +25,7 @@ class Notification_processor extends App_Controller {
     function create_notification($data = array()) {
 
         ini_set('max_execution_time', 300); //300 seconds 
-        error_log(date('[Y-m-d H:i:s e] ') . " Process Notification: " . serialize($_POST) . PHP_EOL, 3, "error.log");
+        //error_log(date('[Y-m-d H:i:s e] ') . " Process Notification: " . serialize($_POST) . PHP_EOL, 3, "error.log");
         //validate notification request
 
         if (!get_setting("log_direct_notifications")) {
