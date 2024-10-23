@@ -280,10 +280,7 @@ class Outlook_smtp {
             $email["message"]["bccRecipients"] = $this->prepare_emails_array($bcc);
         }
 
-        $response = $this->do_request("POST", "sendMail", $email);
-
-        
-        log_message('error', '[ERROR] {exception}', ['exception' => json_encode($response)]);
+        $this->do_request("POST", "sendMail", $email);
 
         return true;
     }
