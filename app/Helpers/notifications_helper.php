@@ -540,8 +540,6 @@ if (!function_exists('send_notification_emails')) {
         if (!$notification) {
             return false;
         }
-
-        log_message('error', '[ERROR] {exception}', ['exception' => 'passou do if']);
         
         $url = get_uri();
         $parser_data = array();
@@ -922,7 +920,6 @@ if (!function_exists('send_notification_emails')) {
             }
         } else {
             
-            log_message('error', '[ERROR] {exception}', ['exception' => '2']);
             if ($email_notify_to && is_array($email_notify_to)) {
                 foreach ($email_notify_to as $user) {
                     if (is_string($user)) {
@@ -961,11 +958,9 @@ if (!function_exists('send_notification_emails')) {
                     $parser_data["LOGO_URL"] = get_logo_url();
                     $parser_data["EVENT_TITLE"] = $notification->user_name . " " . sprintf(app_lang("notification_" . $notification->event), $notification->to_user_name);
 
-                    log_message('error', '[ERROR] {exception}', ['exception' => '5']);
                     send_app_mail($user_email_address, $subject, $message, $email_options);
                 }
             } else if ($email_notify_to) { //keep previous method
-                log_message('error', '[ERROR] {exception}', ['exception' => '3']);
                 try {
                     //it'll be used for specific notifications for plugins individually
                     $email_notification_info_of_hook = app_hooks()->apply_filters("app_filter_send_email_notification", array(
@@ -985,7 +980,6 @@ if (!function_exists('send_notification_emails')) {
 
                 $email_notify_to_array = explode(",", $email_notify_to);
                 foreach ($email_notify_to_array as $email_address) {
-                    log_message('error', '[ERROR] {exception}', ['exception' => '4']);
                     send_app_mail($email_address, $subject, $message, $email_options);
                 }
             }
