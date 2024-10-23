@@ -6155,6 +6155,10 @@ class Projects extends Security_Controller {
                 $value = "";
             }
 
+            if($setting == "project_amount_charge"){
+                $value = str_replace(',', '.', $value);
+            }
+
             $this->Project_settings_model->save_setting($project_id, $setting, $value);
         }
 
