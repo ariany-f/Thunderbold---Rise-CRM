@@ -483,6 +483,8 @@ class Notifications_model extends Crud_model {
         $web_notify_to = "";
         $email_notify_to = array();
 
+        error_log(date('[Y-m-d H:i:s e] '), 3, "chegou_aqui.log");
+
         //we've to send email specifically to the unknown client
         if (get_setting("enable_email_piping")) {
             //add creator's email
@@ -601,6 +603,7 @@ class Notifications_model extends Crud_model {
             $extra_data["notification_multiple_tasks_user_wise"] = get_array_value($notification_multiple_tasks_users, "user_wise_tasks");
         }
 
+        error_log(date('[Y-m-d H:i:s e] '), 3, "chegou_nesse.log");
         //notification saved. send emails
         if ($notification_id && $email_notify_to) {
             send_notification_emails($notification_id, $email_notify_to, $extra_data);
