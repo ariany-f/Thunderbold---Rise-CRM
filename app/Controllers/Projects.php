@@ -2958,7 +2958,15 @@ class Projects extends Security_Controller {
 
         $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
-        $project_total_amount = $project_amount * $duration_in_hours;
+        if(is_numeric($project_amount) and is_numeric($duration_in_hours))
+        {
+            $project_total_amount = $project_amount * $duration_in_hours;
+        }
+        else
+        {
+            $project_total_amount = 0;
+        }   
+
         
         if($this->login_user->is_admin)
         {
@@ -3151,7 +3159,14 @@ class Projects extends Security_Controller {
 
             $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
-            $project_total_amount = ($project_amount * $duration_in_hours);
+            if(is_numeric($project_amount) and is_numeric($duration_in_hours))
+            {
+                $project_total_amount = $project_amount * $duration_in_hours;
+            }
+            else
+            {
+                $project_total_amount = 0;
+            }   
 
             if($this->login_user->is_admin)
             {
