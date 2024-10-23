@@ -3149,9 +3149,9 @@ class Projects extends Security_Controller {
             // Multiplicação de $hour_amount por $duration em horas
             $total_amount = $hour_amount * $duration_in_hours;
 
-            $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+            $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
-            $project_total_amount = $project_amount * $duration_in_hours;    
+            $project_total_amount = ($project_amount * $duration_in_hours);
 
             if($this->login_user->is_admin)
             {
