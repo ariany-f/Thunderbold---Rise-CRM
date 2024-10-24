@@ -17,6 +17,7 @@ class Proposals_model extends Crud_model {
         $taxes_table = $this->db->prefixTable('taxes');
         $proposal_items_table = $this->db->prefixTable('proposal_items');
         $users_table = $this->db->prefixTable('users');
+        $templates_table = $this->db->prefixTable('proposal_templates');
 
         $where = "";
         $id = $this->_get_clean_value($options, "id");
@@ -80,10 +81,11 @@ class Proposals_model extends Crud_model {
         $join_custom_fieds = get_array_value($custom_field_query_info, "join_string");
         $custom_fields_where = get_array_value($custom_field_query_info, "where_string");
 
-        $sql = "SELECT $proposals_table.*, $clients_table.currency, $clients_table.currency_symbol, $clients_table.company_name, $clients_table.is_lead,
+        $sql = "SELECT $proposals_table.*, $templates_table.title as template_name ,$clients_table.currency, $clients_table.currency_symbol, $clients_table.company_name, $clients_table.is_lead,
            CONCAT($users_table.first_name, ' ',$users_table.last_name) AS signer_name, $users_table.email AS signer_email,
            $proposal_value_calculation AS proposal_value, (IFNULL(items_table.unit_type, '')) AS unit_type, $proposal_quantity_calculation AS proposal_quantity, $proposal_quantity_gp_calculation AS proposal_quantity_gp, $proposal_sum_quantity_calculation AS proposal_sum_quantity, tax_table.percentage AS tax_percentage, tax_table2.percentage AS tax_percentage2 $select_custom_fieds
         FROM $proposals_table
+        LEFT JOIN $templates_table ON $templates_table.id= $proposals_table.template_id
         LEFT JOIN $clients_table ON $clients_table.id= $proposals_table.client_id
         LEFT JOIN $users_table ON $users_table.id= $proposals_table.accepted_by
         LEFT JOIN (SELECT $taxes_table.* FROM $taxes_table) AS tax_table ON tax_table.id = $proposals_table.tax_id
@@ -118,6 +120,7 @@ class Proposals_model extends Crud_model {
         $client = $this->db->query($client_sql)->getRow();
         
         $result = new \stdClass();
+        $result->gp_apart = $proposal->gp_apart;
         $result->proposal_subtotal = $item->proposal_subtotal;
         $result->proposal_total_sum_quantity = $item->proposal_total_sum_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade somado gp+comum
         $result->proposal_total_quantity_gp = $item->proposal_total_quantity_gp . ' ' . $item->unit_type; // Adicionado total de quantidade gp

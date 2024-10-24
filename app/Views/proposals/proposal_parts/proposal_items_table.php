@@ -19,7 +19,13 @@ $total_after_discount_row = '<tr>
     <tr style="font-weight: bold; background-color: <?php echo $color; ?>; color: #fff;  ">
         <th style="width: 65%; border-right: 1px solid #eee;"> <?php echo app_lang("item"); ?> </th>
         <!--<th style="text-align: right;  width: 20%; border-right: 1px solid #eee;"> <?php echo app_lang("rate"); ?></th>-->
-        <th colspan="2" style="text-align: center;  width: 10%; border-right: 1px solid #eee;"> <?php echo app_lang("quantity"); ?></th>
+        <?php if($proposal_total_summary->gp_apart) : ?>
+            <th style="text-align: center;  width: 10%; border-right: 1px solid #eee;"> <?php echo app_lang("quantity"); ?></th>
+            <th style="text-align: center;  width: 10%; border-right: 1px solid #eee;"> <?php echo app_lang("quantity_gp"); ?></th>
+        <?php else: ?>
+            <th colspan="2" style="text-align: center;  width: 10%; border-right: 1px solid #eee;"> <?php echo app_lang("quantity"); ?></th>
+        <?php endif; ?>
+
         <th style="text-align: right;  width: 15%; "> <?php echo app_lang("total"); ?></th>
     </tr>
     <?php
@@ -31,7 +37,12 @@ $total_after_discount_row = '<tr>
                 <span style="color: #888; font-size: 90%;"><?php echo nl2br($item->description ? process_images_from_content($item->description) : ""); ?></span>
             </td>
             <!--<td style="text-align: right; width: 20%; border: 1px solid #fff;"> <?php echo to_currency($item->rate, $item->currency_symbol); ?></td>-->
-            <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity + $item->quantity_gp  . " " . $item->unit_type; ?></td>
+            <?php if($proposal_total_summary->gp_apart) : ?>
+                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity . " " . $item->unit_type; ?></td>
+                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity_gp . " " . $item->unit_type; ?></td>
+            <?php else: ?>
+                <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity + $item->quantity_gp  . " " . $item->unit_type; ?></td>
+            <?php endif; ?>
             <td style="text-align: right; width: 15%; border: 1px solid #fff;"> <?php echo to_currency($item->total, $item->currency_symbol); ?></td>
         </tr>
     <?php } ?>

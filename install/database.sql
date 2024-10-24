@@ -890,6 +890,8 @@ CREATE TABLE IF NOT EXISTS `proposals` (
   `discount_amount` double NOT NULL,
   `discount_amount_type` enum('percentage','fixed_amount') COLLATE utf8_unicode_ci NOT NULL,
   `content` mediumtext COLLATE utf8_unicode_ci NOT NULL,
+  `gp_apart` tinyint(1) NOT NULL DEFAULT '0',
+  `template_id` int(11) NOT NULL DEFAULT '0',
   `public_key` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `accepted_by` INT(11) NOT NULL DEFAULT '0',
   `meta_data` TEXT NOT NULL, 

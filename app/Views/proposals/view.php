@@ -92,6 +92,11 @@
                 <?php } ?>
         <div class="mt15">
             <div class="card no-border clearfix ">
+            
+                <div class="clearfix p20">
+                    <small><?= ($proposal_info->template_name) ? ('Template selecionado: ' . $proposal_info->template_name) : 'Sem template selecionado' ?></small>
+                </div>
+
                 <ul data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white title" role="tablist">
                     <li><a role="presentation" data-bs-toggle="tab" href="javascript:;" data-bs-target="#proposal-items"><?php echo app_lang("proposal") . " " . app_lang("items"); ?></a></li>
                     <li><a role="presentation" data-bs-toggle="tab" href="<?php echo_uri("proposals/editor/" . $proposal_info->id); ?>" data-bs-target="#proposal-editor"><?php echo app_lang("proposal_editor"); ?></a></li>

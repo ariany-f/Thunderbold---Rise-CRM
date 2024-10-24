@@ -114,7 +114,9 @@ class Proposals extends Security_Controller {
         $id = $this->request->getPost("id");
 
         $proposal_data = array(
-            "content" => decode_ajax_post_data($this->request->getPost('view'))
+            "content" => decode_ajax_post_data($this->request->getPost('view')),
+            "template_id" => $this->request->getPost('template_id'),
+            "gp_apart" => $this->request->getPost('gp_apart')
         );
 
         $this->Proposals_model->ci_save($proposal_data, $id);

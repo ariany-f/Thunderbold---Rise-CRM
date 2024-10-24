@@ -2023,6 +2023,7 @@ $lang["delete_proposal_template"] = "Excluir modelo de proposta";
 $lang["use_template_from"] = "Usar modelo de";
 $lang["print_proposal"] = "Imprimir proposta";
 $lang["proposal_template_inserting_instruction"] = "Você perderá todas as alterações não salvas ao inserir um modelo.";
+$lang["gp_apart"] = "Separar GP";
 
 $lang["default"] = "Predefinição";
 
