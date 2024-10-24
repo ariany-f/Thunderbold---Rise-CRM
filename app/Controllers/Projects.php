@@ -2918,7 +2918,7 @@ class Projects extends Security_Controller {
 
 
         $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
-        $task_title = modal_anchor(get_uri("projects/task_view"), $data->task_title, array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
+        $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
 
         $client_name = "-";
         if ($data->timesheet_client_company_name) {
@@ -3115,7 +3115,7 @@ class Projects extends Security_Controller {
             $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
 
             if ($group_by != "member") {
-                $task_title = modal_anchor(get_uri("projects/task_view"), $data->task_title, array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
+                $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
                 if (!$data->task_title) {
                     $task_title = app_lang("not_specified");
                 }
