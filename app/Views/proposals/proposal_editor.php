@@ -19,7 +19,12 @@
                         <button type="button" class="btn btn-primary ml10 float-end" id="proposal-save-and-show-btn"><span data-feather='check-circle' class="icon-16"></span> <?php echo app_lang('save_and_show'); ?></button>
                         <button type="submit" class="btn btn-primary float-end"><span data-feather='check-circle' class="icon-16"></span> <?php echo app_lang('save'); ?></button>
                     </div>
-
+                    <div class=" col-md-12">
+                        <label for="gp_apart"><?php echo app_lang('gp_apart'); ?></label>
+                        <?php
+                            echo form_checkbox("gp_apart", "1", $proposal_info->gp_apart ? true : false, "id='gp_apart' class='form-check-input'");
+                        ?>
+                    </div>
                     <div class=" col-md-12">
                         <?php
                         echo form_textarea(array(
@@ -28,6 +33,18 @@
                             "value" => process_images_from_content($proposal_info->content, false),
                             "placeholder" => app_lang('view'),
                             "class" => "form-control"
+                        ));
+                        ?>
+                    </div>
+
+                    <div class=" col-md-12">
+                        <?php
+                        echo form_input(array(
+                            "id" => "proposal-temnplate-id",
+                            "name" => "template_id",
+                            "value" => process_images_from_content($proposal_info->template_id, false),
+                            "placeholder" => app_lang('template_id'),
+                            "class" => "form-control hide"
                         ));
                         ?>
                     </div>
@@ -92,6 +109,7 @@
                 success: function (result) {
                     if (result.success) {
                         $("#proposal-view").summernote("code", result.template);
+                        $("#proposal-temnplate-id").val(id);
 
                         //close the modal
                         $("#close-template-modal-btn").trigger("click");
