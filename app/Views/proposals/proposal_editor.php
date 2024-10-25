@@ -19,8 +19,8 @@
                         <button type="button" class="btn btn-primary ml10 float-end" id="proposal-save-and-show-btn"><span data-feather='check-circle' class="icon-16"></span> <?php echo app_lang('save_and_show'); ?></button>
                         <button type="submit" class="btn btn-primary float-end"><span data-feather='check-circle' class="icon-16"></span> <?php echo app_lang('save'); ?></button>
                     </div>
-                    <div class=" col-md-12">
-                        <label for="gp_apart"><?php echo app_lang('gp_apart'); ?></label>
+                    <div class=" col-md-12 text-right">
+                        <label style="color: #2471a3;" for="gp_apart"><b><?php echo app_lang('gp_apart'); ?></b></label>
                         <?php
                             echo form_checkbox("gp_apart", "1", $proposal_info->gp_apart ? true : false, "id='gp_apart' class='form-check-input'");
                         ?>
