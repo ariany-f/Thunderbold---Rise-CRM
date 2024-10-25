@@ -94,7 +94,7 @@
             <div class="card no-border clearfix ">
             
                 <div class="clearfix p20">
-                    <small><?= ($proposal_info->template_name) ? ('Template selecionado: ' . $proposal_info->template_name) : 'Sem template selecionado' ?></small>
+                    <p><?= ($proposal_info->template_name) ? ('<b style="color:#2471a3 !important;">Template selecionado:  </b>' . $proposal_info->template_name) : 'Sem template selecionado' ?></p>
                 </div>
 
                 <ul data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white title" role="tablist">

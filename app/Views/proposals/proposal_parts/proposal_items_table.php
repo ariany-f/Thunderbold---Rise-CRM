@@ -48,12 +48,24 @@ $total_after_discount_row = '<tr>
     <?php } ?>
     <tr>
         <td style="text-align: right;"><?php echo app_lang("sub_total"); ?></td>
-        <td style="text-align: center; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
-            <?php echo $proposal_total_summary->proposal_total_sum_quantity; ?>
-        </td>
-        <td colspan="2" style="text-align: right; width: 15%; border: 1px solid #fff; background-color: #f4f4f4;">
-            <?php echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?>
-        </td>
+        <?php if($proposal_total_summary->gp_apart) : ?>
+            <td style="text-align: center; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
+                <?php echo $proposal_total_summary->proposal_total_quantity; ?>
+            </td>
+            <td style="text-align: center; width: 10%; border: 1px solid #fff; background-color: #f4f4f4;">
+                <?php echo $proposal_total_summary->proposal_total_quantity_gp; ?>
+            </td>
+            <td style="text-align: right; width: 15%; border: 1px solid #fff; background-color: #f4f4f4;">
+                <?php echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?>
+            </td>
+        <?php else: ?>
+            <td style="text-align: center; width: 20%; border: 1px solid #fff; background-color: #f4f4f4;">
+                <?php echo $proposal_total_summary->proposal_total_sum_quantity; ?>
+            </td>
+            <td colspan="2" style="text-align: right; width: 15%; border: 1px solid #fff; background-color: #f4f4f4;">
+                <?php echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?>
+            </td>
+        <?php endif; ?>
     </tr>
     <?php
     if ($proposal_total_summary->discount_total && $proposal_total_summary->discount_type == "before_tax") {
@@ -82,9 +94,19 @@ $total_after_discount_row = '<tr>
     }
     ?> 
     <tr>
-        <td colspan="2" style="text-align: right;"><?php echo app_lang("total"); ?></td>
-        <td colspan="2" style="text-align: right; width: 15%; background-color: <?php echo $color; ?>; color: #fff;">
-            <?php echo to_currency($proposal_total_summary->proposal_total, $proposal_total_summary->currency_symbol); ?>
-        </td>
+        <?php if($proposal_total_summary->gp_apart) : ?>
+            <td style="text-align: right;"><?php echo app_lang("total"); ?></td>
+            <td colspan="2" style="text-align: center; width: 20%; background-color: <?php echo $color; ?>; color: #fff;">
+                <?php echo $proposal_total_summary->proposal_total_sum_quantity; ?>
+            </td>
+            <td style="text-align: right; width: 15%; background-color: <?php echo $color; ?>; color: #fff;">
+                <?php echo to_currency($proposal_total_summary->proposal_total, $proposal_total_summary->currency_symbol); ?>
+            </td>
+        <?php else: ?>
+            <td colspan="2" style="text-align: right;"><?php echo app_lang("total"); ?></td>
+            <td colspan="2" style="text-align: right; width: 15%; background-color: <?php echo $color; ?>; color: #fff;">
+                <?php echo to_currency($proposal_total_summary->proposal_total, $proposal_total_summary->currency_symbol); ?>
+            </td>
+        <?php endif; ?>
     </tr>
 </table>
