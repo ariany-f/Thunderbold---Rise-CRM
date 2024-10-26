@@ -984,6 +984,7 @@ class Clients extends Security_Controller {
             "skype" => $this->request->getPost('skype'),
             "job_title" => $this->request->getPost('job_title'),
             "gender" => is_null($this->request->getPost('gender')) ? "" : $this->request->getPost('gender'),
+            "dob" => $this->request->getPost('dob'),
             "note" => $this->request->getPost('note')
         );
 
