@@ -2468,6 +2468,31 @@ class Projects extends Security_Controller {
         }
     }
 
+    function start_task_dev($task_id) {
+        validate_numeric_value($task_id);
+        $this->access_only_team_members();
+
+        $task_data = $this->Tasks_model->get_one_where(array('id' => $task_id));
+
+        $data = array(
+            "assigned_to" => $this->login_user->id,
+            "status_id" => 2
+        );
+
+        $user_has_any_open_timer_on_this_task = false;
+
+        if ($task_id) {
+            $user_has_any_open_timer_on_this_task = $this->Timesheets_model->user_has_any_open_timer_on_this_task($task_id, $this->login_user->id);
+        }
+
+       if ($user_has_any_open_timer_on_this_task) {
+            app_redirect("forbidden");
+        }
+
+        $this->Tasks_model->ci_save($data, $task_id);
+        echo json_encode(array("success" => true));
+    }
+
     function create_conversation($project_id, $task_id, $group_id) {
         
         validate_numeric_value($project_id);
