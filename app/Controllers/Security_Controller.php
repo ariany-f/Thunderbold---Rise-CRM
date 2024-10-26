@@ -703,6 +703,24 @@ class Security_Controller extends App_Controller {
 
         return $projects_dropdown;
     }
+    
+    //get projects dropdown for speciiic client
+    protected function _get_projects_of_client_dropdown($client_id) {
+        $project_options = array("status" => "open", "deleted" => 0);
+     
+        $project_options["client_id"] = $client_id; //get client's projects
+    
+        $projects = $this->Projects_model->get_details($project_options)->getResult();
+        $projects_dropdown = array("" => "-");
+
+        if ($projects) {
+            foreach ($projects as $project) {
+                $projects_dropdown[$project->id] = ((($project->is_ticket) ? "Chamados:  " : "Projeto: ") . $project->title);
+            }
+        }
+
+        return $projects_dropdown;
+    }
 
     protected function check_access_to_this_item($item_info) {
         if ($this->login_user->user_type === "client") {

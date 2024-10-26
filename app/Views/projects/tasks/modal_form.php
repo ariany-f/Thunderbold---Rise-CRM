@@ -48,18 +48,18 @@
                     </div>
                 </div>
             </div>
-            <?php if (!$project_id) { ?>
+            <?php //if (!$project_id) { ?>
                 <div class="form-group">
                     <div class="row">
                         <label for="project_id" class=" col-md-3"><?php echo app_lang('project'); ?></label>
                         <div class="col-md-9">
                             <?php
-                            echo form_dropdown("project_id", $projects_dropdown, array($model_info->project_id), "class='select2 validate-hidden' id='project_id' data-rule-required='true', data-msg-required='" . app_lang('field_required') . "'");
+                            echo form_dropdown("project_id", $projects_dropdown, array($project_id), "class='select2 validate-hidden' id='project_id' data-rule-required='true', data-msg-required='" . app_lang('field_required') . "'");
                             ?>
                         </div>
                     </div>
                 </div>
-            <?php } ?>
+            <?php //} ?>
             <!--<div class="form-group">-->
             <!--    <div class="row">-->
             <!--        <label for="points" class="col-md-3"><?php echo app_lang('points'); ?>-->
