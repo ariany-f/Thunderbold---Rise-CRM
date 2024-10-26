@@ -281,6 +281,7 @@ class Proposals extends Security_Controller {
             "client_id" => $this->request->getPost("client_id"),
             "start_date" => $this->request->getPost("start_date"),
             "end_date" => $this->request->getPost("end_date"),
+            "search_by" => $this->request->getPost("search_by"),
             "custom_fields" => $custom_fields,
             "custom_field_filter" => $this->prepare_custom_field_filter_values("proposals", $this->login_user->is_admin, $this->login_user->user_type)
         );
