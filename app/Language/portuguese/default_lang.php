@@ -388,6 +388,7 @@ $lang["create_task"] = "Criar Tarefa";
 $lang["staff"] = "Usuário do sistema";
 $lang["group_name"] = "Nome do Grupo";
 $lang["create_conversation"] = "Criar Chat da Tarefa no Grupo";
+$lang["start_development"] = "Iniciar Desenvolvimento";
 $lang["enter_conversation"] = "Entrar no Chat da Tarefa";
 $lang["convert_task"] = "Criar Tarefa";
 $lang["project_timeline"] = "Cronograma do projeto";

@@ -128,7 +128,10 @@ if ($total_sub_tasks) {
                                 echo modal_anchor(get_uri("projects/timelog_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('log_time'), array("class" => "btn btn-success", "title" => app_lang('log_time'), "data-post-project_id" => $model_info->project_id, "data-post-task_id" => $model_info->id));
                               //  echo view("projects/tasks/task_timer");
                             }
-                        ?> 
+                            if($model_info->status_id == "1" && $login_user->user_type === 'staff') {
+                                echo ajax_anchor(get_uri("projects/start_task_dev/" . $model_info->id), "<i data-feather='play' class='icon-16'></i> " . app_lang('start_development'), array("class" => "btn btn-info color-white mt-4", "title" => app_lang('start_development'), "data-reload-on-success" => "1"));
+                            }
+                        ?>
                     </div>
 
                     <?php if (get_setting("module_project_timesheet") == "1" && $show_timesheet_info) { ?>
