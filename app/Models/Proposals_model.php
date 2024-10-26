@@ -72,6 +72,14 @@ class Proposals_model extends Crud_model {
             $where .= " AND $proposals_table.status!='draft' ";
         }
 
+        $search_by = get_array_value($options, "search_by");
+        if ($search_by) {
+            $search_by = $this->db->escapeLikeString($search_by);
+            $where .= " AND (";
+            $where .= " $proposals_table.name LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $proposals_table.note LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " )";
+        }
 
         //prepare custom fild binding query
         $custom_fields = get_array_value($options, "custom_fields");
