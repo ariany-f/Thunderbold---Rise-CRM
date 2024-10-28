@@ -58,6 +58,46 @@ if (!function_exists('to_currency')) {
 }
 
 /**
+ * Remove currency formatting and convert a formatted currency string to a number
+ * 
+ * @param string $formatted_number
+ * @param string $currency
+ * @return float
+ */
+if (!function_exists('from_currency')) {
+
+    function from_currency($formatted_number, $currency = "") {
+        // Se não for passado um símbolo de moeda, pega o símbolo padrão das configurações
+        if (!$currency) {
+            $currency = get_setting("currency_symbol");
+        }
+
+        // Remove o símbolo da moeda e qualquer espaço ao redor
+        $number = str_replace($currency, '', $formatted_number);
+        $number = trim($number);
+
+        // Obter separadores configurados
+        $decimal_separator = get_setting("decimal_separator");
+        $thousand_separator = get_setting("thousand_separator");
+
+        // Remover separadores de milhar
+        if ($thousand_separator) {
+            $number = str_replace($thousand_separator, '', $number);
+        }
+
+        // Substituir o separador decimal configurado por um ponto
+        if ($decimal_separator && $decimal_separator !== '.') {
+            $number = str_replace($decimal_separator, '.', $number);
+        }
+
+        // Converter para float para operações matemáticas
+        return (float)$number;
+    }
+
+}
+
+
+/**
  * convert a number to quantity format
  * 
  * @param number $number
