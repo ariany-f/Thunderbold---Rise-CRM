@@ -2902,13 +2902,331 @@ class Projects extends Security_Controller {
         }
 
         $result_data = array();
-        foreach ($list_data as $data) {
-
-            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
-
-            $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
-
-            $result_data[] = $this->_make_timesheet_row($data, $custom_fields, $resource);
+        if(!empty($list_data))
+        {
+            foreach ($list_data as $data_timesheet) {
+    
+                $options_resources = array("project_id" => $data_timesheet->project_id, "user_id" => $data_timesheet->user_id, "is_leader" => 0);
+                $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+    
+                $result_data[] = $this->_make_timesheet_row($data_timesheet, $custom_fields, $resource);
+    
+                // Buscar o gestor do projeto
+                $options_manager = array("project_id" => $data_timesheet->project_id, "is_leader" => 1, "deleted" => 0);
+                $manager = $this->Project_resources_model->get_details($options_manager)->getRow();
+    
+                if($manager and (!$this->request->getPost("user_id") || $this->request->getPost("user_id") === $manager->user_id))
+                {
+                    $group_by = "project";
+                    $options_timesheet_manager = [
+                        "project_id" => $data_timesheet->project_id,
+                        "status" => "none_open",
+                        "start_date" => $this->request->getPost("start_date"),
+                        "end_date" => $this->request->getPost("end_date"),
+                        "group_by" => $group_by,
+                        "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
+                    ];
+            
+                    $data = $this->Timesheets_model->get_summary_details($options_timesheet_manager)->getRow();
+            
+                    $member = "-";
+                    $task_title = "-";
+            
+                    if ($group_by != "task") {
+                        $image_url = get_avatar($manager->resource_avatar, $manager->resource_name);
+                        $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $manager->resource_name";
+            
+                        $member = get_team_member_profile_link($manager->user_id, $user);
+                    }
+                    
+                    $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
+            
+                    $duration = convert_seconds_to_time_format(abs($data->total_duration));
+            
+                    $client_name = "-";
+                    if ($data->timesheet_client_company_name) {
+                        $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
+                    }
+            
+                    if($manager)
+                    {
+                        $hour_amount = $manager->hour_amount;
+                    }
+                    else
+                    {
+                        $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+                        $hour_amount = $user->salary;
+                    }
+                    
+                    // Convertendo $duration para horas (se estiver em segundos)
+                    $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+            
+                    if($this->login_user->user_type === 'client')
+                    {
+                        $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+                    }
+                    
+                    // Multiplicação de $hour_amount por $duration em horas
+                    $total_amount = $hour_amount * $duration_in_hours;
+                    
+                    // Cobrar horas de gerenciamento somente em projetos
+                    if($data->project_is_ticket)
+                    {
+                        $project_total_amount = 0;
+                    }
+                    else
+                    {
+                        $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+            
+                        if(is_numeric($project_amount) and is_numeric($duration_in_hours))
+                        {
+                            $project_total_amount = $project_amount * $duration_in_hours;
+                        }
+                        else
+                        {
+                            $project_total_amount = 0;
+                        }   
+                    }
+            
+                    if($this->login_user->is_admin)
+                    {
+                        $new_entry = array(
+                            $member,
+                            $project_title,
+                            $client_name,
+                            "Gerenciamento de Projeto",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            $duration,
+                            to_decimal_format(convert_time_string_to_decimal($duration)),
+                            to_currency($project_total_amount),
+                            to_currency($total_amount),
+                            to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0),
+                            ""
+                        );
+                        
+                        // Verificar se o registro já existe no array
+                        $exists = array_filter($result_data, function ($entry) use ($member, $project_title, $client_name) {
+                            return $entry[0] === $member && $entry[1] === $project_title && $entry[2] === $client_name;
+                        });
+                        
+                        // Se não existir, adicionar ao array
+                        if (empty($exists)) {
+                            $result_data[] = $new_entry;
+                        }
+                    }
+                    else
+                    {
+                        $new_entry =  array(
+                            $member,
+                            $project_title,
+                            $client_name,
+                            "Gerenciamento de Projeto",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            $duration,
+                            to_decimal_format(convert_time_string_to_decimal($duration)),
+                            "",
+                            to_currency($total_amount),
+                            "",
+                            ""
+                        );
+    
+                         // Verificar se o registro já existe no array
+                         $exists = array_filter($result_data, function ($entry) use ($member, $project_title, $client_name) {
+                            return $entry[0] === $member && $entry[1] === $project_title && $entry[2] === $client_name;
+                        });
+                        
+                        // Se não existir, adicionar ao array
+                        if (empty($exists)) {
+                            $result_data[] = $new_entry;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            $options = array(
+                "project_id" => $project_id,
+                "status" => "none_open",
+                "start_date" => $this->request->getPost("start_date"),
+                "end_date" => $this->request->getPost("end_date"),
+                "task_id" => $this->request->getPost("task_id"),
+                "client_id" => $this->request->getPost("client_id"),
+                "custom_fields" => $custom_fields,
+                "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
+            );
+    
+            //get allowed member ids
+            $members = $this->_get_members_to_manage_timesheet();
+            if ($members != "all" && $this->login_user->user_type == "staff") {
+                //if user has permission to access all members, query param is not required
+                //client can view all timesheet
+                $options["allowed_members"] = $members;
+            }
+    
+            $all_options = append_server_side_filtering_commmon_params($options);
+    
+            $result = $this->Timesheets_model->get_details($all_options);
+    
+            //by this, we can handel the server side or client side from the app table prams.
+            if (get_array_value($all_options, "server_side")) {
+                $list_data = get_array_value($result, "data");
+            } else {
+                $list_data = $result->getResult();
+                $result = array();
+            }
+    
+            $result_data = array();
+            
+            foreach ($list_data as $data_timesheet) {
+    
+                // Buscar o gestor do projeto
+                $options_manager = array("project_id" => $data_timesheet->project_id, "is_leader" => 1, "deleted" => 0);
+                $manager = $this->Project_resources_model->get_details($options_manager)->getRow();
+    
+                if($manager)
+                {
+                    $group_by = "project";
+                    $options_timesheet_manager = [
+                        "project_id" => $data_timesheet->project_id,
+                        "status" => "none_open",
+                        "start_date" => $this->request->getPost("start_date"),
+                        "end_date" => $this->request->getPost("end_date"),
+                        "group_by" => $group_by,
+                        "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
+                    ];
+            
+                    $data = $this->Timesheets_model->get_summary_details($options_timesheet_manager)->getRow();
+            
+                    $member = "-";
+                    $task_title = "-";
+            
+                    if ($group_by != "task") {
+                        $image_url = get_avatar($manager->resource_avatar, $manager->resource_name);
+                        $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $manager->resource_name";
+            
+                        $member = get_team_member_profile_link($manager->user_id, $user);
+                    }
+                    
+                    $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
+            
+                    $duration = convert_seconds_to_time_format(abs($data->total_duration));
+            
+                    $client_name = "-";
+                    if ($data->timesheet_client_company_name) {
+                        $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
+                    }
+            
+                    if($manager)
+                    {
+                        $hour_amount = $manager->hour_amount;
+                    }
+                    else
+                    {
+                        $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+                        $hour_amount = $user->salary;
+                    }
+                    
+                    // Convertendo $duration para horas (se estiver em segundos)
+                    $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+            
+                    if($this->login_user->user_type === 'client')
+                    {
+                        $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+                    }
+                    
+                    // Multiplicação de $hour_amount por $duration em horas
+                    $total_amount = $hour_amount * $duration_in_hours;
+                    
+                    // Cobrar horas de gerenciamento somente em projetos
+                    if($data->project_is_ticket)
+                    {
+                        $project_total_amount = 0;
+                    }
+                    else
+                    {
+                        $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+            
+                        if(is_numeric($project_amount) and is_numeric($duration_in_hours))
+                        {
+                            $project_total_amount = $project_amount * $duration_in_hours;
+                        }
+                        else
+                        {
+                            $project_total_amount = 0;
+                        }   
+                    }
+            
+                    if($this->login_user->is_admin)
+                    {
+                        $new_entry = array(
+                            $member,
+                            $project_title,
+                            $client_name,
+                            "Gerenciamento de Projeto",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            $duration,
+                            to_decimal_format(convert_time_string_to_decimal($duration)),
+                            to_currency($project_total_amount),
+                            to_currency($total_amount),
+                            to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0),
+                            ""
+                        );
+                        
+                        // Verificar se o registro já existe no array
+                        $exists = array_filter($result_data, function ($entry) use ($member, $project_title, $client_name) {
+                            return $entry[0] === $member && $entry[1] === $project_title && $entry[2] === $client_name;
+                        });
+                        
+                        // Se não existir, adicionar ao array
+                        if (empty($exists)) {
+                            $result_data[] = $new_entry;
+                        }
+                    }
+                    else
+                    {
+                        $new_entry =  array(
+                            $member,
+                            $project_title,
+                            $client_name,
+                            "Gerenciamento de Projeto",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            $duration,
+                            to_decimal_format(convert_time_string_to_decimal($duration)),
+                            "",
+                            to_currency($total_amount),
+                            "",
+                            ""
+                        );
+    
+                         // Verificar se o registro já existe no array
+                         $exists = array_filter($result_data, function ($entry) use ($member, $project_title, $client_name) {
+                            return $entry[0] === $member && $entry[1] === $project_title && $entry[2] === $client_name;
+                        });
+                        
+                        // Se não existir, adicionar ao array
+                        if (empty($exists)) {
+                            $result_data[] = $new_entry;
+                        }
+                    }
+                }
+            }
         }
 
         $result["data"] = $result_data;
@@ -2959,6 +3277,10 @@ class Projects extends Security_Controller {
             if(!$resource->is_leader)
             {
                 $hour_amount = $resource->hour_amount;
+            }
+            else
+            {
+                $hour_amount = 0;
             }
         }
         else
@@ -3124,102 +3446,418 @@ class Projects extends Security_Controller {
         $list_data = $this->Timesheets_model->get_summary_details($options)->getResult();
 
         $result = array();
-        foreach ($list_data as $data) {
-
-
-            $member = "-";
-            $task_title = "-";
-
-            if ($group_by != "task") {
-                $image_url = get_avatar($data->logged_by_avatar, $data->logged_by_user);
-                $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
-
-                $member = get_team_member_profile_link($data->user_id, $user);
-            }
-            
-            $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
-
-            if ($group_by != "member") {
-                $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
-                if (!$data->task_title) {
-                    $task_title = app_lang("not_specified");
+        if(!empty($list_data))
+        {
+            foreach ($list_data as $data_timesheet) {
+                $member = "-";
+                $task_title = "-";
+    
+                if ($group_by != "task") {
+                    $image_url = get_avatar($data_timesheet->logged_by_avatar, $data_timesheet->logged_by_user);
+                    $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data_timesheet->logged_by_user";
+    
+                    $member = get_team_member_profile_link($data_timesheet->user_id, $user);
                 }
-            }
-
-
-            $duration = convert_seconds_to_time_format(abs($data->total_duration));
-
-            $client_name = "-";
-            if ($data->timesheet_client_company_name) {
-                $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
-            }
-
-            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
-
-            $resource = $this->Project_resources_model->get_details($options_resources)->getRow();    
-
-            if($resource)
-            {
-                if(!$resource->is_leader)
+                
+                $project_title = anchor(get_uri("projects/view/" . $data_timesheet->project_id . ($data_timesheet->project_is_ticket ? '/ticket' : '')), (($data_timesheet->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data_timesheet->project_title));
+    
+                if ($group_by != "member") {
+                    $task_title = modal_anchor(get_uri("projects/task_view"), ((($data_timesheet->task_id) ? (" #" . $data_timesheet->task_id . " - ") : "") . $data_timesheet->task_title), array("title" => app_lang('task_info') . " #$data_timesheet->task_id", "data-post-id" => $data_timesheet->task_id, "data-modal-lg" => "1"));
+                    if (!$data_timesheet->task_title) {
+                        $task_title = app_lang("not_specified");
+                    }
+                }
+    
+    
+                $duration = convert_seconds_to_time_format(abs($data_timesheet->total_duration));
+    
+                $client_name = "-";
+                if ($data_timesheet->timesheet_client_company_name) {
+                    $client_name = anchor(get_uri("clients/view/" . $data_timesheet->timesheet_client_id), $data_timesheet->timesheet_client_company_name);
+                }
+    
+                $options_resources = array("project_id" => $data_timesheet->project_id, "user_id" => $data_timesheet->user_id, "is_leader" => 0);
+    
+                $resource = $this->Project_resources_model->get_details($options_resources)->getRow();    
+    
+                if($resource)
                 {
-                    $hour_amount = $resource->hour_amount;
+                    if(!$resource->is_leader)
+                    {
+                        $hour_amount = $resource->hour_amount;
+                    }
                 }
+                else
+                {
+                    $user = $this->Users_model->get_details(array("id" => $data_timesheet->user_id))->getRow();
+                    $hour_amount = $user->salary;
+                }
+                
+                // Convertendo $duration para horas (se estiver em segundos)
+                $duration_in_hours = (($data_timesheet->total_duration) ? abs($data_timesheet->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+    
+                if($this->login_user->user_type === 'client')
+                {
+                    $hour_amount = ((!empty($this->Project_settings_model->get_setting($data_timesheet->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data_timesheet->project_id, 'project_amount_charge') : 0);
+                }
+                
+                // Multiplicação de $hour_amount por $duration em horas
+                $total_amount = $hour_amount * $duration_in_hours;
+    
+                $project_amount = (((!empty($this->Project_settings_model->get_setting($data_timesheet->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data_timesheet->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data_timesheet->project_id, 'project_amount_charge') : 0);
+    
+                if(is_numeric($project_amount) and is_numeric($duration_in_hours))
+                {
+                    $project_total_amount = $project_amount * $duration_in_hours;
+                }
+                else
+                {
+                    $project_total_amount = 0;
+                }   
+    
+                if($this->login_user->is_admin)
+                {
+                    $result[] = array(
+                        $project_title,
+                        $client_name,
+                        $member,
+                        $task_title,
+                        $duration,
+                        to_decimal_format(convert_time_string_to_decimal($duration)),
+                        to_currency($project_total_amount),
+                        to_currency($total_amount),
+                        to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)
+                    );
+                }
+                else
+                {
+                    $result[] = array(
+                        $project_title,
+                        $client_name,
+                        $member,
+                        $task_title,
+                        $duration,
+                        to_decimal_format(convert_time_string_to_decimal($duration)),
+                        "",
+                        to_currency($total_amount),
+                        ""
+                    );
+                }
+    
+    
+                 // Buscar o gestor do projeto
+                 $options_manager = array("project_id" => $data_timesheet->project_id, "is_leader" => 1, "deleted" => 0);
+                 $manager = $this->Project_resources_model->get_details($options_manager)->getRow();
+     
+                 if($manager and (!$this->request->getPost("user_id") || $this->request->getPost("user_id") === $manager->user_id))
+                 {
+                     $group_by = "project";
+                     $options_timesheet_manager = [
+                         "project_id" => $data_timesheet->project_id,
+                         "status" => "none_open",
+                         "start_date" => $this->request->getPost("start_date"),
+                         "end_date" => $this->request->getPost("end_date"),
+                         "group_by" => $group_by,
+                         "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
+                     ];
+             
+                     $data = $this->Timesheets_model->get_summary_details($options_timesheet_manager)->getRow();
+             
+                     $member = "-";
+                     $task_title = "-";
+             
+                     if ($group_by != "task") {
+                         $image_url = get_avatar($manager->resource_avatar, $manager->resource_name);
+                         $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $manager->resource_name";
+             
+                         $member = get_team_member_profile_link($manager->user_id, $user);
+                     }
+                     
+                     $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
+             
+                     $duration = convert_seconds_to_time_format(abs($data->total_duration));
+             
+                     $client_name = "-";
+                     if ($data->timesheet_client_company_name) {
+                         $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
+                     }
+             
+                     if($manager)
+                     {
+                         $hour_amount = $manager->hour_amount;
+                     }
+                     else
+                     {
+                         $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+                         $hour_amount = $user->salary;
+                     }
+                     
+                     // Convertendo $duration para horas (se estiver em segundos)
+                     $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+             
+                     if($this->login_user->user_type === 'client')
+                     {
+                         $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+                     }
+                     
+                     // Multiplicação de $hour_amount por $duration em horas
+                     $total_amount = $hour_amount * $duration_in_hours;
+                     
+                     // Cobrar horas de gerenciamento somente em projetos
+                     if($data->project_is_ticket)
+                     {
+                         $project_total_amount = 0;
+                     }
+                     else
+                     {
+                         $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+             
+                         if(is_numeric($project_amount) and is_numeric($duration_in_hours))
+                         {
+                             $project_total_amount = $project_amount * $duration_in_hours;
+                         }
+                         else
+                         {
+                             $project_total_amount = 0;
+                         }   
+                     }
+             
+                     if($this->login_user->is_admin)
+                     {
+                         $new_entry = array(
+                             $project_title,
+                             $client_name,
+                             $member,
+                             "Gerenciamento de Projeto",
+                             $duration,
+                             to_decimal_format(convert_time_string_to_decimal($duration)),
+                             to_currency($project_total_amount),
+                             to_currency($total_amount),
+                             to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0),
+                             ""
+                         );
+                         
+                         // Verificar se o registro já existe no array
+                         $exists = array_filter($result, function ($entry) use ($member, $project_title, $client_name) {
+                             return $entry[2] === $member && $entry[0] === $project_title && $entry[1] === $client_name;
+                         });
+                         
+                         // Se não existir, adicionar ao array
+                         if (empty($exists)) {
+                             $result[] = $new_entry;
+                         }
+                     }
+                     else
+                     {
+                         $new_entry =  array(
+                             $project_title,
+                             $client_name,
+                             $member,
+                             "Gerenciamento de Projeto",
+                             $duration,
+                             to_decimal_format(convert_time_string_to_decimal($duration)),
+                             "",
+                             to_currency($total_amount),
+                             "",
+                             ""
+                         );
+     
+                          // Verificar se o registro já existe no array
+                          $exists = array_filter($result, function ($entry) use ($member, $project_title, $client_name) {
+                            return $entry[2] === $member && $entry[0] === $project_title && $entry[1] === $client_name;
+                        });
+                         
+                         // Se não existir, adicionar ao array
+                         if (empty($exists)) {
+                             $result[] = $new_entry;
+                         }
+                     }
+                 }
             }
-            else
-            {
-                $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
-                $hour_amount = $user->salary;
-            }
+        }
+        else
+        {
             
-            // Convertendo $duration para horas (se estiver em segundos)
-            $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+            $group_by = $this->request->getPost("group_by");
 
-            if($this->login_user->user_type === 'client')
-            {
-                $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+            $options = array(
+                "project_id" => $project_id,
+                "status" => "none_open",
+                "start_date" => $this->request->getPost("start_date"),
+                "end_date" => $this->request->getPost("end_date"),
+                "task_id" => $this->request->getPost("task_id"),
+                "group_by" => $group_by,
+                "client_id" => $this->request->getPost("client_id"),
+                "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
+            );
+
+            //get allowed member ids
+            $members = $this->_get_members_to_manage_timesheet();
+            if ($members != "all" && $this->login_user->user_type == "staff") {
+                //if user has permission to access all members, query param is not required
+                //client can view all timesheet
+                $options["allowed_members"] = $members;
             }
+
+            $list_data = $this->Timesheets_model->get_summary_details($options)->getResult();
+
+            $result = array();
+
+            foreach ($list_data as $data_timesheet) {
+                $member = "-";
+                $task_title = "-";
+
+                if ($group_by != "task") {
+                    $image_url = get_avatar($data_timesheet->logged_by_avatar, $data_timesheet->logged_by_user);
+                    $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data_timesheet->logged_by_user";
+
+                    $member = get_team_member_profile_link($data_timesheet->user_id, $user);
+                }
+                
+                $project_title = anchor(get_uri("projects/view/" . $data_timesheet->project_id . ($data_timesheet->project_is_ticket ? '/ticket' : '')), (($data_timesheet->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data_timesheet->project_title));
+
+                if ($group_by != "member") {
+                    $task_title = modal_anchor(get_uri("projects/task_view"), ((($data_timesheet->task_id) ? (" #" . $data_timesheet->task_id . " - ") : "") . $data_timesheet->task_title), array("title" => app_lang('task_info') . " #$data_timesheet->task_id", "data-post-id" => $data_timesheet->task_id, "data-modal-lg" => "1"));
+                    if (!$data_timesheet->task_title) {
+                        $task_title = app_lang("not_specified");
+                    }
+                }
+
+                $duration = convert_seconds_to_time_format(abs($data_timesheet->total_duration));
+
+                $client_name = "-";
+                if ($data_timesheet->timesheet_client_company_name) {
+                    $client_name = anchor(get_uri("clients/view/" . $data_timesheet->timesheet_client_id), $data_timesheet->timesheet_client_company_name);
+                }
+
+                // Buscar o gestor do projeto
+                $options_manager = array("project_id" => $data_timesheet->project_id, "is_leader" => 1, "deleted" => 0);
+                $manager = $this->Project_resources_model->get_details($options_manager)->getRow();
+    
+                if($manager and (!$this->request->getPost("user_id") || $this->request->getPost("user_id") === $manager->user_id))
+                {
+                    $group_by = "project";
+                    $options_timesheet_manager = [
+                        "project_id" => $data_timesheet->project_id,
+                        "status" => "none_open",
+                        "start_date" => $this->request->getPost("start_date"),
+                        "end_date" => $this->request->getPost("end_date"),
+                        "group_by" => $group_by,
+                        "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
+                    ];
             
-            // Multiplicação de $hour_amount por $duration em horas
-            $total_amount = $hour_amount * $duration_in_hours;
-
-            $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
-
-            if(is_numeric($project_amount) and is_numeric($duration_in_hours))
-            {
-                $project_total_amount = $project_amount * $duration_in_hours;
-            }
-            else
-            {
-                $project_total_amount = 0;
-            }   
-
-            if($this->login_user->is_admin)
-            {
-                $result[] = array(
-                    $project_title,
-                    $client_name,
-                    $member,
-                    $task_title,
-                    $duration,
-                    to_decimal_format(convert_time_string_to_decimal($duration)),
-                    to_currency($project_total_amount),
-                    to_currency($total_amount),
-                    to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)
-                );
-            }
-            else
-            {
-                $result[] = array(
-                    $project_title,
-                    $client_name,
-                    $member,
-                    $task_title,
-                    $duration,
-                    to_decimal_format(convert_time_string_to_decimal($duration)),
-                    "",
-                    to_currency($total_amount),
-                    ""
-                );
+                    $data = $this->Timesheets_model->get_summary_details($options_timesheet_manager)->getRow();
+            
+                    $member = "-";
+                    $task_title = "-";
+            
+                    if ($group_by != "task") {
+                        $image_url = get_avatar($manager->resource_avatar, $manager->resource_name);
+                        $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $manager->resource_name";
+            
+                        $member = get_team_member_profile_link($manager->user_id, $user);
+                    }
+                    
+                    $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
+            
+                    $duration = convert_seconds_to_time_format(abs($data->total_duration));
+            
+                    $client_name = "-";
+                    if ($data->timesheet_client_company_name) {
+                        $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
+                    }
+            
+                    if($manager)
+                    {
+                        $hour_amount = $manager->hour_amount;
+                    }
+                    else
+                    {
+                        $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+                        $hour_amount = $user->salary;
+                    }
+                    
+                    // Convertendo $duration para horas (se estiver em segundos)
+                    $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+            
+                    if($this->login_user->user_type === 'client')
+                    {
+                        $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+                    }
+                    
+                    // Multiplicação de $hour_amount por $duration em horas
+                    $total_amount = $hour_amount * $duration_in_hours;
+                    
+                    // Cobrar horas de gerenciamento somente em projetos
+                    if($data->project_is_ticket)
+                    {
+                        $project_total_amount = 0;
+                    }
+                    else
+                    {
+                        $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+            
+                        if(is_numeric($project_amount) and is_numeric($duration_in_hours))
+                        {
+                            $project_total_amount = $project_amount * $duration_in_hours;
+                        }
+                        else
+                        {
+                            $project_total_amount = 0;
+                        }   
+                    }
+            
+                    if($this->login_user->is_admin)
+                    {
+                        $new_entry = array(
+                            $project_title,
+                            $client_name,
+                            $member,
+                            "Gerenciamento de Projeto",
+                            $duration,
+                            to_decimal_format(convert_time_string_to_decimal($duration)),
+                            to_currency($project_total_amount),
+                            to_currency($total_amount),
+                            to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0),
+                            ""
+                        );
+                        
+                        // Verificar se o registro já existe no array
+                        $exists = array_filter($result, function ($entry) use ($member, $project_title, $client_name) {
+                            return $entry[2] === $member && $entry[0] === $project_title && $entry[1] === $client_name;
+                        });
+                        
+                        // Se não existir, adicionar ao array
+                        if (empty($exists)) {
+                            $result[] = $new_entry;
+                        }
+                    }
+                    else
+                    {
+                        $new_entry =  array(
+                            $project_title,
+                            $client_name,
+                            $member,
+                            "Gerenciamento de Projeto",
+                            $duration,
+                            to_decimal_format(convert_time_string_to_decimal($duration)),
+                            "",
+                            to_currency($total_amount),
+                            "",
+                            ""
+                        );
+    
+                        // Verificar se o registro já existe no array
+                        $exists = array_filter($result, function ($entry) use ($member, $project_title, $client_name) {
+                            return $entry[2] === $member && $entry[0] === $project_title && $entry[1] === $client_name;
+                        });
+                        
+                        // Se não existir, adicionar ao array
+                        if (empty($exists)) {
+                            $result[] = $new_entry;
+                        }
+                    }
+                }
             }
         }
         echo json_encode(array("data" => $result));

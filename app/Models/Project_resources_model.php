@@ -69,7 +69,7 @@ class Project_resources_model extends Crud_model {
             $where .= " AND $project_resources_table.is_leader=$is_leader";
         }
 
-        $sql = "SELECT $project_resources_table.*, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS resource_name, $users_table.image as resource_image, $users_table.job_title, $users_table.user_type
+        $sql = "SELECT $project_resources_table.*, $users_table.image as resource_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS resource_name, $users_table.image as resource_image, $users_table.job_title, $users_table.user_type
         FROM $project_resources_table
         LEFT JOIN $users_table ON $users_table.id= $project_resources_table.user_id
         WHERE $project_resources_table.deleted=0 $where";
@@ -100,7 +100,7 @@ class Project_resources_model extends Crud_model {
             $where .= " AND $project_resources_table.user_id IN (SELECT $users_table.id FROM $users_table WHERE $users_table.deleted=0 $user_where)";
         }
 
-        $sql = "SELECT $project_resources_table.user_id, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS resource_name, $users_table.status AS resource_status, $users_table.user_type
+        $sql = "SELECT $project_resources_table.user_id, $users_table.image as resource_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS resource_name, $users_table.status AS resource_status, $users_table.user_type
         FROM $project_resources_table
         LEFT JOIN $users_table ON $users_table.id= $project_resources_table.user_id
         WHERE $project_resources_table.deleted=0 $where 
@@ -120,7 +120,7 @@ class Project_resources_model extends Crud_model {
         $project_resources_table = $this->db->prefixTable('project_resources');
         $users_table = $this->db->prefixTable('users');
 
-        $sql = "SELECT $users_table.id, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS resource_name
+        $sql = "SELECT $users_table.id, $users_table.image as resource_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS resource_name
         FROM $users_table
         LEFT JOIN $project_resources_table ON $project_resources_table.user_id=$users_table.id
         WHERE $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.deleted=0
