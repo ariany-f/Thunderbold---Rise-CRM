@@ -17,7 +17,10 @@ class Timesheets_model extends Crud_model {
         $projects_table = $this->db->prefixTable('projects');
         $users_table = $this->db->prefixTable('users');
         $clients_table = $this->db->prefixTable('clients');
+        $project_resources_table = $this->db->prefixTable('project_resources');
+
         $where = "";
+        $where_resource = "";
         $id = $this->_get_clean_value($options, "id");
         if ($id) {
             $where .= " AND $timesheet_table.id=$id";
@@ -26,11 +29,13 @@ class Timesheets_model extends Crud_model {
         $project_id = $this->_get_clean_value($options, "project_id");
         if ($project_id) {
             $where .= " AND $timesheet_table.project_id=$project_id";
+            $where_resource = " AND $project_resources_table.project_id=$project_id";
         }
 
         $user_id = $this->_get_clean_value($options, "user_id");
         if ($user_id) {
             $where .= " AND $timesheet_table.user_id=$user_id";
+            $where_resource .= " AND $project_resources_table.user_id=$user_id";
         }
 
         $status = $this->_get_clean_value($options, "status");
@@ -55,13 +60,14 @@ class Timesheets_model extends Crud_model {
         $start_date = $this->_get_clean_value($options, "start_date");
         if ($start_date) {
             $where .= " AND DATE(ADDTIME($timesheet_table.start_time,'$offset'))>='$start_date'";
+            $where_resource .= " AND DATE(ADDTIME($timesheet_table.start_time,'$offset'))>='$start_date'";
         }
 
         $end_date = $this->_get_clean_value($options, "end_date");
         if ($end_date) {
             $where .= " AND DATE(ADDTIME($timesheet_table.end_time,'$offset'))<='$end_date'";
+            $where_resource .= " AND DATE(ADDTIME($timesheet_table.end_time,'$offset'))<='$end_date'";
         }
-
 
         $allowed_members = $this->_get_clean_value($options, "allowed_members");
         if (is_array($allowed_members) && count($allowed_members)) {
@@ -121,15 +127,63 @@ class Timesheets_model extends Crud_model {
             $where .= " )";
         }
 
-        $sql = "SELECT SQL_CALC_FOUND_ROWS $timesheet_table.*,  CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
-            $tasks_table.title AS task_title, $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
-            $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name $select_custom_fieds
+        $sql = "SELECT SQL_CALC_FOUND_ROWS 
+            DISTINCT $timesheet_table.id,  
+            $timesheet_table.project_id,
+            $timesheet_table.user_id,
+            $timesheet_table.start_time,
+            $timesheet_table.end_time,
+            $timesheet_table.hours,
+            (TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time) + ROUND(($timesheet_table.hours * 60), 0) * 60) AS total_duration,
+            $timesheet_table.status,
+            $timesheet_table.note,
+            $timesheet_table.task_id,
+            $timesheet_table.deleted,
+            CONCAT($users_table.first_name, ' ', $users_table.last_name) AS logged_by_user, 
+            $users_table.image as logged_by_avatar,
+            $tasks_table.title AS task_title, 
+            $projects_table.title AS project_title, 
+            $projects_table.is_ticket AS project_is_ticket,
+            $projects_table.client_id AS timesheet_client_id, 
+            (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name $select_custom_fieds
         FROM $timesheet_table
         LEFT JOIN $users_table ON $users_table.id= $timesheet_table.user_id
         LEFT JOIN $tasks_table ON $tasks_table.id= $timesheet_table.task_id
         LEFT JOIN $projects_table ON $projects_table.id= $timesheet_table.project_id
+        LEFT JOIN $project_resources_table ON $project_resources_table.project_id = $timesheet_table.project_id AND $project_resources_table.user_id = $timesheet_table.user_id
         $join_custom_fieds
-        WHERE $timesheet_table.deleted=0 $where $custom_fields_where 
+        WHERE $timesheet_table.deleted=0 
+        $where 
+        $custom_fields_where 
+    UNION ALL
+        SELECT 
+            NULL as id,
+            COALESCE($projects_table.id, NULL) as project_id,
+            COALESCE($project_resources_table.user_id, NULL) as user_id,
+            NULL as start_time,
+            NULL as end_time,
+            SUM($timesheet_table.hours) AS hours, 
+            (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration,
+            'logged' as status,
+            '' as note,
+            NULL as task_id,
+            0 as deleted,
+            CONCAT($users_table.first_name, ' ', $users_table.last_name) AS logged_by_user, 
+            $users_table.image as logged_by_avatar,
+            'Gerenciamento de Projetos' as task_title,
+            $projects_table.title AS project_title,
+            $projects_table.is_ticket AS project_is_ticket,
+            $projects_table.client_id AS timesheet_client_id,
+            (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name $select_custom_fieds
+        FROM $project_resources_table
+        LEFT JOIN $users_table ON $users_table.id= $project_resources_table.user_id
+        LEFT JOIN $projects_table ON $projects_table.id= $project_resources_table.project_id
+        LEFT JOIN $timesheet_table ON $timesheet_table.project_id = $projects_table.id AND $timesheet_table.deleted = 0
+        $join_custom_fieds
+        WHERE $project_resources_table.deleted=0 AND $project_resources_table.is_leader=1 
+        $where_resource
+        $custom_fields_where
+        GROUP BY $project_resources_table.user_id, $project_resources_table.project_id
         $order $limit_offset";
 
         $raw_query = $this->db->query($sql);
@@ -153,51 +207,58 @@ class Timesheets_model extends Crud_model {
         $projects_table = $this->db->prefixTable('projects');
         $users_table = $this->db->prefixTable('users');
         $clients_table = $this->db->prefixTable('clients');
+        $project_resources_table = $this->db->prefixTable('project_resources');
+    
         $where = "";
+        $where_resource = "";
         $id = $this->_get_clean_value($options, "id");
         if ($id) {
             $where .= " AND $timesheet_table.id=$id";
         }
-
+    
         $project_id = $this->_get_clean_value($options, "project_id");
         if ($project_id) {
             $where .= " AND $timesheet_table.project_id=$project_id";
+            $where_resource .= " AND $project_resources_table.project_id=$project_id";
         }
-
+    
         $user_id = $this->_get_clean_value($options, "user_id");
         if ($user_id) {
             $where .= " AND $timesheet_table.user_id=$user_id";
+            $where_resource = " AND $project_resources_table.user_id=$user_id";
         }
-
+    
         $status = $this->_get_clean_value($options, "status");
         if ($status === "none_open") {
             $where .= " AND $timesheet_table.status !='open'";
         } else if ($status) {
             $where .= " AND $timesheet_table.status='$status'";
         }
-
+    
         $task_id = $this->_get_clean_value($options, "task_id");
         if ($task_id) {
             $where .= " AND $timesheet_table.task_id=$task_id";
         }
-
+    
         $offset = convert_seconds_to_time_format(get_timezone_offset());
-
+    
         $start_date = $this->_get_clean_value($options, "start_date");
         if ($start_date) {
             $where .= " AND DATE(ADDTIME($timesheet_table.start_time,'$offset'))>='$start_date'";
+            $where_resource .= " AND DATE(ADDTIME($timesheet_table.start_time,'$offset'))>='$start_date'";
         }
-
+    
         $end_date = $this->_get_clean_value($options, "end_date");
         if ($end_date) {
             $where .= " AND DATE(ADDTIME($timesheet_table.end_time,'$offset'))<='$end_date'";
+            $where_resource .= " AND DATE(ADDTIME($timesheet_table.end_time,'$offset'))<='$end_date'";
         }
-
+    
         $client_id = $this->_get_clean_value($options, "client_id");
         if ($client_id) {
             $where .= " AND $timesheet_table.project_id IN(SELECT $projects_table.id FROM $projects_table WHERE $projects_table.client_id=$client_id)";
         }
-
+    
         $allowed_members = $this->_get_clean_value($options, "allowed_members");
         if (is_array($allowed_members) && count($allowed_members)) {
             $allowed_members = join(",", $allowed_members);
@@ -210,7 +271,7 @@ class Timesheets_model extends Crud_model {
         //group by
         $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
         $group_by = $this->_get_clean_value($options, "group_by");
-
+        
         if ($group_by === "member") {
             $group_by_option = "$timesheet_table.user_id";
         } else if ($group_by === "task") {
@@ -222,18 +283,38 @@ class Timesheets_model extends Crud_model {
         $custom_field_filter = $this->_get_clean_value($options, "custom_field_filter");
         $custom_field_query_info = $this->prepare_custom_field_query_string("timesheets", "", $timesheet_table, $custom_field_filter);
         $custom_fields_where = $this->_get_clean_value($custom_field_query_info, "where_string");
-
+       
         $sql = "SELECT new_summary_table.user_id, new_summary_table.total_duration, new_summary_table.hours, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
-                       $tasks_table.id AS task_id,  $tasks_table.title AS task_title,  $projects_table.id AS project_id,  $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
-                       $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
+                    $tasks_table.id AS task_id,  $tasks_table.title AS task_title,  $projects_table.id AS project_id,  $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
+                    $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
                 FROM (SELECT MAX($timesheet_table.project_id) AS project_id, MAX($timesheet_table.user_id) AS user_id, MAX($timesheet_table.task_id) AS task_id, SUM($timesheet_table.hours) AS hours, (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration
-                        FROM $timesheet_table
-                        WHERE $timesheet_table.deleted=0 $where $custom_fields_where
-                        GROUP BY $group_by_option) AS new_summary_table
-                LEFT JOIN $users_table ON $users_table.id= new_summary_table.user_id
-                LEFT JOIN $tasks_table ON $tasks_table.id= new_summary_table.task_id
-                LEFT JOIN $projects_table ON $projects_table.id= new_summary_table.project_id            
-                ";
+                    FROM $timesheet_table
+                WHERE $timesheet_table.deleted=0 $where $custom_fields_where
+                    GROUP BY $group_by_option) AS new_summary_table
+                    LEFT JOIN $users_table ON $users_table.id= new_summary_table.user_id
+                    LEFT JOIN $tasks_table ON $tasks_table.id= new_summary_table.task_id
+                    LEFT JOIN $projects_table ON $projects_table.id= new_summary_table.project_id 
+            UNION ALL
+                SELECT $project_resources_table.user_id, 
+                        (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration,
+                        SUM($timesheet_table.hours) AS hours, 
+                        CONCAT($users_table.first_name, ' ', $users_table.last_name) AS logged_by_user, 
+                        $users_table.image AS logged_by_avatar,
+                        NULL AS task_id,  
+                        'Gerenciamento de Projetos' AS task_title,  
+                        $projects_table.id AS project_id,  
+                        $projects_table.title AS project_title, 
+                        $projects_table.is_ticket AS project_is_ticket,
+                        $projects_table.client_id AS timesheet_client_id, 
+                        (SELECT $clients_table.company_name 
+                FROM $clients_table 
+                        WHERE $clients_table.id = $projects_table.client_id AND $clients_table.deleted = 0) AS timesheet_client_company_name
+                FROM $project_resources_table
+                    LEFT JOIN $users_table ON $users_table.id = $project_resources_table.user_id
+                    LEFT JOIN $projects_table ON $projects_table.id = $project_resources_table.project_id
+                    LEFT JOIN $timesheet_table ON $timesheet_table.project_id = $projects_table.id AND $timesheet_table.deleted = 0
+                WHERE $project_resources_table.deleted = 0 AND $project_resources_table.is_leader = 1 $where_resource GROUP BY $project_resources_table.user_id, $project_resources_table.project_id";
+
         return $this->db->query($sql);
     }
 
