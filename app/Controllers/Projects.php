@@ -2938,6 +2938,16 @@ class Projects extends Security_Controller {
         $image_url = get_avatar($data->logged_by_avatar, $data->logged_by_user);
         $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
 
+        if($data->manager_id)
+        {
+            $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
+            $manager_user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->manager_user";
+            $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
+        }
+        else {
+            $manager_member = "-";
+        }
+
         $start_time = $data->start_time;
         $end_time = $data->end_time;
 
@@ -2956,10 +2966,7 @@ class Projects extends Security_Controller {
 
         if($resource)
         {
-            if(!$resource->is_leader)
-            {
-                $hour_amount = $resource->hour_amount;
-            }
+            $hour_amount = $resource->hour_amount;
         }
         else
         {
@@ -2976,9 +2983,14 @@ class Projects extends Security_Controller {
             $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
         }
 
-        // Multiplicação de $hour_amount por $duration em horas
+        // Valor Consultor
         $total_amount = $hour_amount * $duration_in_hours;
+        
+       
+        // Valor Gerente
+        $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
 
+        // Valor Cliente
         $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
         if(is_numeric($project_amount) and is_numeric($duration_in_hours))
@@ -3007,6 +3019,8 @@ class Projects extends Security_Controller {
                 to_decimal_format(convert_time_string_to_decimal($duration)),
                 to_currency($project_total_amount),
                 to_currency($total_amount),
+                to_currency($total_manager_amount),
+                $manager_member,
                 to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)
             );
         }
@@ -3026,6 +3040,8 @@ class Projects extends Security_Controller {
                 to_decimal_format(convert_time_string_to_decimal($duration)),
                 "",
                 to_currency($total_amount),
+                "",
+                "",
                 ""
             );
         }
@@ -3135,6 +3151,18 @@ class Projects extends Security_Controller {
                 $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
 
                 $member = get_team_member_profile_link($data->user_id, $user);
+
+                if($data->manager_id)
+                {
+                    $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
+                    $manager_user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->manager_user";
+    
+                    $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
+                }
+                else
+                {
+                    $manager_member = "-";
+                }
             }
             
             $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
@@ -3179,9 +3207,13 @@ class Projects extends Security_Controller {
                 $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
             }
             
-            // Multiplicação de $hour_amount por $duration em horas
+            // Valor Consultor
             $total_amount = $hour_amount * $duration_in_hours;
 
+            // Valor Gerente
+            $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
+
+            // Valor Cliente
             $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
             if(is_numeric($project_amount) and is_numeric($duration_in_hours))
@@ -3204,6 +3236,8 @@ class Projects extends Security_Controller {
                     to_decimal_format(convert_time_string_to_decimal($duration)),
                     to_currency($project_total_amount),
                     to_currency($total_amount),
+                    to_currency($total_manager_amount),
+                    $manager_member,
                     to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)
                 );
             }
@@ -3218,6 +3252,8 @@ class Projects extends Security_Controller {
                     to_decimal_format(convert_time_string_to_decimal($duration)),
                     "",
                     to_currency($total_amount),
+                    "",
+                    "",
                     ""
                 );
             }

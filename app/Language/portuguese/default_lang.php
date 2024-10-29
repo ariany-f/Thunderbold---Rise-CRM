@@ -17,6 +17,7 @@ $lang["delete"] = "Excluir";
 $lang["description"] = "Descrição";
 $lang["admin"] = "Admin";
 $lang["manager"] = "Gerente";
+$lang["manager_name"] = "Nome do Gerente";
 $lang["options"] = "Opções";
 $lang["id"] = "ID";
 $lang["name"] = "Nome";
