@@ -2,7 +2,7 @@
     <?php echo form_open(get_uri("timeline/save"), array("id" => "post-form", "class" => "general-form", "role" => "form")); ?>
     <div class="box">
         <div class="box-content avatar avatar-md pr15 d-table-cell">
-            <img src="<?php echo get_avatar($login_user->image); ?>" alt="..." />
+            <img src="<?php echo get_avatar($login_user->image, ($login_user->first_name . ' ' . $login_user->last_name)); ?>" alt="..." />
         </div>
         <div id="post-dropzone" class="post-dropzone box-content form-group">
             <input type="hidden" name="post_id" value="<?php echo isset($post_id) ? $post_id : 0; ?>">

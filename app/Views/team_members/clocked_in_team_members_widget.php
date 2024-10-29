@@ -24,7 +24,7 @@
                 <div class="message-row d-flex">
                     <div class="flex-shrink-0">
                         <span class="avatar avatar-xs">
-                            <img alt="..." src="<?php echo get_avatar($user->created_by_avatar); ?>">
+                            <img alt="..." src="<?php echo get_avatar($user->created_by_avatar, $user->created_by_user); ?>">
                         </span>
                     </div>
                     <div class="w-100 ps-2">

@@ -19,7 +19,7 @@ if (count($notifications)) {
             $notification_class .= " clickable";
         }
 
-        $avatar = get_avatar("system_bot");
+        $avatar = get_avatar("system_bot", "System Bot");
         $title = get_setting("app_title");
         if ($notification->user_id) {
             if ($notification->user_id == "999999998") {

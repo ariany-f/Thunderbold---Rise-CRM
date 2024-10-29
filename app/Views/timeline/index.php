@@ -16,7 +16,7 @@
                         <div class="d-flex mb-3">
                             <div class="flex-shrink-0 me-2 mt-1">
                                 <span class="avatar avatar-xs">
-                                    <img src="<?php echo get_avatar($member->image); ?>" alt="..." />
+                                    <img src="<?php echo get_avatar($member->image, ($member->first_name . " " . $member->last_name)); ?>" alt="..." />
                                 </span>
                             </div>
                             <div class="w-100 clearfix">
