@@ -3165,6 +3165,10 @@ class Projects extends Security_Controller {
                     $data->manager_hour_amount = 0;
                 }
             }
+            else
+            {
+                $manager_member = "-";
+            }
             
             $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
 
