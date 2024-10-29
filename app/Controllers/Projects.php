@@ -2941,7 +2941,7 @@ class Projects extends Security_Controller {
         if($data->manager_id)
         {
             $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
-            $manager_user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->manager_user";
+            $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
             $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
         }
         else {
@@ -3155,7 +3155,7 @@ class Projects extends Security_Controller {
                 if($data->manager_id)
                 {
                     $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
-                    $manager_user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->manager_user";
+                    $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
     
                     $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
                 }
