@@ -2953,7 +2953,14 @@ class Projects extends Security_Controller {
 
 
         $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
-        $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
+        if($data->task_title)
+        {
+            $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
+        }
+        else
+        {
+            $task_title = app_lang('not_specified');
+        }
 
         $client_name = "-";
         if ($data->timesheet_client_company_name) {
@@ -3005,6 +3012,7 @@ class Projects extends Security_Controller {
         
         if($this->login_user->is_admin)
         {
+            // Visão Admin
             $row_data = array(
                 get_team_member_profile_link($data->user_id, $user),
                 $project_title,
@@ -3017,15 +3025,16 @@ class Projects extends Security_Controller {
                 $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
                 $duration,
                 to_decimal_format(convert_time_string_to_decimal($duration)),
-                to_currency($project_total_amount),
-                to_currency($total_amount),
-                to_currency($total_manager_amount),
+                "<span style='color: blue'>".to_currency($project_total_amount)."</span>",
+                "<span style='color: red'>".to_currency($total_amount)."</span>",
                 $manager_member,
-                to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)
+                "<span style='color: red'>".to_currency($total_manager_amount)."</span>",
+                "<span style='color: green'>".to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)."</span>"
             );
         }
         else
         {
+            // Visão Consultor
             $row_data = array(
                 get_team_member_profile_link($data->user_id, $user),
                 $project_title,
@@ -3039,7 +3048,7 @@ class Projects extends Security_Controller {
                 $duration,
                 to_decimal_format(convert_time_string_to_decimal($duration)),
                 "",
-                to_currency($total_amount),
+                "<span style='color: green'>".to_currency($total_amount)."</span>",
                 "",
                 "",
                 ""
@@ -3151,19 +3160,14 @@ class Projects extends Security_Controller {
                 $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
 
                 $member = get_team_member_profile_link($data->user_id, $user);
+            }
 
-                if($data->manager_id and $group_by != "member")
-                {
-                    $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
-                    $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
-    
-                    $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
-                }
-                else
-                {
-                    $manager_member = "-";
-                    $data->manager_hour_amount = 0;
-                }
+            if($data->manager_id and $group_by != "member")
+            {
+                $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
+                $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
+
+                $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
             }
             else
             {
@@ -3234,30 +3238,30 @@ class Projects extends Security_Controller {
             if($this->login_user->is_admin)
             {
                 $result[] = array(
-                    $project_title,
                     $client_name,
+                    $project_title,
                     $member,
                     $task_title,
                     $duration,
                     to_decimal_format(convert_time_string_to_decimal($duration)),
-                    to_currency($project_total_amount),
-                    to_currency($total_amount),
-                    to_currency($total_manager_amount),
+                    "<span style='color: blue;'>".to_currency($project_total_amount)."</span>",
+                    "<span style='color: red;'>".to_currency($total_amount)."</span>",
                     $manager_member,
-                    to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)
+                    "<span style='color: red;'>".to_currency($total_manager_amount)."</span>",
+                    "<span style='color: green;'>".to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount - $total_manager_amount) : 0)."</span>"
                 );
             }
             else
             {
                 $result[] = array(
-                    $project_title,
                     $client_name,
+                    $project_title,
                     $member,
                     $task_title,
                     $duration,
                     to_decimal_format(convert_time_string_to_decimal($duration)),
                     "",
-                    to_currency($total_amount),
+                    "<span style='color: green;'>".to_currency($total_amount)."</span>",
                     "",
                     "",
                     ""

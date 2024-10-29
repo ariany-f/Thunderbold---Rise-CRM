@@ -66,7 +66,7 @@
                 {visible: false, title: "<?php echo app_lang('hours') ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge') ?>", "class": "text-center w50"},
                 {title: "<?php echo app_lang('consultant') ?>", "class": "text-right"},
-                {title: "<?php echo app_lang('manager') ?>", "class": "text-right"},
+                {title: "<?php echo app_lang('comission') ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center w50"}
                 <?php echo $custom_field_headers; ?>,

@@ -23,18 +23,18 @@
             columns: [
                 {visible: false, searchable: false},
                 {visible: false, searchable: false},
-                {title: "<?php echo app_lang("member"); ?>", "class": "w15p"},
+                {title: "<?php echo app_lang("consultant"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("task"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
                 {title: "<?php echo app_lang("hours"); ?>", "class": "w15p text-right"},
-                {visible: projectAmount, title: "<?php echo app_lang('charge') ?>", "class": "text-center w50"},
-                {title: "<?php echo app_lang("consultant"); ?>", "class": "text-center"},
-                {title: "<?php echo app_lang("manager"); ?>", "class": "text-center"},
+                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center w50"},
+                {title: "<?php echo app_lang("consultant") . ' (R$)'; ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("manager_name"); ?>", "class": "text-center"},
+                {title: "<?php echo app_lang("comission"). ' (R$)'; ?>", "class": "text-center"},
                 {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center w50"}
             ],
-            printColumns: [2, 3, 4, 5, 6],
-            xlsColumns: [2, 3, 4, 5, 6],
+            printColumns: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+            xlsColumns: [2, 3, 4, 5, 6, 7, 8, 9, 10],
             summation: [{column: 4, dataType: 'time'}, {column: 5, dataType: 'number'}, {column: 6, dataType: 'currency'}, {column: 7, dataType: 'currency'},  {column: 8, dataType: 'currency'},  {column: 10, dataType: 'currency'}],
             onRelaodCallback: function (tableInstance, filterParams) {
 
