@@ -631,8 +631,8 @@ INSERT INTO `notification_settings` (`id`, `event`, `category`, `enable_email`, 
 (66, 'contract_accepted', 'contract', 0, 0, '', '', '', 66, 0),
 (67, 'contract_rejected', 'contract', 0, 0, '', '', '', 67, 0),
 (68, 'subscription_request_sent', 'subscription', 0, 0, '', '', '', 68, 0),
-(61, 'new_message_sent_to_group', 'message', 0, 0, '', '', '', 36, 0),
-(62, 'message_reply_sent_to_group', 'message', 0, 0, '', '', '', 37, 0);
+(69, 'new_message_sent_to_group', 'message', 0, 0, '', '', '', 36, 0),
+(70, 'message_reply_sent_to_group', 'message', 0, 0, '', '', '', 37, 0);
 
 
 CREATE TABLE IF NOT EXISTS `orders` (
@@ -801,6 +801,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `starred_by` mediumtext COLLATE utf8_unicode_ci NOT NULL,
   `estimate_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
+  `is_ticket` tinyint(1) NOT NULL DEFAULT '0',
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
