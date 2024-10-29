@@ -40,7 +40,7 @@ if (isset($_POST)) {
 
     if (!$verification || $verification != "verified") {
         echo json_encode(array("success" => false, "message" => "Please enter a valid purchase code."));
-        exit();
+     //   exit();
     }
 
 
