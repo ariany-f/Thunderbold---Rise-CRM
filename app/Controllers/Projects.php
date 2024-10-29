@@ -3162,6 +3162,7 @@ class Projects extends Security_Controller {
                 else
                 {
                     $manager_member = "-";
+                    $data->manager_hour_amount = 0;
                 }
             }
             
