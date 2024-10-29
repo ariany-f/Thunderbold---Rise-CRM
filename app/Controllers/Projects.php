@@ -3170,13 +3170,14 @@ class Projects extends Security_Controller {
                 // Convertendo $duration para horas (se estiver em segundos)
                 $duration_in_hours = (($data->total_duration_manager) ? (abs($data->total_duration_manager)) : 0) / 3600; // 3600 segundos = 1 hora
             }
-            elseif($group_by == 'project')
+            elseif(!empty($group_by))
             {
                 $duration = convert_seconds_to_time_format(abs($data->total_duration_manager + $data->total_duration));
             
                 // Convertendo $duration para horas (se estiver em segundos)
                 $duration_in_hours = (($data->total_duration_manager and $data->total_duration) ? (abs($data->total_duration_manager + $data->total_duration)) : 0) / 3600; // 3600 segundos = 1 hora
             }
+            
 
             $client_name = "-";
             if ($data->timesheet_client_company_name) {
