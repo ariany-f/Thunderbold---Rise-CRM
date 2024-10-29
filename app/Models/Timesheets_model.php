@@ -274,9 +274,15 @@ class Timesheets_model extends Crud_model {
         $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
         $group_by_general = "user_id, project_id";
         $group_by = $this->_get_clean_value($options, "group_by");
+        $no_group_by_field =  "((SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) * 0.2) AS total_duration_manager";
 
         $group_by_manager = "$project_resources_table.user_id";
         
+        if(!empty($group_by) and $group_by != "")
+        {
+            $no_group_by_field =  "(((SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) * 0.2) + ((SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)))) AS total_duration_manager";
+        }
+
         if ($group_by === "member") {
             $group_by_option = "$timesheet_table.user_id";
             $group_by_manager = "$project_resources_table.user_id";
@@ -294,53 +300,55 @@ class Timesheets_model extends Crud_model {
         $custom_field_filter = $this->_get_clean_value($options, "custom_field_filter");
         $custom_field_query_info = $this->prepare_custom_field_query_string("timesheets", "", $timesheet_table, $custom_field_filter);
         $custom_fields_where = $this->_get_clean_value($custom_field_query_info, "where_string");
+
+
        
         $sql = " SELECT 
-        user_id, 
-        SUM(total_duration) AS total_duration, 
-        SUM(total_duration_manager) AS total_duration_manager,
-        SUM(hours) AS hours, 
-        logged_by_user, 
-        logged_by_avatar, 
-        task_id, 
-        task_title, 
-        project_id, 
-        project_title, 
-        project_is_ticket, 
-        timesheet_client_id, 
-        timesheet_client_company_name
-    FROM (
-    SELECT new_summary_table.user_id, new_summary_table.total_duration, 0 AS total_duration_manager, new_summary_table.hours, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
-                    $tasks_table.id AS task_id,  $tasks_table.title AS task_title,  $projects_table.id AS project_id,  $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
-                    $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
-                FROM (SELECT MAX($timesheet_table.project_id) AS project_id, MAX($timesheet_table.user_id) AS user_id, MAX($timesheet_table.task_id) AS task_id, SUM($timesheet_table.hours) AS hours, (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration
-                    FROM $timesheet_table
-                WHERE $timesheet_table.deleted=0 $where $custom_fields_where
-                    GROUP BY $group_by_option) AS new_summary_table
-                    LEFT JOIN $users_table ON $users_table.id= new_summary_table.user_id
-                    LEFT JOIN $tasks_table ON $tasks_table.id= new_summary_table.task_id
-                    LEFT JOIN $projects_table ON $projects_table.id= new_summary_table.project_id 
-            UNION ALL
-                SELECT $project_resources_table.user_id, 
-                        0 AS total_duration,
-                        ((SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) * 0.2) AS total_duration_manager,
-                        SUM($timesheet_table.hours) AS hours, 
-                        CONCAT($users_table.first_name, ' ', $users_table.last_name) AS logged_by_user, 
-                        $users_table.image AS logged_by_avatar,
-                        0 AS task_id,  
-                        'Gerenciamento de Projetos' AS task_title,  
-                        $projects_table.id AS project_id,  
-                        $projects_table.title AS project_title, 
-                        $projects_table.is_ticket AS project_is_ticket,
-                        $projects_table.client_id AS timesheet_client_id, 
-                        (SELECT $clients_table.company_name 
-                            FROM $clients_table 
-                                    WHERE $clients_table.id = $projects_table.client_id AND $clients_table.deleted = 0) AS timesheet_client_company_name
-                FROM $project_resources_table
-                    LEFT JOIN $users_table ON $users_table.id = $project_resources_table.user_id
-                    LEFT JOIN $projects_table ON $projects_table.id = $project_resources_table.project_id
-                    LEFT JOIN $timesheet_table ON $timesheet_table.project_id = $projects_table.id AND $timesheet_table.deleted = 0
-                WHERE $project_resources_table.deleted = 0 AND $project_resources_table.is_leader = 1 $where_resource GROUP BY $group_by_manager ) AS combined_results GROUP BY $group_by_general";
+            user_id, 
+            SUM(total_duration) AS total_duration, 
+            SUM(total_duration_manager) AS total_duration_manager,
+            SUM(hours) AS hours, 
+            logged_by_user, 
+            logged_by_avatar, 
+            task_id, 
+            task_title, 
+            project_id, 
+            project_title, 
+            project_is_ticket, 
+            timesheet_client_id, 
+            timesheet_client_company_name
+        FROM (
+        SELECT new_summary_table.user_id, new_summary_table.total_duration, 0 AS total_duration_manager, new_summary_table.hours, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
+                        $tasks_table.id AS task_id,  $tasks_table.title AS task_title,  $projects_table.id AS project_id,  $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
+                        $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
+                    FROM (SELECT MAX($timesheet_table.project_id) AS project_id, MAX($timesheet_table.user_id) AS user_id, MAX($timesheet_table.task_id) AS task_id, SUM($timesheet_table.hours) AS hours, (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration
+                        FROM $timesheet_table
+                    WHERE $timesheet_table.deleted=0 $where $custom_fields_where
+                        GROUP BY $group_by_option) AS new_summary_table
+                        LEFT JOIN $users_table ON $users_table.id= new_summary_table.user_id
+                        LEFT JOIN $tasks_table ON $tasks_table.id= new_summary_table.task_id
+                        LEFT JOIN $projects_table ON $projects_table.id= new_summary_table.project_id 
+                UNION ALL
+                    SELECT $project_resources_table.user_id, 
+                            0 AS total_duration,
+                            $no_group_by_field,
+                            SUM($timesheet_table.hours) AS hours, 
+                            CONCAT($users_table.first_name, ' ', $users_table.last_name) AS logged_by_user, 
+                            $users_table.image AS logged_by_avatar,
+                            0 AS task_id,  
+                            'Gerenciamento de Projetos' AS task_title,  
+                            $projects_table.id AS project_id,  
+                            $projects_table.title AS project_title, 
+                            $projects_table.is_ticket AS project_is_ticket,
+                            $projects_table.client_id AS timesheet_client_id, 
+                            (SELECT $clients_table.company_name 
+                                FROM $clients_table 
+                                        WHERE $clients_table.id = $projects_table.client_id AND $clients_table.deleted = 0) AS timesheet_client_company_name
+                    FROM $project_resources_table
+                        LEFT JOIN $users_table ON $users_table.id = $project_resources_table.user_id
+                        LEFT JOIN $projects_table ON $projects_table.id = $project_resources_table.project_id
+                        LEFT JOIN $timesheet_table ON $timesheet_table.project_id = $projects_table.id AND $timesheet_table.deleted = 0
+                    WHERE $project_resources_table.deleted = 0 AND $project_resources_table.is_leader = 1 $where_resource GROUP BY $group_by_manager ) AS combined_results GROUP BY $group_by_general";
 
                 log_message('info', 'SQL: '.$sql);
 
