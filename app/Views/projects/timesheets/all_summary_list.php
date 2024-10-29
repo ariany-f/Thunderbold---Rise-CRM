@@ -23,17 +23,17 @@
             //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
             dateRangeType: "monthly",
             columns: [
-                {title: "<?php echo app_lang("project"); ?>"},
                 {title: "<?php echo app_lang('client') ?>"},
-                {title: "<?php echo app_lang("member"); ?>"},
+                {title: "<?php echo app_lang("project"); ?>"},
+                {title: "<?php echo app_lang("consultant"); ?>"},
                 {title: "<?php echo app_lang("task"); ?>"},
-                {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
+                {title: "<?php echo app_lang("duration"); ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
-                {visible: projectAmount, title: "<?php echo app_lang('charge') ?>", "class": "text-center w50"},
-                {title: "<?php echo app_lang('consultant') ?>", "class": "text-right"},
-                {title: "<?php echo app_lang('manager') ?>", "class": "text-right"},
+                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center"},
+                {title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
-                {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center w50"}
+                {title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
+                {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
             xlsColumns: [0, 1, 2, 3, 4, 5],
@@ -46,8 +46,9 @@
                     //show member
                     showHideAppTableColumn(tableInstance, 0, false);
                     showHideAppTableColumn(tableInstance, 1, false);
-                    showHideAppTableColumn(tableInstance, 2, true);
-                    showHideAppTableColumn(tableInstance, 3, false);
+                    showHideAppTableColumn(tableInstance, 2, false);
+                    showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 6, true);
 
                     showHideAppTableColumn(tableInstance, 8, false);
                     showHideAppTableColumn(tableInstance, 9, false);
@@ -62,13 +63,13 @@
                     showHideAppTableColumn(tableInstance, 9, true);
                 } else if (filterParams && filterParams.group_by === "task") {
                     //show task
-                    showHideAppTableColumn(tableInstance, 0, false);
-                    showHideAppTableColumn(tableInstance, 1, false);
+                    showHideAppTableColumn(tableInstance, 0, true);
+                    showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
 
-                    showHideAppTableColumn(tableInstance, 8, false);
-                    showHideAppTableColumn(tableInstance, 9, false);
+                    showHideAppTableColumn(tableInstance, 8, true);
+                    showHideAppTableColumn(tableInstance, 9, true);
                 } else {
                     //show all
                     showHideAppTableColumn(tableInstance, 0, true);
