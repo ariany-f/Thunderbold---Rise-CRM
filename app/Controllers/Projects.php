@@ -4722,7 +4722,7 @@ class Projects extends Security_Controller {
         $success_array = array("success" => true, "data" => $this->_task_row_data($save_id), 'id' => $save_id, "message" => app_lang('record_saved'));
 
         if ($data_field == "assigned_to") {
-            $success_array["assigned_to_avatar"] = get_avatar($task_info->assigned_to_avatar);
+            $success_array["assigned_to_avatar"] = get_avatar($task_info->assigned_to_avatar, $task_info->assigned_to_user);
             $success_array["assigned_to_id"] = $task_info->assigned_to;
         }
 

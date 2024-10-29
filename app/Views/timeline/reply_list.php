@@ -2,7 +2,7 @@
     <div id="reply-content-container-<?php echo $reply->id; ?>"  class="d-flex mb15 b-l reply-container">
         <div class="flex-shrink-0 pl15 pr10">
             <span class="avatar avatar-xs">
-                <img src="<?php echo get_avatar($reply->created_by_avatar); ?>" alt="..." />
+                <img src="<?php echo get_avatar($reply->created_by_avatar, $reply->created_by_user); ?>" alt="..." />
             </span>
         </div>
         <div class="w-100">

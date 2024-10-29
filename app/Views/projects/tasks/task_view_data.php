@@ -17,7 +17,7 @@ if ($total_sub_tasks) {
                     <div class="d-flex m0">
                         <div class="flex-shrink-0">
                             <span class="avatar avatar-sm">
-                                <img id="task-assigned-to-avatar" src="<?php echo get_avatar($model_info->assigned_to_avatar); ?>" alt="..." />
+                                <img id="task-assigned-to-avatar" src="<?php echo get_avatar($model_info->assigned_to_avatar, $model_info->assigned_to_user); ?>" alt="..." />
                             </span>
                         </div>
                         <div class="w-100 ps-2 pt5">

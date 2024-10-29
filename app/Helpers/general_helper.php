@@ -1901,7 +1901,7 @@ if (!function_exists('send_message_via_pusher')) {
             $message_info = $ci->Messages_model->get_one($message_id);
 
             $user_info = $ci->Users_model->get_one($ci->login_user->id);
-            $avatar = " <img alt='...' src='" . get_avatar($user_info->image) . "' class='dark strong' /> ";
+            $avatar = " <img alt='...' src='" . get_avatar($user_info->image, ($user_info->first_name . " " . $user_info->last_name)) . "' class='dark strong' /> ";
 
             $message_data = array(
                 "<div class='chat-other'>

@@ -2,7 +2,7 @@
     <div class="d-flex mt15 mb15">
         <div class="flex-shrink-0">
             <span class="avatar avatar-xs">
-                <img src="<?php echo get_avatar($timesheet->logged_by_avatar); ?>" alt="..." />
+                <img src="<?php echo get_avatar($timesheet->logged_by_avatar, $timesheet->logged_by_user); ?>" alt="..." />
             </span>
         </div>
         <div class="w-100 ps-2">
