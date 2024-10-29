@@ -62,8 +62,8 @@
             <?php //} ?>
             <!--<div class="form-group">-->
             <!--    <div class="row">-->
-            <!--        <label for="points" class="col-md-3"><?php //echo app_lang('points'); ?>-->
-            <!--            <span class="help" data-bs-toggle="tooltip" title="<?php //echo app_lang('task_point_help_text'); ?>"><i data-feather="help-circle" class="icon-16"></i></span>-->
+            <!--        <label for="points" class="col-md-3"><?php echo app_lang('points'); ?>-->
+            <!--            <span class="help" data-bs-toggle="tooltip" title="<?php echo app_lang('task_point_help_text'); ?>"><i data-feather="help-circle" class="icon-16"></i></span>-->
             <!--        </label>-->
 
             <!--        <div class="col-md-9">-->

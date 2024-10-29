@@ -279,10 +279,6 @@ if (!function_exists('convert_time_string_to_decimal')) {
 if (!function_exists('convert_seconds_to_time_format')) {
 
     function convert_seconds_to_time_format($seconds = 0) {
-        
-        // Replace decimal points with commas in the input parameter
-        $seconds = str_replace(',', '.', $seconds); // Caso receba com vírgula, converter para ponto
-
         $is_negative = false;
         if ($seconds < 0) {
             $seconds = $seconds * -1;

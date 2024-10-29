@@ -2892,7 +2892,7 @@ class Projects extends Security_Controller {
         $all_options = append_server_side_filtering_commmon_params($options);
 
         $result = $this->Timesheets_model->get_details($all_options);
-        
+
         //by this, we can handel the server side or client side from the app table prams.
         if (get_array_value($all_options, "server_side")) {
             $list_data = get_array_value($result, "data");
@@ -2904,7 +2904,7 @@ class Projects extends Security_Controller {
         $result_data = array();
         foreach ($list_data as $data) {
 
-            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id);
+            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
 
             $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
 
@@ -2924,7 +2924,7 @@ class Projects extends Security_Controller {
         $options = array("id" => $id, "custom_fields" => $custom_fields);
         $data = $this->Timesheets_model->get_details($options)->getRow();
 
-        $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id);
+        $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
 
         $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
 
@@ -2950,32 +2950,16 @@ class Projects extends Security_Controller {
             $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
         }
 
-        if($data->start_time && $data->end_time)
-        {
-            $duration = convert_seconds_to_time_format($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time))));
-            $duration_for_resource = ($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time)))); // Mantém o valor em segundos
-        }
-        else
-        {
-            $duration = "00:00";
-            $duration_for_resource = 0;
-        }
+        $duration = convert_seconds_to_time_format($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time))));
 
-        $original_duration = $duration = convert_seconds_to_time_format(abs($data->total_duration));
-        $original_duration_in_hours =  $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+        $duration_for_resource = ($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time)))); // Mantém o valor em segundos
 
-        if($data->total_duration_manager !== '0')
-        {
-            $duration = convert_seconds_to_time_format(abs($data->total_duration_manager));
-        
-            // Convertendo $duration para horas (se estiver em segundos)
-            $duration_in_hours = (($data->total_duration_manager) ? (abs($data->total_duration_manager)) : 0) / 3600; // 3600 segundos = 1 hora
-        }
-
-        $hour_amount = 0;
         if($resource)
         {
-            $hour_amount = $resource->hour_amount;
+            if(!$resource->is_leader)
+            {
+                $hour_amount = $resource->hour_amount;
+            }
         }
         else
         {
@@ -2983,18 +2967,20 @@ class Projects extends Security_Controller {
             $hour_amount = $user_for_hour->salary;
         }
         
+        // Convertendo $duration para horas (se estiver em segundos)
+        $duration_in_hours = $duration_for_resource / 3600; // 3600 segundos = 1 hora
+        
 
         if($this->login_user->user_type === 'client')
         {
             $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
         }
 
-        // Valor Consultor
-        $total_amount = $hour_amount * $original_duration_in_hours;
+        // Multiplicação de $hour_amount por $duration em horas
+        $total_amount = $hour_amount * $duration_in_hours;
 
         $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
-        // Valor Cliente
         if(is_numeric($project_amount) and is_numeric($duration_in_hours))
         {
             $project_total_amount = $project_amount * $duration_in_hours;
@@ -3002,8 +2988,9 @@ class Projects extends Security_Controller {
         else
         {
             $project_total_amount = 0;
-        }
-    
+        }   
+
+        
         if($this->login_user->is_admin)
         {
             $row_data = array(
@@ -3159,29 +3146,24 @@ class Projects extends Security_Controller {
                 }
             }
 
-            $original_duration = $duration = convert_seconds_to_time_format(abs($data->total_duration));
-            $original_duration_in_hours = $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
 
-            if($data->total_duration_manager !== '0')
-            {
-                $duration = convert_seconds_to_time_format(abs($data->total_duration_manager));
-            
-                // Convertendo $duration para horas (se estiver em segundos)
-                $duration_in_hours = (($data->total_duration_manager) ? (abs($data->total_duration_manager)) : 0) / 3600; // 3600 segundos = 1 hora
-            }
+            $duration = convert_seconds_to_time_format(abs($data->total_duration));
 
             $client_name = "-";
             if ($data->timesheet_client_company_name) {
                 $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
             }
 
-            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id);
+            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
 
             $resource = $this->Project_resources_model->get_details($options_resources)->getRow();    
 
             if($resource)
             {
-                $hour_amount = $resource->hour_amount;
+                if(!$resource->is_leader)
+                {
+                    $hour_amount = $resource->hour_amount;
+                }
             }
             else
             {
@@ -3189,18 +3171,19 @@ class Projects extends Security_Controller {
                 $hour_amount = $user->salary;
             }
             
+            // Convertendo $duration para horas (se estiver em segundos)
+            $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
 
             if($this->login_user->user_type === 'client')
             {
                 $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
             }
             
-            // Valor Consultor
-            $total_amount = $hour_amount * $original_duration_in_hours;
+            // Multiplicação de $hour_amount por $duration em horas
+            $total_amount = $hour_amount * $duration_in_hours;
 
             $project_amount = (((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) and $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge')) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
-            // Valor Cliente
             if(is_numeric($project_amount) and is_numeric($duration_in_hours))
             {
                 $project_total_amount = $project_amount * $duration_in_hours;
