@@ -3152,7 +3152,7 @@ class Projects extends Security_Controller {
 
                 $member = get_team_member_profile_link($data->user_id, $user);
 
-                if($data->manager_id)
+                if($data->manager_id and $group_by != "member")
                 {
                     $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
                     $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
