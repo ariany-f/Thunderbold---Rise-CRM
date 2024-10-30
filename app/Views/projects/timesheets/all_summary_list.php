@@ -46,8 +46,9 @@
                     //show member
                     showHideAppTableColumn(tableInstance, 0, false);
                     showHideAppTableColumn(tableInstance, 1, false);
-                    showHideAppTableColumn(tableInstance, 2, false);
-                    showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 2, true);
+                    showHideAppTableColumn(tableInstance, 3, false);
+                    showHideAppTableColumn(tableInstance, 4, true);
                     showHideAppTableColumn(tableInstance, 6, true);
 
                     showHideAppTableColumn(tableInstance, 8, false);
@@ -58,6 +59,7 @@
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, false);
+                    showHideAppTableColumn(tableInstance, 4, true);
 
                     showHideAppTableColumn(tableInstance, 8, true);
                     showHideAppTableColumn(tableInstance, 9, true);
@@ -67,6 +69,7 @@
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
+                    showHideAppTableColumn(tableInstance, 4, true);
 
                     showHideAppTableColumn(tableInstance, 8, true);
                     showHideAppTableColumn(tableInstance, 9, true);
@@ -76,6 +79,7 @@
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, true);
+                    showHideAppTableColumn(tableInstance, 4, true);
 
                     showHideAppTableColumn(tableInstance, 8, true);
                     showHideAppTableColumn(tableInstance, 9, true);

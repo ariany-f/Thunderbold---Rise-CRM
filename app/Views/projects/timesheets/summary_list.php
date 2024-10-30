@@ -42,12 +42,17 @@
                 if (filterParams && filterParams.group_by === "member") {
                     showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, false);
+                    showHideAppTableColumn(tableInstance, 5, false);
+                    showHideAppTableColumn(tableInstance, 8, false);
+                    showHideAppTableColumn(tableInstance, 9, false);
                 } else if (filterParams && filterParams.group_by === "task") {
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
+                    showHideAppTableColumn(tableInstance, 5, false);
                 } else {
                     showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, true);
+                    showHideAppTableColumn(tableInstance, 5, false);
                 }
 
                 //clear this status for next time load
