@@ -3000,15 +3000,7 @@ class Projects extends Security_Controller {
         // Valor Cliente
         $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
-        if(is_numeric($project_amount))
-        {
-            $project_total_amount = $project_amount * $duration_in_hours;
-        }
-        else
-        {
-            $project_total_amount = 0;
-        }   
-
+        $project_total_amount = $project_amount * $duration_in_hours;
         
         if($this->login_user->is_admin)
         {
@@ -3208,7 +3200,7 @@ class Projects extends Security_Controller {
             // Valor Gerente
             $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
 
-            $project_amount = ($data->project_client_amount ?? 0);
+            $project_amount = ((!empty($data->project_client_amount)) ? $data->project_client_amount  : 0);
 
             // Valor Cliente
             $project_total_amount = $project_amount * $duration_in_hours;
