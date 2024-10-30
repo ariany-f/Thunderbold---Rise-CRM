@@ -3000,7 +3000,7 @@ class Projects extends Security_Controller {
         // Valor Cliente
         $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
 
-        if(is_numeric($project_amount) and is_numeric($duration_in_hours))
+        if(is_numeric($project_amount))
         {
             $project_total_amount = $project_amount * $duration_in_hours;
         }
