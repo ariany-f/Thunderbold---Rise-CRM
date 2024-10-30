@@ -221,7 +221,7 @@ class Timesheets_model extends Crud_model {
         $distinct_user = "MAX(DISTINCT $timesheet_table.user_id)";
         if ($group_by === "member") {
             $group_by_option = "$timesheet_table.user_id";
-            $group_general = "new_summary_table.task_id, new_summary_table.user_id";
+            $group_general = "new_summary_table.user_id";
             $distinct_user = "$timesheet_table.user_id";
         } else if ($group_by === "task") {
             $group_by_option = "$timesheet_table.project_id, $timesheet_table.task_id";
@@ -236,7 +236,7 @@ class Timesheets_model extends Crud_model {
         $custom_field_query_info = $this->prepare_custom_field_query_string("timesheets", "", $timesheet_table, $custom_field_filter);
         $custom_fields_where = $this->_get_clean_value($custom_field_query_info, "where_string");
 
-        $sql = "SELECT SUM(new_summary_table.project_resources_amount) AS project_resources_amount, new_summary_table.user_id, new_summary_table.total_duration, new_summary_table.project_id, $project_resources_table.user_id AS manager_id, $project_resources_table.hour_amount AS manager_hour_amount, CONCAT(project_resources_user.first_name, ' ',project_resources_user.last_name) AS manager_user, project_resources_user.image as manager_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
+        $sql = "SELECT SUM(new_summary_table.project_resources_amount) AS project_resources_amount, SUM(new_summary_table.project_client_amount) AS project_client_amount, new_summary_table.user_id, new_summary_table.total_duration, new_summary_table.project_id, $project_resources_table.user_id AS manager_id, $project_resources_table.hour_amount AS manager_hour_amount, CONCAT(project_resources_user.first_name, ' ',project_resources_user.last_name) AS manager_user, project_resources_user.image as manager_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
                        $tasks_table.id AS task_id,  $tasks_table.title AS task_title,  $projects_table.id AS project_id,  $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
                        $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
                 FROM (SELECT 
@@ -258,7 +258,18 @@ class Timesheets_model extends Crud_model {
                             WHERE rtmi.user_id = $timesheet_table.user_id
                             AND rtmi.deleted = 0 
                             LIMIT 1)
-                        ) AS project_resources_amount
+                        ) AS project_resources_amount,
+                        COALESCE(
+                            (
+                                SELECT rps.setting_value
+                                FROM rise_project_settings rps
+                                WHERE rps.project_id = $timesheet_table.project_id
+                                AND rps.deleted = 0
+                                AND rps.setting_name = 'project_amount_charge'
+                                LIMIT 1
+                            ),
+                            0
+                        ) AS project_client_amount
                 FROM 
                     $timesheet_table
                 WHERE 
