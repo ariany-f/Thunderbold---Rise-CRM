@@ -3208,17 +3208,10 @@ class Projects extends Security_Controller {
             // Valor Gerente
             $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
 
-            // Valor Cliente
-            $project_amount = $data->project_client_amount;
+            $project_amount = ($data->project_client_amount ?? 0);
 
-            if(is_numeric($project_amount) and is_numeric($duration_in_hours))
-            {
-                $project_total_amount = $project_amount * $duration_in_hours;
-            }
-            else
-            {
-                $project_total_amount = 0;
-            }   
+            // Valor Cliente
+            $project_total_amount = $project_amount * $duration_in_hours;
 
             if($this->login_user->is_admin)
             {
@@ -3233,7 +3226,7 @@ class Projects extends Security_Controller {
                     "<span style='color: red;'>".to_currency($total_amount)."</span>",
                     $manager_member,
                     "<span style='color: red;'>".to_currency($total_manager_amount)."</span>",
-                    "<span style='color: green;'>".to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount - $total_manager_amount) : 0)."</span>"
+                    "<span style='color: green;'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>"
                 );
             }
             else
