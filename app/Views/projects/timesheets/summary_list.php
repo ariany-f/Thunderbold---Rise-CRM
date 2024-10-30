@@ -24,14 +24,14 @@
                 {visible: false, searchable: false},
                 {visible: false, searchable: false},
                 {title: "<?php echo app_lang("task"); ?>", "class": "w15p"},
-                {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
-                {title: "<?php echo app_lang("hours"); ?>", "class": "w15p text-right"},
-                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center w50"},
+                {title: "<?php echo app_lang("duration"); ?>", "class": "text-center"},
+                {visible: false, title: "<?php echo app_lang("hours"); ?>", "class": "text-center"},
+                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("consultant"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("consultant") . ' (R$)'; ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("manager_name"); ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("comission"). ' (R$)'; ?>", "class": "text-center"},
-                {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center w50"}
+                {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center"}
             ],
             printColumns: [2, 3, 4, 5, 6, 7, 8, 9, 10],
             xlsColumns: [2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -41,18 +41,21 @@
                 //we'll show/hide the task/member column based on the group by status
                 if (filterParams && filterParams.group_by === "member") {
                     showHideAppTableColumn(tableInstance, 2, true);
-                    showHideAppTableColumn(tableInstance, 3, false);
-                    showHideAppTableColumn(tableInstance, 5, false);
+                    showHideAppTableColumn(tableInstance, 3, true);
+                    // showHideAppTableColumn(tableInstance, 2, false);
+                    // showHideAppTableColumn(tableInstance, 6, true);
                     showHideAppTableColumn(tableInstance, 8, false);
                     showHideAppTableColumn(tableInstance, 9, false);
                 } else if (filterParams && filterParams.group_by === "task") {
-                    showHideAppTableColumn(tableInstance, 2, false);
-                    showHideAppTableColumn(tableInstance, 3, true);
-                    showHideAppTableColumn(tableInstance, 5, false);
-                } else {
                     showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, true);
-                    showHideAppTableColumn(tableInstance, 5, false);
+                    showHideAppTableColumn(tableInstance, 6, false);
+                    // showHideAppTableColumn(tableInstance, 2, false);
+                } else {
+                    showHideAppTableColumn(tableInstance, 3, true);
+                    showHideAppTableColumn(tableInstance, 2, true);
+                    // showHideAppTableColumn(tableInstance, 2, false);
+                    // showHideAppTableColumn(tableInstance, 6, true);
                 }
 
                 //clear this status for next time load

@@ -26,7 +26,7 @@
                 {title: "<?php echo app_lang('client') ?>"},
                 {title: "<?php echo app_lang("project"); ?>"},
                 {title: "<?php echo app_lang("task"); ?>"},
-                {title: "<?php echo app_lang("duration"); ?>", "class": "text-right"},
+                {title: "<?php echo app_lang("duration"); ?>"},
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("consultant"); ?>"},
@@ -46,9 +46,10 @@
                     //show member
                     showHideAppTableColumn(tableInstance, 0, false);
                     showHideAppTableColumn(tableInstance, 1, false);
-                    showHideAppTableColumn(tableInstance, 2, true);
-                    showHideAppTableColumn(tableInstance, 3, false);
-                    showHideAppTableColumn(tableInstance, 4, true);
+                    showHideAppTableColumn(tableInstance, 2, false);
+                    showHideAppTableColumn(tableInstance, 4, false);
+
+                    showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 6, true);
 
                     showHideAppTableColumn(tableInstance, 8, false);
@@ -58,8 +59,8 @@
                     showHideAppTableColumn(tableInstance, 0, true);
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, false);
-                    showHideAppTableColumn(tableInstance, 3, false);
-                    showHideAppTableColumn(tableInstance, 4, true);
+                    showHideAppTableColumn(tableInstance, 3, true);
+                    showHideAppTableColumn(tableInstance, 4, false);
 
                     showHideAppTableColumn(tableInstance, 8, true);
                     showHideAppTableColumn(tableInstance, 9, true);
@@ -67,9 +68,9 @@
                     //show task
                     showHideAppTableColumn(tableInstance, 0, true);
                     showHideAppTableColumn(tableInstance, 1, true);
-                    showHideAppTableColumn(tableInstance, 2, false);
+                    showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, true);
-                    showHideAppTableColumn(tableInstance, 4, true);
+                    showHideAppTableColumn(tableInstance, 4, false);
 
                     showHideAppTableColumn(tableInstance, 8, true);
                     showHideAppTableColumn(tableInstance, 9, true);
@@ -77,9 +78,9 @@
                     //show all
                     showHideAppTableColumn(tableInstance, 0, true);
                     showHideAppTableColumn(tableInstance, 1, true);
-                    showHideAppTableColumn(tableInstance, 2, true);
+                    showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
-                    showHideAppTableColumn(tableInstance, 4, true);
+                    showHideAppTableColumn(tableInstance, 4, false);
 
                     showHideAppTableColumn(tableInstance, 8, true);
                     showHideAppTableColumn(tableInstance, 9, true);
