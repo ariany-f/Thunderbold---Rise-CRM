@@ -3014,7 +3014,6 @@ class Projects extends Security_Controller {
         {
             // Visão Admin
             $row_data = array(
-                get_team_member_profile_link($data->user_id, $user),
                 $project_title,
                 $client_name,
                 $task_title,
@@ -3026,6 +3025,7 @@ class Projects extends Security_Controller {
                 $duration,
                 to_decimal_format(convert_time_string_to_decimal($duration)),
                 "<span style='color: blue'>".to_currency($project_total_amount)."</span>",
+                get_team_member_profile_link($data->user_id, $user),
                 "<span style='color: red'>".to_currency($total_amount)."</span>",
                 $manager_member,
                 "<span style='color: red'>".to_currency($total_manager_amount)."</span>",
@@ -3036,7 +3036,6 @@ class Projects extends Security_Controller {
         {
             // Visão Consultor
             $row_data = array(
-                get_team_member_profile_link($data->user_id, $user),
                 $project_title,
                 $client_name,
                 $task_title,
@@ -3048,6 +3047,7 @@ class Projects extends Security_Controller {
                 $duration,
                 to_decimal_format(convert_time_string_to_decimal($duration)),
                 "",
+                get_team_member_profile_link($data->user_id, $user),
                 "<span style='color: green'>".to_currency($total_amount)."</span>",
                 "",
                 "",
