@@ -217,13 +217,14 @@ class Timesheets_model extends Crud_model {
         $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
         $group_general = "new_summary_table.user_id, new_summary_table.task_id, new_summary_table.project_id";
         $group_by = $this->_get_clean_value($options, "group_by");
-
+        $distinct = "";
         if ($group_by === "member") {
             $group_by_option = "$timesheet_table.user_id";
             $group_general = "new_summary_table.user_id";
         } else if ($group_by === "task") {
             $group_by_option = "$timesheet_table.task_id";
             $group_general = "new_summary_table.task_id";
+            $distinct = "DISTINCT";
         } else if ($group_by === "project") {
             $group_by_option = "$timesheet_table.project_id";
             $group_general = "new_summary_table.project_id";
@@ -237,24 +238,25 @@ class Timesheets_model extends Crud_model {
                        $tasks_table.id AS task_id,  $tasks_table.title AS task_title,  $projects_table.id AS project_id,  $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
                        $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
                 FROM (SELECT 
-                    MAX($timesheet_table.project_id) AS project_id, 
-                    MAX($timesheet_table.user_id) AS user_id, 
-                    MAX($timesheet_table.task_id) AS task_id, 
-                    (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + 
-                    SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration,
-                    COALESCE(
-                        (SELECT rpr.hour_amount 
-                        FROM rise_project_resources rpr 
-                        WHERE rpr.user_id = $timesheet_table.user_id 
-                        AND rpr.project_id = $timesheet_table.project_id
-                        AND rpr.is_leader = 0
-                        AND rpr.deleted = 0
-                        LIMIT 1),
-                        (SELECT rtmi.salary 
-                        FROM rise_team_member_job_info rtmi 
-                        WHERE rtmi.user_id = $timesheet_table.user_id 
-                        LIMIT 1)
-                    ) AS project_resources_amount
+                        MAX($timesheet_table.project_id) AS project_id, 
+                        MAX($timesheet_table.user_id) AS user_id, 
+                        MAX($distinct $timesheet_table.task_id) AS task_id, 
+                        (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + 
+                        SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration,
+                        COALESCE(
+                            (SELECT rpr.hour_amount 
+                            FROM rise_project_resources rpr 
+                            WHERE rpr.user_id = $timesheet_table.user_id 
+                            AND rpr.project_id = $timesheet_table.project_id
+                            AND rpr.is_leader = 0
+                            AND rpr.deleted = 0
+                            LIMIT 1),
+                            (SELECT rtmi.salary 
+                            FROM rise_team_member_job_info rtmi 
+                            WHERE rtmi.user_id = $timesheet_table.user_id
+                            AND rtmi.deleted = 0 
+                            LIMIT 1)
+                        ) AS project_resources_amount
                 FROM 
                     $timesheet_table
                 WHERE 
@@ -269,7 +271,6 @@ class Timesheets_model extends Crud_model {
                 LEFT JOIN $projects_table ON $projects_table.id= new_summary_table.project_id
                 LEFT JOIN $project_resources_table ON $project_resources_table.project_id= new_summary_table.project_id AND $project_resources_table.is_leader=1 AND $project_resources_table.deleted=0
                 LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id= $project_resources_table.user_id       
-               
                 GROUP BY $group_general
                 ";
                 log_message('info', 'get_summary_details: '.$sql);

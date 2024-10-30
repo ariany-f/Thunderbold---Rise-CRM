@@ -3193,29 +3193,6 @@ class Projects extends Security_Controller {
             }
 
             $hour_amount = $data->project_resources_amount;
-            // if($group_by != 'project')
-            // {
-               
-            // }
-            // else
-            // {
-            //     $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
-    
-            //     $resource = $this->Project_resources_model->get_details($options_resources)->getRow();    
-    
-            //     if($resource)
-            //     {
-            //         if(!$resource->is_leader)
-            //         {
-            //             $hour_amount = $resource->hour_amount;
-            //         }
-            //     }
-            //     else
-            //     {
-            //         $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
-            //         $hour_amount = $user->salary;
-            //     }
-            // }
             
             // Convertendo $duration para horas (se estiver em segundos)
             $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
