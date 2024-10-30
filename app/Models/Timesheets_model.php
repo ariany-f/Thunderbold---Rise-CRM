@@ -240,7 +240,7 @@ class Timesheets_model extends Crud_model {
         } else if ($group_by === "project") {
             $group_by_option = "$timesheet_table.project_id";
             $group_general = "new_summary_table.project_id";
-            $distinct_project = "$timesheet_table.project_id";
+            $distinct_project = "MAX(DISTINCT $timesheet_table.project_id)";
         }
 
         $custom_field_filter = $this->_get_clean_value($options, "custom_field_filter");
