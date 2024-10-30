@@ -66,6 +66,7 @@ class Email_templates extends Security_Controller {
             "message" => array(
                 "message_received" => array("SUBJECT", "USER_NAME", "MESSAGE_CONTENT", "MESSAGE_URL", "APP_TITLE", "LOGO_URL", "SIGNATURE", "RECIPIENTS_EMAIL_ADDRESS"),
                 "message_received_in_group" => array("SUBJECT", "USER_NAME", "MESSAGE_CONTENT", "MESSAGE_URL", "APP_TITLE", "LOGO_URL", "SIGNATURE", "RECIPIENTS_EMAIL_ADDRESS", "GROUP_NAME", "TASK_URL"),
+                "message_received_in_group_mentioning_you" => array("SUBJECT", "USER_NAME", "MESSAGE_CONTENT", "MESSAGE_URL", "APP_TITLE", "LOGO_URL", "SIGNATURE", "RECIPIENTS_EMAIL_ADDRESS", "GROUP_NAME", "TASK_URL"),
             ),
             "subscription" => array(
                 "subscription_request_sent" => array("SUBSCRIPTION_ID", "SUBSCRIPTION_TITLE", "CONTACT_FIRST_NAME", "CONTACT_LAST_NAME", "SUBSCRIPTION_URL", "LOGO_URL", "SIGNATURE", "RECIPIENTS_EMAIL_ADDRESS"),

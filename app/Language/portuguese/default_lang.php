@@ -1051,6 +1051,7 @@ $lang["card_payment_failed_error_message"] = "Nós não pudemos processar o seu 
 
 $lang["message_received"] = "Mensagem recebida";
 $lang["message_received_in_group"] = "Mensagem recebida em grupo";
+$lang["message_received_in_group"] = "Mensagem recebida em grupo mencionando você";
 $lang["in_number_of_days"] = "Em %s dias"; //Ex. In 7 days
 $lang["details"] = "Detalhes";
 $lang["summary"] = "Resumo";
