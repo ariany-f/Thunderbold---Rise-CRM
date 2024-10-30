@@ -256,8 +256,7 @@ class Timesheets_model extends Crud_model {
                         $distinct_project AS project_id, 
                         $distinct_user AS user_id, 
                         $distinct_task AS task_id,
-                        (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + 
-                        SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration,
+                        (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time))) AS total_duration,
                         COALESCE(
                             (SELECT rpr.hour_amount 
                             FROM rise_project_resources rpr 
