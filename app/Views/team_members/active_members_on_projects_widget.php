@@ -26,8 +26,9 @@
                         $project_list = explode(",", $user_info->projects_list);
                         foreach ($project_list as $project) {
                             $project_timer = explode("--::--", $project);
+                          
                             $in_time = "<span class='text-off'>" . "<i data-feather='clock' class='icon-16'></i>" . " ";
-                            $in_time .= format_to_relative_time($project_timer[2]);
+                            $in_time .= isset($project_timer[2]) ? format_to_relative_time($project_timer[2]) : '--';
                             $in_time .= "</span>";
                             echo "<div class='clearfix row'>";
                             echo "<div class='col-md-7 col-sm-7'>";
