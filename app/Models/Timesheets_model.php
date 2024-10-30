@@ -279,7 +279,6 @@ class Timesheets_model extends Crud_model {
                 GROUP BY 
                     $group_by_option) AS new_summary_table
                 LEFT JOIN $users_table ON $users_table.id= new_summary_table.user_id
-                LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id= $users_table.id
                 LEFT JOIN $tasks_table ON $tasks_table.id= new_summary_table.task_id
                 LEFT JOIN $projects_table ON $projects_table.id= new_summary_table.project_id
                 LEFT JOIN $project_resources_table ON $project_resources_table.project_id= new_summary_table.project_id AND $project_resources_table.is_leader=1 AND $project_resources_table.deleted=0
