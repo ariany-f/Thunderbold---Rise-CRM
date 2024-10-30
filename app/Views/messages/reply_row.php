@@ -39,7 +39,7 @@
                         <?php } ?>
                         <!-- Permitir responder uma mensagem diretamente -->
                     </div>
-                    <p><?php echo nl2br(link_it(process_images_from_content($reply_info->message))); ?></p>
+                    <p><?php echo convert_mentions(nl2br(link_it(process_images_from_content($reply_info->message)))); ?></p>
 
                     <div class="comment-image-box clearfix">
                         <?php

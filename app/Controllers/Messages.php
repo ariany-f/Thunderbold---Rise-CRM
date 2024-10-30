@@ -1077,6 +1077,28 @@ class Messages extends Security_Controller {
         }
     }
 
+    /* get member suggestion with start typing '@' */
+    function get_member_suggestion_to_mention() {
+
+        $this->validate_submitted_data(array(
+            "group_id" => "required|numeric"
+        ));
+
+        $group_id = $this->request->getPost("group_id");
+
+        $message_group_members = $this->Message_group_members_model->get_message_group_members_dropdown_list($group_id, "", true, true)->getResult();
+        $message_group_members_dropdown = array();
+        foreach ($message_group_members as $member) {
+            $message_group_members_dropdown[] = array("name" => $member->member_name, "content" => "@[" . $member->member_name . " :" . $member->user_id . "]");
+        }
+
+        if ($message_group_members_dropdown) {
+            echo json_encode(array("success" => TRUE, "data" => $message_group_members_dropdown));
+        } else {
+            echo json_encode(array("success" => FALSE));
+        }
+    }
+
 
     /* reply to an existing message */
 
@@ -1149,6 +1171,27 @@ class Messages extends Security_Controller {
                             send_message_via_pusher($pusher_to_user_id, $message_data, $message_id);
                         }
                     }
+
+                    preg_match_all('#\@\[(.*?)\]#', $message, $matches);
+                    
+                    $members = array();
+
+                    $mentions = get_array_value($matches, 1);
+                    if ($mentions && count($mentions)) {
+                        foreach ($mentions as $mention) {
+                            $user = explode(":", $mention);
+                            $user_id = get_array_value($user, 1);
+                            $members[] = $user_id;
+                        }
+                    }
+
+                    if(!empty($members)) {
+                        foreach($members as $member)
+                        {
+                            log_notification("message_reply_mentioning_you_sent_to_group", array("user_id" => $this->login_user->id, "to_user_id" => $member, "actual_message_id" => $save_id, "parent_message_id" => $message_id));
+                        }
+                    }
+
 
                     log_notification("message_reply_sent_to_group", array("actual_message_id" => $save_id, "parent_message_id" => $message_id));
                 }

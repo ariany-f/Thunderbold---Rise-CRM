@@ -283,6 +283,13 @@
             <?php if(!$message_info->ended) { ?>
                 var dropzone = attachDropzoneWithForm("#reply-form-dropzone", uploadUrl, validationUrl);
 
+                <?php if ($mode === "list_groups" and $message_info->group_id) { ?>
+                    $('#reply_message').appMention({
+                        source: "<?php echo_uri("messages/get_member_suggestion_to_mention"); ?>",
+                        data: {group_id: <?php echo $message_info->group_id; ?>}
+                    });
+                <?php } ?>
+
                 $("#message-reply-form").appForm({
                     isModal: false,
                     onSuccess: function (result) {
