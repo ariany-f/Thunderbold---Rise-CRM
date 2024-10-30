@@ -26,12 +26,12 @@
                 {title: "<?php echo app_lang("task"); ?>", "class": "text-left"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "text-left"},
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
-                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center"},
+                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang("consultant"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("consultant") . ' (R$)'; ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("manager_name"); ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("comission"). ' (R$)'; ?>", "class": "text-center"},
-                {visible: projectAmount, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-center"}
+                {visible: projectAmount, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right"}
             ],
             printColumns: [2, 3, 4, 5, 6, 7, 8, 9, 10],
             xlsColumns: [2, 3, 4, 5, 6, 7, 8, 9, 10],

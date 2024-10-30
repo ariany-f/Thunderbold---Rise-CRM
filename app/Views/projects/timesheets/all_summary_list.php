@@ -28,12 +28,12 @@
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>"},
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
-                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center"},
+                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang("consultant"); ?>"},
                 {title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
-                {visible: projectAmount, title: "<?php echo app_lang('liquid') . ' (R$)'?>", "class": "text-center"}
+                {visible: projectAmount, title: "<?php echo app_lang('liquid') . ' (R$)'?>", "class": "text-right"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
             xlsColumns: [0, 1, 2, 3, 4, 5],
