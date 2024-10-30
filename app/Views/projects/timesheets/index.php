@@ -77,6 +77,13 @@
             ],
             printColumns: combineCustomFieldsColumns([0, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([0, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
+            onRelaodCallback: function (tableInstance, filterParams) {
+                
+                showHideAppTableColumn(tableInstance, 3, false);
+                showHideAppTableColumn(tableInstance, 6, false);
+                showHideAppTableColumn(tableInstance, 9, false);
+                clearAppTableState(tableInstance);
+            },
             summation: [{column: 8, dataType: 'time'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'}, {column: 15, dataType: 'currency'}]
         });
     }

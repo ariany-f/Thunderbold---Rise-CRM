@@ -23,11 +23,11 @@
             columns: [
                 {visible: false, searchable: false},
                 {visible: false, searchable: false},
-                {title: "<?php echo app_lang("consultant"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("task"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "w15p text-right"},
                 {title: "<?php echo app_lang("hours"); ?>", "class": "w15p text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center w50"},
+                {title: "<?php echo app_lang("consultant"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("consultant") . ' (R$)'; ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("manager_name"); ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("comission"). ' (R$)'; ?>", "class": "text-center"},

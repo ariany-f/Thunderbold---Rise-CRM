@@ -25,11 +25,11 @@
             columns: [
                 {title: "<?php echo app_lang('client') ?>"},
                 {title: "<?php echo app_lang("project"); ?>"},
-                {title: "<?php echo app_lang("consultant"); ?>"},
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center"},
+                {title: "<?php echo app_lang("consultant"); ?>"},
                 {title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
