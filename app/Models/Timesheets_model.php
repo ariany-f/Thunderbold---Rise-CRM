@@ -215,14 +215,18 @@ class Timesheets_model extends Crud_model {
 
         //group by
         $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
+        $group_general = "new_summary_table.user_id, new_summary_table.task_id, new_summary_table.project_id";
         $group_by = $this->_get_clean_value($options, "group_by");
 
         if ($group_by === "member") {
             $group_by_option = "$timesheet_table.user_id";
+            $group_general = "new_summary_table.user_id";
         } else if ($group_by === "task") {
             $group_by_option = "$timesheet_table.task_id";
+            $group_general = "new_summary_table.task_id";
         } else if ($group_by === "project") {
             $group_by_option = "$timesheet_table.project_id";
+            $group_general = "new_summary_table.project_id";
         }
 
         $custom_field_filter = $this->_get_clean_value($options, "custom_field_filter");
@@ -266,7 +270,7 @@ class Timesheets_model extends Crud_model {
                 LEFT JOIN $project_resources_table ON $project_resources_table.project_id= new_summary_table.project_id AND $project_resources_table.is_leader=1 AND $project_resources_table.deleted=0
                 LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id= $project_resources_table.user_id       
                
-                GROUP BY new_summary_table.user_id, new_summary_table.task_id, new_summary_table.project_id
+                GROUP BY $group_general
                 ";
                 log_message('info', 'get_summary_details: '.$sql);
         return $this->db->query($sql);
