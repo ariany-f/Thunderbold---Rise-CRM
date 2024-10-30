@@ -157,6 +157,8 @@ class Timesheets_model extends Crud_model {
         $users_table = $this->db->prefixTable('users');
         $clients_table = $this->db->prefixTable('clients');
         $project_resources_table = $this->db->prefixTable('project_resources');
+        $team_member_job_info_table = $this->db->prefixTable('team_member_job_info');
+
         $where = "";
         $id = $this->_get_clean_value($options, "id");
         if ($id) {
@@ -227,7 +229,7 @@ class Timesheets_model extends Crud_model {
         $custom_field_query_info = $this->prepare_custom_field_query_string("timesheets", "", $timesheet_table, $custom_field_filter);
         $custom_fields_where = $this->_get_clean_value($custom_field_query_info, "where_string");
 
-        $sql = "SELECT new_summary_table.user_id, new_summary_table.total_duration, new_summary_table.project_id, $project_resources_table.user_id AS manager_id, $project_resources_table.hour_amount AS manager_hour_amount, CONCAT(project_resources_user.first_name, ' ',project_resources_user.last_name) AS manager_user, project_resources_user.image as manager_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
+        $sql = "SELECT SUM(COALESCE(project_resources.hour_amount,$team_member_job_info_table.salary)) AS project_resources_amount, new_summary_table.user_id, new_summary_table.total_duration, new_summary_table.project_id, $project_resources_table.user_id AS manager_id, $project_resources_table.hour_amount AS manager_hour_amount, CONCAT(project_resources_user.first_name, ' ',project_resources_user.last_name) AS manager_user, project_resources_user.image as manager_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
                        $tasks_table.id AS task_id,  $tasks_table.title AS task_title,  $projects_table.id AS project_id,  $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
                        $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
                 FROM (SELECT MAX($timesheet_table.project_id) AS project_id, MAX($timesheet_table.user_id) AS user_id, MAX($timesheet_table.task_id) AS task_id, (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration
@@ -235,10 +237,12 @@ class Timesheets_model extends Crud_model {
                         WHERE $timesheet_table.deleted=0 $where $custom_fields_where
                         GROUP BY $group_by_option) AS new_summary_table
                 LEFT JOIN $users_table ON $users_table.id= new_summary_table.user_id
+                LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id= $users_table.id
                 LEFT JOIN $tasks_table ON $tasks_table.id= new_summary_table.task_id
                 LEFT JOIN $projects_table ON $projects_table.id= new_summary_table.project_id
                 LEFT JOIN $project_resources_table ON $project_resources_table.project_id= new_summary_table.project_id AND $project_resources_table.is_leader=1 AND $project_resources_table.deleted=0
                 LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id= $project_resources_table.user_id       
+                LEFT JOIN $project_resources_table AS project_resources ON project_resources.project_id= new_summary_table.project_id AND $users_table.id = project_resources.user_id AND project_resources.is_leader=0 AND project_resources.deleted=0
                 ";
             log_message('info', 'sql: '.$sql);
         return $this->db->query($sql);

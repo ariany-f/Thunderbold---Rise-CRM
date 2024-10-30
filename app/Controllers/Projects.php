@@ -3192,21 +3192,28 @@ class Projects extends Security_Controller {
                 $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
             }
 
-            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
-
-            $resource = $this->Project_resources_model->get_details($options_resources)->getRow();    
-
-            if($resource)
+            if($group_by != 'project')
             {
-                if(!$resource->is_leader)
-                {
-                    $hour_amount = $resource->hour_amount;
-                }
+                $hour_amount = $data->project_resources_amount;
             }
             else
             {
-                $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
-                $hour_amount = $user->salary;
+                $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
+    
+                $resource = $this->Project_resources_model->get_details($options_resources)->getRow();    
+    
+                if($resource)
+                {
+                    if(!$resource->is_leader)
+                    {
+                        $hour_amount = $resource->hour_amount;
+                    }
+                }
+                else
+                {
+                    $user = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
+                    $hour_amount = $user->salary;
+                }
             }
             
             // Convertendo $duration para horas (se estiver em segundos)
