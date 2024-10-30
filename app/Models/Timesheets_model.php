@@ -217,19 +217,17 @@ class Timesheets_model extends Crud_model {
         $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
         $group_general = "new_summary_table.user_id, new_summary_table.task_id, new_summary_table.project_id";
         $group_by = $this->_get_clean_value($options, "group_by");
-        $distinct_task = "";
+        $distinct_task = "MAX(DISTINCT $timesheet_table.task_id)";
         if ($group_by === "member") {
             $group_by_option = "$timesheet_table.user_id";
             $group_general = "new_summary_table.user_id";
-            $distinct_task = " MAX(DISTINCT $timesheet_table.task_id) AS task_id";
         } else if ($group_by === "task") {
             $group_by_option = "$timesheet_table.task_id";
             $group_general = "new_summary_table.task_id";
-            $distinct_task = " $timesheet_table.task_id AS task_id";
+            $distinct_task = "$timesheet_table.task_id";
         } else if ($group_by === "project") {
             $group_by_option = "$timesheet_table.project_id";
             $group_general = "new_summary_table.project_id";
-            $distinct_task = " MAX(DISTINCT $timesheet_table.task_id) AS task_id";
         }
 
         $custom_field_filter = $this->_get_clean_value($options, "custom_field_filter");
@@ -242,7 +240,7 @@ class Timesheets_model extends Crud_model {
                 FROM (SELECT 
                         MAX($timesheet_table.project_id) AS project_id, 
                         MAX($timesheet_table.user_id) AS user_id, 
-                        $distinct_task, 
+                        $distinct_task AS task_id,
                         (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + 
                         SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration,
                         COALESCE(
