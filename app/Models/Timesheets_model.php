@@ -265,7 +265,7 @@ class Timesheets_model extends Crud_model {
                                 FROM rise_project_settings rps
                                 WHERE rps.project_id = $timesheet_table.project_id
                                 AND rps.deleted = 0
-                                AND rps.key_name = 'project_amount_charge'
+                                AND rps.setting_name = 'project_amount_charge'
                                 LIMIT 1
                             ),
                             0
