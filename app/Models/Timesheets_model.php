@@ -218,9 +218,11 @@ class Timesheets_model extends Crud_model {
         $group_general = "new_summary_table.user_id, new_summary_table.task_id, new_summary_table.project_id";
         $group_by = $this->_get_clean_value($options, "group_by");
         $distinct_task = "MAX(DISTINCT $timesheet_table.task_id)";
+        $distinct_user = "MAX(DISTINCT $timesheet_table.user_id)";
         if ($group_by === "member") {
-            $group_by_option = "$timesheet_table.project_id, $timesheet_table.task_id, $timesheet_table.user_id";
-            $group_general = "new_summary_table.project_id, new_summary_table.task_id, new_summary_table.user_id";
+            $group_by_option = "$timesheet_table.user_id";
+            $group_general = "new_summary_table.user_id";
+            $distinct_user = "$timesheet_table.user_id";
         } else if ($group_by === "task") {
             $group_by_option = "$timesheet_table.project_id, $timesheet_table.task_id";
             $group_general = "new_summary_table.project_id, new_summary_table.task_id";
@@ -239,7 +241,7 @@ class Timesheets_model extends Crud_model {
                        $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
                 FROM (SELECT 
                         MAX($timesheet_table.project_id) AS project_id, 
-                        MAX($timesheet_table.user_id) AS user_id, 
+                        $distinct_user AS user_id, 
                         $distinct_task AS task_id,
                         (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + 
                         SUM(ROUND(($timesheet_table.hours * 60), 0) * 60)) AS total_duration,
