@@ -220,8 +220,8 @@ class Timesheets_model extends Crud_model {
         $distinct_task = "MAX(DISTINCT $timesheet_table.task_id)";
         $distinct_user = "MAX(DISTINCT $timesheet_table.user_id)";
         if ($group_by === "member") {
-            $group_by_option = "$timesheet_table.project_id, $timesheet_table.task_id, $timesheet_table.user_id";
-            $group_general = "new_summary_table.user_id";
+            $group_by_option = "$timesheet_table.user_id";
+            $group_general = "new_summary_table.task_id, new_summary_table.user_id";
             $distinct_user = "$timesheet_table.user_id";
         } else if ($group_by === "task") {
             $group_by_option = "$timesheet_table.project_id, $timesheet_table.task_id";
