@@ -2971,16 +2971,9 @@ class Projects extends Security_Controller {
 
         $duration_for_resource = ($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time)))); // Mantém o valor em segundos
 
-        if($resource)
-        {
-            $hour_amount = $resource->hour_amount;
-        }
-        else
-        {
-            $user_for_hour = $this->Users_model->get_details(array("id" => $data->user_id))->getRow();
-            $hour_amount = $user_for_hour->salary;
-        }
         
+        $hour_amount = $data->project_resources_amount;
+       
         // Convertendo $duration para horas (se estiver em segundos)
         $duration_in_hours = $duration_for_resource / 3600; // 3600 segundos = 1 hora
         
@@ -2997,8 +2990,8 @@ class Projects extends Security_Controller {
         // Valor Gerente
         $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
 
-        // Valor Cliente
-        $project_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+        // Valor Cliente        
+        $project_amount = ((!empty($data->project_client_amount)) ? $data->project_client_amount  : 0);
 
         $project_total_amount = $project_amount * $duration_in_hours;
         
