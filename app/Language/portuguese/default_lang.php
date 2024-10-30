@@ -988,7 +988,7 @@ $lang["message_reply_sent_to_group_mentioning_you"] = "Mensagem respondida no gr
 $lang["message_reply_sent_to_group"] = "Mensagem respondida no grupo";
 $lang["notification_new_message_sent_to_group"] = "Enviou uma mensagem no grupo.";
 $lang["notification_message_reply_sent_to_group"] = "Respondeu uma mensagem no grupo.";
-$lang["notification_mmessage_reply_sent_to_group_mentioning_you"] = "Respondeu uma mensagem no grupo mencionando você.";
+$lang["notification_message_reply_sent_to_group_mentioning_you"] = "Respondeu uma mensagem no grupo mencionando você.";
 $lang["invoice_payment_confirmation"] = "Confirmação de pagamento da fatura";
 $lang["notification_invoice_payment_confirmation"] = "Pagamento recebido";
 
