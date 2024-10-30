@@ -33,7 +33,7 @@
                 {title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
-                {visible: projectAmount, title: "<?php echo app_lang('liquid') ?>", "class": "text-center"}
+                {visible: projectAmount, title: "<?php echo app_lang('liquid') . ' (R$)'?>", "class": "text-center"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
             xlsColumns: [0, 1, 2, 3, 4, 5],
