@@ -81,7 +81,7 @@
                 showHideAppTableColumn(tableInstance, 9, false);
                 clearAppTableState(tableInstance);
             },
-            summation: [{column: 8, dataType: 'time'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}]
+            summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}]
         });
     });
 </script>
