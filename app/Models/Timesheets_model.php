@@ -18,6 +18,9 @@ class Timesheets_model extends Crud_model {
         $users_table = $this->db->prefixTable('users');
         $clients_table = $this->db->prefixTable('clients');
         $project_resources_table = $this->db->prefixTable('project_resources');
+        $team_member_job_info_table = $this->db->prefixTable('team_member_job_info');
+        $project_settings_table = $this->db->prefixTable('project_settings');
+
         $where = "";
         $id = $this->_get_clean_value($options, "id");
         if ($id) {
@@ -122,7 +125,7 @@ class Timesheets_model extends Crud_model {
             $where .= " )";
         }
 
-        $sql = "SELECT SQL_CALC_FOUND_ROWS $timesheet_table.*, $project_resources_table.user_id AS manager_id, $project_resources_table.hour_amount AS manager_hour_amount, CONCAT(project_resources_user.first_name, ' ',project_resources_user.last_name) AS manager_user, project_resources_user.image as manager_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
+        $sql = "SELECT SQL_CALC_FOUND_ROWS $timesheet_table.*, SUM($project_settings_table.setting_value) AS project_client_amount, SUM(COALESCE(project_resources_member.hour_amount, $team_member_job_info_table.salary)) AS project_resources_amount, $project_resources_table.user_id AS manager_id, $project_resources_table.hour_amount AS manager_hour_amount, CONCAT(project_resources_user.first_name, ' ',project_resources_user.last_name) AS manager_user, project_resources_user.image as manager_avatar, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, $users_table.image as logged_by_avatar,
             $tasks_table.title AS task_title, $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
             $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name $select_custom_fieds
         FROM $timesheet_table
@@ -131,10 +134,13 @@ class Timesheets_model extends Crud_model {
         LEFT JOIN $projects_table ON $projects_table.id= $timesheet_table.project_id
         LEFT JOIN $project_resources_table ON $project_resources_table.project_id= $timesheet_table.project_id AND $project_resources_table.is_leader=1 AND $project_resources_table.deleted=0
         LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id= $project_resources_table.user_id
+        LEFT JOIN $project_resources_table AS project_resources_member ON project_resources_member.project_id= $timesheet_table.project_id AND project_resources_member.user_id= $timesheet_table.user_id AND project_resources_member.deleted=0 AND project_resources_member.is_leader=0
+        LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id = $timesheet_table.user_id AND $team_member_job_info_table.deleted=0
+        LEFT JOIN $project_settings_table ON $project_settings_table.project_id = $timesheet_table.project_id AND $project_settings_table.deleted=0 AND $project_settings_table.setting_name='project_amount_charge'
         $join_custom_fieds
-        WHERE $timesheet_table.deleted=0 $where $custom_fields_where 
+        WHERE $timesheet_table.deleted=0 $where $custom_fields_where GROUP BY $timesheet_table.id
         $order $limit_offset";
-  log_message('info', 'getdETAILS: '.$sql);
+ 
         $raw_query = $this->db->query($sql);
 
         $total_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow();
