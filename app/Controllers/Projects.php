@@ -3014,8 +3014,8 @@ class Projects extends Security_Controller {
         {
             // Visão Admin
             $row_data = array(
-                $project_title,
                 $client_name,
+                $project_title,
                 $task_title,
                 $data->start_time,
                 $data->note,
@@ -3036,8 +3036,8 @@ class Projects extends Security_Controller {
         {
             // Visão Consultor
             $row_data = array(
-                $project_title,
                 $client_name,
+                $project_title,
                 $task_title,
                 $data->start_time,
                 $data->note,
