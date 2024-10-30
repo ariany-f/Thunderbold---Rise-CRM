@@ -252,7 +252,7 @@ class Timesheets_model extends Crud_model {
                        $tasks_table.id AS task_id,  $tasks_table.title AS task_title,  $projects_table.id AS project_id,  $projects_table.title AS project_title, $projects_table.is_ticket AS project_is_ticket,
                        $projects_table.client_id AS timesheet_client_id, (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
                 FROM (SELECT 
-                        MAX($timesheet_table.project_id) AS project_id, 
+                        $distinct_project AS project_id, 
                         $distinct_user AS user_id, 
                         $distinct_task AS task_id,
                         (SUM(TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time)) + 
