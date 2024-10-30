@@ -3014,7 +3014,7 @@ class Projects extends Security_Controller {
                 "<span style='color: red'>".to_currency($total_amount)."</span>",
                 $manager_member,
                 "<span style='color: red'>".to_currency($total_manager_amount)."</span>",
-                "<span style='color: green'>".to_currency(($project_total_amount && $project_total_amount !== 0) ? ($project_total_amount - $total_amount) : 0)."</span>"
+                "<span style='color: green'>".to_currency(($project_total_amount) ? ($project_total_amount - $total_amount - $total_manager_amount) : 0)."</span>"
             );
         }
         else
