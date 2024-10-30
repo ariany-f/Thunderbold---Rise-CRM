@@ -53,8 +53,8 @@
             //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
             dateRangeType: "monthly",
             columns: [
-                {title: "<?php echo app_lang('project') ?>", order_by: "project"},
                 {title: "<?php echo app_lang('client') ?>", order_by: "client"},
+                {title: "<?php echo app_lang('project') ?>", order_by: "project"},
                 {title: "<?php echo app_lang('task') ?>", order_by: "task_title"},
                 {visible: false, searchable: false, order_by: "start_time"},
                 {title: "<?php echo app_lang('note')?>", "class": "text-center w200 limited-column"},
