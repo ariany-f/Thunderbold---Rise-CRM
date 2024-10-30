@@ -396,7 +396,7 @@ if (!function_exists('get_notification_config')) {
                 "notify_to" => array("recipient"),
                 "info" => $message_link
             ),
-            "message_reply_mentioning_you_sent_to_group" => array(
+            "message_reply_sent_to_group_mentioning_you" => array(
                 "notify_to" => array("recipient"),
                 "info" => $message_to_group_link
             ),
@@ -635,7 +635,7 @@ if (!function_exists('send_notification_emails')) {
             if ($message_info->files) {
                 $email_options["attachments"] = prepare_attachment_of_files(get_setting("timeline_file_path"), $message_info->files);
             }
-        } else if ($notification->event == "new_message_sent_to_group" || $notification->event == "message_reply_sent_to_group" || $notification->event == "message_reply_mentioning_you_sent_to_group") {
+        } else if ($notification->event == "new_message_sent_to_group" || $notification->event == "message_reply_sent_to_group" || $notification->event == "message_reply_sent_to_group_mentioning_you") {
             $template_name = "message_received_in_group";
 
             $message_info = $ci->Messages_model->get_details(array("id" => $notification->actual_message_id))->row;
@@ -685,7 +685,7 @@ if (!function_exists('send_notification_emails')) {
                         $parser_data["TASK_URL"] = $task_url;
                     }
                 }
-            } else if($notification->event == "message_reply_mentioning_you_sent_to_group") {
+            } else if($notification->event == "message_reply_sent_to_group_mentioning_you") {
                 $template_name = "message_received_in_group_mentioning_you";
                 $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
                 $parser_data["SUBJECT"] = $main_message_info->subject;
