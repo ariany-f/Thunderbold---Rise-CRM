@@ -216,13 +216,16 @@ class Timesheets_model extends Crud_model {
         //group by
         $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
         $group_general = "new_summary_table.user_id, new_summary_table.task_id, new_summary_table.project_id";
+
         $group_by = $this->_get_clean_value($options, "group_by");
+
         $distinct_task = "MAX(DISTINCT $timesheet_table.task_id)";
         $distinct_user = "MAX(DISTINCT $timesheet_table.user_id)";
+        $distinct_project = "MAX(DISTINCT $timesheet_table.project_id)";
+
         if ($group_by === "member") {
-            $group_by_option = "$timesheet_table.user_id";
+            $group_by_option = "$timesheet_table.project_id, $timesheet_table.task_id, $timesheet_table.user_id";
             $group_general = "new_summary_table.user_id";
-            $distinct_task = "$timesheet_table.task_id";
             $distinct_user = "$timesheet_table.user_id";
         } else if ($group_by === "task") {
             $group_by_option = "$timesheet_table.project_id, $timesheet_table.task_id";
@@ -231,6 +234,7 @@ class Timesheets_model extends Crud_model {
         } else if ($group_by === "project") {
             $group_by_option = "$timesheet_table.project_id";
             $group_general = "new_summary_table.project_id";
+            $distinct_project = "$timesheet_table.project_id";
         }
 
         $custom_field_filter = $this->_get_clean_value($options, "custom_field_filter");
@@ -269,7 +273,7 @@ class Timesheets_model extends Crud_model {
                                 AND rps.setting_name = 'project_amount_charge'
                                 LIMIT 1
                             ),
-                            0
+                        0
                         ) AS project_client_amount
                 FROM 
                     $timesheet_table
