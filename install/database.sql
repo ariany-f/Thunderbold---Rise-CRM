@@ -633,7 +633,8 @@ INSERT INTO `notification_settings` (`id`, `event`, `category`, `enable_email`, 
 (67, 'contract_rejected', 'contract', 0, 0, '', '', '', 67, 0),
 (68, 'subscription_request_sent', 'subscription', 0, 0, '', '', '', 68, 0),
 (69, 'new_message_sent_to_group', 'message', 0, 0, '', '', '', 36, 0),
-(70, 'message_reply_sent_to_group', 'message', 0, 0, '', '', '', 37, 0);
+(70, 'message_reply_sent_to_group', 'message', 0, 0, '', '', '', 37, 0),
+(71, 'message_reply_sent_to_group_mentioning_you', 'message', 0, 0, '', '', '', 37, 0);
 
 
 CREATE TABLE IF NOT EXISTS `orders` (
