@@ -1188,7 +1188,7 @@ class Messages extends Security_Controller {
                     if(!empty($members)) {
                         foreach($members as $member)
                         {
-                            log_notification("message_reply_mentioning_you_sent_to_group", array("user_id" => $this->login_user->id, "to_user_id" => $member, "actual_message_id" => $save_id, "parent_message_id" => $message_id));
+                            log_notification("message_reply_sent_to_group_mentioning_you", array("user_id" => $this->login_user->id, "to_user_id" => $member, "actual_message_id" => $save_id, "parent_message_id" => $message_id));
                         }
                     }
 
