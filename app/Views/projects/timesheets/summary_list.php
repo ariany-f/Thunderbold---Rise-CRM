@@ -23,9 +23,9 @@
             columns: [
                 {visible: false, searchable: false},
                 {visible: false, searchable: false},
-                {title: "<?php echo app_lang("task"); ?>", "class": "w15p"},
-                {title: "<?php echo app_lang("duration"); ?>", "class": "text-center"},
-                {visible: false, title: "<?php echo app_lang("hours"); ?>", "class": "text-center"},
+                {title: "<?php echo app_lang("task"); ?>", "class": "text-left"},
+                {title: "<?php echo app_lang("duration"); ?>", "class": "text-left"},
+                {visible: false, title: "<?php echo app_lang("hours"); ?>"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-center"},
                 {title: "<?php echo app_lang("consultant"); ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("consultant") . ' (R$)'; ?>", "class": "text-center"},
@@ -40,7 +40,7 @@
 
                 //we'll show/hide the task/member column based on the group by status
                 if (filterParams && filterParams.group_by === "member") {
-                    showHideAppTableColumn(tableInstance, 2, true);
+                    showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
                     // showHideAppTableColumn(tableInstance, 2, false);
                     // showHideAppTableColumn(tableInstance, 6, true);
