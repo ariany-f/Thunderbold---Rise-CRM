@@ -261,7 +261,7 @@ class Timesheets_model extends Crud_model {
                         ) AS project_resources_amount,
                         COALESCE(
                             (
-                                SELECT rps.hour_amount
+                                SELECT rps.setting_value
                                 FROM rise_project_settings rps
                                 WHERE rps.project_id = $timesheet_table.project_id
                                 AND rps.deleted = 0
