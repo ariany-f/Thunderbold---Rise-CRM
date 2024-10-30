@@ -56,7 +56,6 @@
             //rangeDatepicker: [{startDate: {name: "start_date", value: ""}, endDate: {name: "end_date", value: ""}, showClearButton: true}],
             dateRangeType: "monthly",
             columns: [
-                {title: "<?php echo app_lang('member') ?>", order_by: "member_name", "class": "text-left"},
                 {visible: false, searchable: false},
                 {visible: false, searchable: false},
                 {title: "<?php echo app_lang('task') ?>", order_by: "task_title", "class": "text-left"},
@@ -68,6 +67,7 @@
                 {title: "<?php echo app_lang('duration') ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('hours') ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge') ?>","class": "text-center"},
+                {title: "<?php echo app_lang('member') ?>", order_by: "member_name", "class": "text-left"},
                 {title: "<?php echo app_lang('consultant') ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('comission') ?>", "class": "text-right"},
@@ -77,7 +77,7 @@
             ],
             printColumns: combineCustomFieldsColumns([0, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([0, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
-            summation: [{column: 9, dataType: 'time'}, {column: 11, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'}, {column: 15, dataType: 'currency'}]
+            summation: [{column: 8, dataType: 'time'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'}, {column: 15, dataType: 'currency'}]
         });
     }
     );
