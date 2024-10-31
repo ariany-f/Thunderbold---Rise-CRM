@@ -3284,6 +3284,7 @@ class Projects extends Security_Controller {
                     "<span style='color: green;'>".to_currency($total_amount)."</span>",
                     $manager_member,
                     "",
+                    "",
                     ""
                 );
             }
