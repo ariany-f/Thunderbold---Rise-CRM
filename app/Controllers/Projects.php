@@ -3062,7 +3062,7 @@ class Projects extends Security_Controller {
                 "",
                 get_team_member_profile_link($data->user_id, $user),
                 "<span style='color: green'>".to_currency($total_amount)."</span>",
-                "",
+                $manager_member,
                 "",
                 ""
             );
@@ -3282,7 +3282,7 @@ class Projects extends Security_Controller {
                     "",
                     $member,
                     "<span style='color: green;'>".to_currency($total_amount)."</span>",
-                    "",
+                    $manager_member,
                     "",
                     ""
                 );
