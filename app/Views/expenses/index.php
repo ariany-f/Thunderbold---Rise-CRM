@@ -67,7 +67,9 @@
             {title: '<?php echo app_lang("amount") ?>', "class": "text-right"},
             {title: '<?php echo app_lang("tax") ?>', "class": "text-right"},
             {title: '<?php echo app_lang("second_tax") ?>', "class": "text-right"},
-            {title: '<?php echo app_lang("total") ?>', "class": "text-right"}
+            {title: '<?php echo app_lang("total") ?>', "class": "text-right"},
+            {title: "<?php echo app_lang("start_timesheet_filter") ?>"},
+            {title: "<?php echo app_lang("end_timesheet_filter") ?>"}
 <?php echo $custom_field_headers; ?>,
             {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],

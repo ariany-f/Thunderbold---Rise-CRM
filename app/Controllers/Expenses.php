@@ -349,7 +349,9 @@ class Expenses extends Security_Controller {
             to_currency($data->amount),
             to_currency($tax),
             to_currency($tax2),
-            to_currency($data->amount + $tax + $tax2)
+            to_currency($data->amount + $tax + $tax2),
+            format_to_date($data->start_timesheet_filter, false),
+            format_to_date($data->end_timesheet_filter, false)
         );
 
         foreach ($custom_fields as $field) {

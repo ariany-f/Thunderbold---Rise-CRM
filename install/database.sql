@@ -306,6 +306,8 @@ CREATE TABLE IF NOT EXISTS `expenses` (
   `no_of_cycles` int(11) NOT NULL DEFAULT 0,
   `next_recurring_date` date DEFAULT NULL,
   `no_of_cycles_completed` int(11) NOT NULL DEFAULT 0,
+  `start_timesheet_filter` date NULL,
+  `end_timesheet_filter` date NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
