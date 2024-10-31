@@ -294,7 +294,6 @@ class Timesheets_model extends Crud_model {
             LEFT JOIN $project_resources_table ON $project_resources_table.project_id= new_summary_table.project_id AND $project_resources_table.is_leader=1 AND $project_resources_table.deleted=0
             LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id= $project_resources_table.user_id       
             GROUP BY $group_general";
-            log_message('info', 'get_summary_details: '.$sql);
         return $this->db->query($sql);
     }
 

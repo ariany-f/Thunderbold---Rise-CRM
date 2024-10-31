@@ -3224,6 +3224,36 @@ class Projects extends Security_Controller {
             // Valor Cliente
             $project_total_amount = $data->project_client_amount_by_duration;
 
+            $period = [
+                "start_date" => $this->request->getPost("start_date"),
+                "end_date" => $this->request->getPost("end_date")
+            ];
+
+            $options = array(
+                "project_id" => $data->project_id,
+                "start_timesheet_filter" => $period["start_date"],
+                "end_timesheet_filter" => $period["end_date"]
+            );
+    
+            $invoice_for_project = $this->Invoices_model->get_details($options)->getRow();
+
+            if($invoice_for_project && $invoice_for_project->id)
+            {
+                $invoice_labels = make_labels_view_data($invoice_for_project->labels_list, true, true);
+
+                if ($this->login_user->user_type == "staff") {
+                    $invoice_url = anchor(get_uri("invoices/view/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                } else {
+                    $invoice_url = anchor(get_uri("invoices/preview/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                }
+
+                $button_generate_invoice = "Fatura com status " . get_invoice_status_label($invoice_for_project, true) . $invoice_labels;
+            }
+            else
+            {
+                $button_generate_invoice = ajax_anchor(get_uri("projects/generate_invoice/". $data->project_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='dollar-sign' class='icon-16'></i>", array('title' => app_lang('generate_invoice')));
+            }
+
             if($this->login_user->is_admin)
             {
                 $result[] = array(
@@ -3237,7 +3267,8 @@ class Projects extends Security_Controller {
                     "<span style='color: red;'>".to_currency($total_amount)."</span>",
                     $manager_member,
                     "<span style='color: red;'>".to_currency($total_manager_amount)."</span>",
-                    "<span style='color: green;'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>"
+                    "<span style='color: green;'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>",
+                    $button_generate_invoice
                 );
             }
             else
@@ -3258,6 +3289,58 @@ class Projects extends Security_Controller {
             }
         }
         echo json_encode(array("data" => $result));
+    }
+    
+    /* generate invoice for a project in a specific period */
+    function generate_invoice($project_id = 0, $start_date = "", $end_date = "") {
+        
+        $this->access_only_team_members();
+        if($project_id == 0)
+        {
+            app_redirect("forbidden");
+        }
+
+        $project_info = $this->Projects_model->get_one($project_id);
+
+        $timesheet_info = $this->Timesheets_model->get_summary_details(array("group_by" => "project", "project_id" => $project_id, "start_date" => $start_date, "end_date" => $end_date))->getResult();
+
+        if($timesheet_info)
+        {
+            $invoice_data = [
+                "project_id" => $project_id,
+                "client_id" => $project_info->client_id,
+                "bill_date" => get_current_utc_time(),
+                "due_date" => get_current_utc_time(),
+                "start_timesheet_filter" => $start_date,
+                "end_timesheet_filter" => $end_date,
+                "status" => "draft"
+            ];
+
+            $invoice_id = $this->Invoices_model->ci_save($invoice_data);
+
+            if($invoice_id)
+            {
+                foreach($timesheet_info as $timesheet)
+                {
+                    $invoice_item_data = [
+                        "invoice_id" => $invoice_id,
+                        "title" => $project_info->title,
+                        "description" => "Fatura para o projeto " . $project_info->title . " referente ao período de " . $start_date . " a " . $end_date,
+                        "quantity" => 1,
+                        "rate" => $timesheet->project_client_amount_by_duration,
+                        "total" => $timesheet->project_client_amount_by_duration
+                    ];
+
+                    $this->Invoice_items_model->ci_save($invoice_item_data);
+                }
+
+                echo json_encode(array("success" => true, "message" => app_lang("invoice_generated")));
+            }
+            else
+            {
+                echo json_encode(array("success" => false, "message" => app_lang("error_occurred")));
+            }
+        }
     }
 
     /* get all projects list */
