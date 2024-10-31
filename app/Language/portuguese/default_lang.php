@@ -880,6 +880,7 @@ $lang["notification_estimate_accepted"] = "Aceitou um Orçamento";
 $lang["notification_estimate_rejected"] = "Rejeitou um Orçamento";
 
 $lang["clone_project"] = "Duplicar Projeto";
+$lang["clone_ticket"] = "Duplicar Chamado";
 $lang["copy_tasks"] = "Copiar Tarefas";
 $lang["copy_project_members"] = "Copiar membros do projeto";
 $lang["copy_milestones"] = "Copiar Etapas";

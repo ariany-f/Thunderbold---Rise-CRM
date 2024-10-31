@@ -2,6 +2,7 @@
 <div class="modal-body clearfix">
     <div class="container-fluid">
         <input type="hidden" name="project_id" value="<?php echo $model_info->id; ?>" />
+        <input type="hidden" name="is_ticket" value="<?php echo $model_info->is_ticket; ?>" />
 
         <div class="form-group">
             <div class="row">
@@ -216,7 +217,14 @@
             onSuccess: function (result) {
                 appAlert.success(result.message);
                 setTimeout(function () {
-                    window.location = "<?php echo site_url('projects/view'); ?>/" + result.id;
+                    if(result.is_ticket)
+                    {
+                        window.location = "<?php echo site_url('projects/view'); ?>/" + result.id + "/ticket";
+                    }
+                    else
+                    {
+                        window.location = "<?php echo site_url('projects/view'); ?>/" + result.id;
+                    }
                 }, 2000);
             }
         });
