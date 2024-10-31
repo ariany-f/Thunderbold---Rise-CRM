@@ -2909,6 +2909,7 @@ class Projects extends Security_Controller {
             "start_date" => $this->request->getPost("start_date"),
             "end_date" => $this->request->getPost("end_date"),
             "task_id" => $this->request->getPost("task_id"),
+            "manager_id" => $this->request->getPost("manager_id"),
             "client_id" => $this->request->getPost("client_id"),
             "custom_fields" => $custom_fields,
             "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
@@ -3503,6 +3504,7 @@ class Projects extends Security_Controller {
         $this->access_only_team_members();
         $members = $this->_get_members_to_manage_timesheet();
 
+        $view_data['managers_dropdown'] = json_encode($this->_prepare_managers_dropdown_for_timesheet_filter($members));
         $view_data['members_dropdown'] = json_encode($this->_prepare_members_dropdown_for_timesheet_filter($members));
         $view_data['projects_dropdown'] = json_encode($this->_get_all_projects_dropdown_list_for_timesheets_filter());
         $view_data['clients_dropdown'] = json_encode($this->_get_clients_dropdown());

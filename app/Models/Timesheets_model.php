@@ -36,6 +36,11 @@ class Timesheets_model extends Crud_model {
         if ($user_id) {
             $where .= " AND $timesheet_table.user_id=$user_id";
         }
+        
+        $manager_id = $this->_get_clean_value($options, "manager_id");
+        if ($manager_id) {
+            $where .= " AND $project_resources_table.user_id=$manager_id";
+        }
 
         $status = $this->_get_clean_value($options, "status");
         if ($status === "none_open") {
