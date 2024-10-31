@@ -177,6 +177,7 @@ class Timesheets_model extends Crud_model {
         $team_member_job_info_table = $this->db->prefixTable('team_member_job_info');
 
         $where = "";
+        $where_manager = "";
         $id = $this->_get_clean_value($options, "id");
         if ($id) {
             $where .= " AND $timesheet_table.id=$id";
@@ -189,7 +190,12 @@ class Timesheets_model extends Crud_model {
 
         $user_id = $this->_get_clean_value($options, "user_id");
         if ($user_id) {
-            $where .= " AND $timesheet_table.user_id=$user_id";
+            $where .= " AND manageer_id=$user_id";
+        }
+        
+        $manager_id = $this->_get_clean_value($options, "manager_id");
+        if ($manager_id) {
+            $where_manager .= " AND $project_resources_table.user_id=$manager_id";
         }
 
         $status = $this->_get_clean_value($options, "status");
@@ -293,7 +299,9 @@ class Timesheets_model extends Crud_model {
             LEFT JOIN $projects_table ON $projects_table.id= new_summary_table.project_id
             LEFT JOIN $project_resources_table ON $project_resources_table.project_id= new_summary_table.project_id AND $project_resources_table.is_leader=1 AND $project_resources_table.deleted=0
             LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id= $project_resources_table.user_id       
+            WHERE 1 = 1 $where_manager
             GROUP BY $group_general";
+            log_message('info', 'sql: '.$sql);
         return $this->db->query($sql);
     }
 

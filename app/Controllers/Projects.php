@@ -3148,6 +3148,7 @@ class Projects extends Security_Controller {
             "start_date" => $this->request->getPost("start_date"),
             "end_date" => $this->request->getPost("end_date"),
             "task_id" => $this->request->getPost("task_id"),
+            "manager_id" => $this->request->getPost("manager_id"),
             "group_by" => $group_by,
             "client_id" => $this->request->getPost("client_id"),
             "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
@@ -3462,6 +3463,24 @@ class Projects extends Security_Controller {
 
     /* prepare dropdown list */
 
+    private function _prepare_managers_dropdown_for_timesheet_filter($members) {
+        $where = array("user_type" => "staff");
+
+        if ($members != "all" && is_array($members) && count($members)) {
+            $where["where_in"] = array("id" => $members);
+        }
+
+        $users = $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id", $where);
+
+        $members_dropdown = array(array("id" => "", "text" => "- " . app_lang("manager") . " -"));
+        foreach ($users as $id => $name) {
+            $members_dropdown[] = array("id" => $id, "text" => $name);
+        }
+        return $members_dropdown;
+    }
+
+    /* prepare dropdown list */
+
     private function _prepare_members_dropdown_for_timesheet_filter($members) {
         $where = array("user_type" => "staff");
 
@@ -3509,6 +3528,7 @@ class Projects extends Security_Controller {
                     array("id" => "task", "text" => app_lang("task"))
         ));
 
+        $view_data['managers_dropdown'] = json_encode($this->_prepare_managers_dropdown_for_timesheet_filter($members));
         $view_data['members_dropdown'] = json_encode($this->_prepare_members_dropdown_for_timesheet_filter($members));
         $view_data['projects_dropdown'] = json_encode($this->_get_all_projects_dropdown_list_for_timesheets_filter());
         $view_data['clients_dropdown'] = json_encode($this->_get_clients_dropdown());
