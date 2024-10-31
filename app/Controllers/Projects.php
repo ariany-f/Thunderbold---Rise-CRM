@@ -3229,29 +3229,53 @@ class Projects extends Security_Controller {
                 "end_date" => $this->request->getPost("end_date")
             ];
 
-            $options = array(
-                "project_id" => $data->project_id,
-                "start_timesheet_filter" => $period["start_date"],
-                "end_timesheet_filter" => $period["end_date"]
-            );
-    
-            $invoice_for_project = $this->Invoices_model->get_details($options)->getRow();
+            $menus = "";
+            if($group_by == "project") {
+                $options_invoices = array(
+                    "project_id" => $data->project_id,
+                    "start_timesheet_filter" => $period["start_date"],
+                    "end_timesheet_filter" => $period["end_date"]
+                );
+        
+                $invoice_for_project = $this->Invoices_model->get_details($options_invoices)->getRow();
 
-            if($invoice_for_project && $invoice_for_project->id)
-            {
-                $invoice_labels = make_labels_view_data($invoice_for_project->labels_list, true, true);
 
-                if ($this->login_user->user_type == "staff") {
-                    $invoice_url = anchor(get_uri("invoices/view/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
-                } else {
-                    $invoice_url = anchor(get_uri("invoices/preview/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                if($invoice_for_project && $invoice_for_project->id)
+                {
+                    $invoice_labels = make_labels_view_data($invoice_for_project->labels_list, true, true);
+
+                    if ($this->login_user->user_type == "staff") {
+                        $invoice_url = anchor(get_uri("invoices/view/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                    } else {
+                        $invoice_url = anchor(get_uri("invoices/preview/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                    }
+
+                    $menus .= "<a class='' href='".get_uri("invoices/view/" . $invoice_for_project->id)."'>Fatura #" .$invoice_for_project->id . "<br/>" . get_invoice_status_label($invoice_for_project, true) . $invoice_labels . "</a>";
                 }
-
-                $button_generate_invoice = "<a href='".get_uri("invoices/view/" . $invoice_for_project->id)."'>Fatura</a> com status " . get_invoice_status_label($invoice_for_project, true) . $invoice_labels;
+                else
+                {
+                    $menus .= ajax_anchor(get_uri("projects/generate_invoice/". $data->project_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='dollar-sign' class='icon-16'></i>", array('title' => app_lang('generate_invoice')));
+                }
             }
-            else
-            {
-                $button_generate_invoice = ajax_anchor(get_uri("projects/generate_invoice/". $data->project_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='dollar-sign' class='icon-16'></i>", array('title' => app_lang('generate_invoice')));
+
+            if($group_by == "member") {
+                $options_expenses = array(
+                    "user_id" => $data->user_id,
+                    "start_timesheet_filter" => $period["start_date"],
+                    "end_timesheet_filter" => $period["end_date"]
+                );
+        
+                $expenses_for_member = $this->Expenses_model->get_details($options_expenses)->getRow();
+                
+                if($expenses_for_member && $expenses_for_member->id)
+                {
+                    $menus .= modal_anchor(get_uri("expenses/expense_details"), "Despesa #" . $expenses_for_member->id , array("title" => app_lang("expense_details"), "data-post-id" => $expenses_for_member->id));
+                   // $menus.= "<br/><a class='' href='".get_uri("expenses/view/" . $expenses_for_member->id)."'>Despesa #" .$expenses_for_member->id . "</a>";
+                }
+                else
+                {
+                    $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense')));
+                }
             }
 
             if($this->login_user->is_admin)
@@ -3268,7 +3292,7 @@ class Projects extends Security_Controller {
                     $manager_member,
                     "<span style='color: red;'>".to_currency($total_manager_amount)."</span>",
                     "<span style='color: green;'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>",
-                    $button_generate_invoice
+                    $menus
                 );
             }
             else
@@ -3336,6 +3360,47 @@ class Projects extends Security_Controller {
                 }
 
                 echo json_encode(array("success" => true, "message" => app_lang("invoice_generated")));
+            }
+            else
+            {
+                echo json_encode(array("success" => false, "message" => app_lang("error_occurred")));
+            }
+        }
+    }
+
+    
+    
+    /* generate expense for a consultant in a specific period */
+    function generate_expense($user_id = 0, $start_date = "", $end_date = "") {
+        
+        $this->access_only_team_members();
+        if($user_id == 0)
+        {
+            app_redirect("forbidden");
+        }
+
+        $user_info = $this->Users_model->get_one($user_id);
+
+        $timesheet_info = $this->Timesheets_model->get_summary_details(array("group_by" => "member", "user_id" => $user_id, "start_date" => $start_date, "end_date" => $end_date))->getRow();
+
+        if($timesheet_info)
+        {
+            $expense_data = [
+                "user_id" => $user_id,
+                "expense_date" => get_current_utc_time(),
+                "start_timesheet_filter" => $start_date,
+                "end_timesheet_filter" => $end_date,
+                "amount" => $timesheet_info->project_resources_amount_by_duration,
+                "category_id" => 9,
+                "title" => "Despesa para o consultor " . $user_info->first_name . " " . $user_info->last_name,
+                "description" => "Despesa para o consultor " . $user_info->first_name . " " . $user_info->last_name . " referente ao período de " . $start_date . " a " . $end_date
+            ];
+
+            $expense_id = $this->Expenses_model->ci_save($expense_data);
+
+            if($expense_id)
+            {
+                echo json_encode(array("success" => true, "message" => app_lang("expense_generated")));
             }
             else
             {

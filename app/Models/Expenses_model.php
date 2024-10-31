@@ -30,6 +30,12 @@ class Expenses_model extends Crud_model {
             $where .= " AND ($expenses_table.expense_date BETWEEN '$start_date' AND '$end_date') ";
         }
 
+        $start_timesheet_filter = $this->_get_clean_value($options, "start_timesheet_filter");
+        $end_timesheet_filter = $this->_get_clean_value($options, "end_timesheet_filter");
+        if ($start_timesheet_filter && $end_timesheet_filter) {
+            $where .= " AND ($expenses_table.start_timesheet_filter >= '$start_timesheet_filter' AND $expenses_table.end_timesheet_filter <= '$end_timesheet_filter') ";
+        }
+
         $category_id = $this->_get_clean_value($options, "category_id");
         if ($category_id) {
             $where .= " AND $expenses_table.category_id=$category_id";
