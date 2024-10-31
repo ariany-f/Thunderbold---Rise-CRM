@@ -3254,7 +3254,7 @@ class Projects extends Security_Controller {
                 }
                 else
                 {
-                    $menus .= ajax_anchor(get_uri("projects/generate_invoice/". $data->project_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='dollar-sign' class='icon-16'></i>", array('title' => app_lang('generate_invoice')));
+                    $menus .= ajax_anchor(get_uri("projects/generate_invoice/". $data->project_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='dollar-sign' class='icon-16'></i>", array('title' => app_lang('generate_invoice'), "data-reload-on-success" => "1"));
                 }
             }
 
@@ -3274,7 +3274,7 @@ class Projects extends Security_Controller {
                 }
                 else
                 {
-                    $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense')));
+                    $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense'), "data-reload-on-success" => "1"));
                 }
             }
 
