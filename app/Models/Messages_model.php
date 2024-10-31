@@ -163,13 +163,21 @@ class Messages_model extends Crud_model {
         if ($is_notification) {
             $notification_sql = " ORDER BY timestamp($messages_table.created_at) DESC LIMIT 10 ";
         }
+
+        $limit_offset = "";
+        $limit = $this->_get_clean_value($options, "limit");
+        if ($limit) {
+            $skip = $this->_get_clean_value($options, "skip");
+            $offset = $skip ? $skip : 0;
+            $limit_offset = " LIMIT $limit OFFSET $offset ";
+        }
     
         // Ignorar sql mode aqui 
         $this->db->query("SET sql_mode = ''");
     
         if($mode != 'list_groups')
         {
-            $sql = "SELECT y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files, $messages_table.ended,
+            $sql = "SELECT SQL_CALC_FOUND_ROWS y.*, $projects_table.is_ticket, $message_groups_table.project_id, COALESCE($message_groups_table.group_name, '') AS group_name, $messages_table.status, $messages_table.read_by, $messages_table.created_at, $messages_table.files, $messages_table.ended,
                         CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image, $users_table.last_online
                     FROM (
                         SELECT max(x.id) as id, main_message_id, subject, 
@@ -189,7 +197,7 @@ class Messages_model extends Crud_model {
                     LEFT JOIN $message_group_members_table ON $message_group_members_table.message_group_id=$message_groups_table.id
                     LEFT JOIN $projects_table ON $projects_table.id = $message_groups_table.project_id
                     GROUP BY $messages_table.id 
-                    $notification_sql";
+                    $notification_sql $limit_offset";
         }
         else
         {
@@ -227,7 +235,19 @@ class Messages_model extends Crud_model {
                     $notification_sql";
         }
     
-        return $this->db->query($sql);
+        $raw_query = $this->db->query($sql);
+
+        $total_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow();
+
+        if ($limit) {
+            return array(
+                "data" => $raw_query->getResult(),
+                "recordsTotal" => $total_rows->found_rows,
+                "recordsFiltered" => $total_rows->found_rows,
+            );
+        } else {
+            return $raw_query;
+        }
     }
     
 

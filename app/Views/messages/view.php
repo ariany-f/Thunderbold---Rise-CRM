@@ -218,29 +218,29 @@
     </div>
 
 
-
-    <?php
-    //if there are more then 5 messages, we'll show load more option.
-
-    if ($found_rows > 5) {
-        ?>    
-        <div id="load-messages" class="b-b">
-            <?php
-            echo js_anchor(app_lang("load_more"), array("class" => "btn btn-default w-100 mt15 spinning-btn", "title" => app_lang("load_more"), "id" => "load-more-messages-link"));
-            ?>
-        </div>
-        <div id="load-more-messages-container"></div>
+    <div style="max-height: 45vh;overflow-y:scroll;">
         <?php
-    }
+        //if there are more then 5 messages, we'll show load more option.
+
+        if ($found_rows > 5) {
+            ?>    
+            <div id="load-messages" class="b-b">
+                <?php
+                echo js_anchor(app_lang("load_more"), array("class" => "btn btn-default w-100 mt15 spinning-btn", "title" => app_lang("load_more"), "id" => "load-more-messages-link"));
+                ?>
+            </div>
+            <div id="load-more-messages-container"></div>
+            <?php
+        }
 
 
-    
+        
 
-    foreach ($replies as $reply_info) {
-        ?>
-        <?php echo view("messages/reply_row", array("reply_info" => $reply_info, "ended" => $message_info->ended)); ?>
-    <?php } ?>
-
+        foreach ($replies as $reply_info) {
+            ?>
+            <?php echo view("messages/reply_row", array("reply_info" => $reply_info, "ended" => $message_info->ended)); ?>
+        <?php } ?>
+    </div>
     <?php if(!$message_info->ended) { ?>
     <div id="reply-form-container">
         <div id="reply-form-dropzone" class="post-dropzone">

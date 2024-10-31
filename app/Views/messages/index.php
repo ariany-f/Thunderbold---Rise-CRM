@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table id="message-table" class="display no-thead no-padding clickable" cellspacing="0" width="100%">            
+                                <table id="message-table" class="display no-thead no-padding clickable" width="100%">            
                                 </table>
                             </div>
                         </div>
@@ -89,17 +89,22 @@
     </div>
 </div>
 <style type="text/css">
-    .datatable-tools:first-child {
+    /* .datatable-tools:first-child {
         display:  none;
-    }
+    } */
+     .datatable-tools #message-table_filter {
+        display: none;
+     }
 </style>
 
 <script type="text/javascript">
     $(document).ready(function () {
         var autoSelectIndex = "<?php echo $auto_select_index; ?>";
         $("#message-table").appTable({
+            server_side: true,
             source: '<?php echo_uri("messages/list_data/" . $mode) ?>',
             order: [[1, "desc"]],
+            displayLength: 10,
             columns: [
                 {title: '<?php echo app_lang("message") ?>'},
                 {targets: [1], visible: false},
