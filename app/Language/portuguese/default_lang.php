@@ -2399,6 +2399,8 @@ $lang["can_access_subscriptions"] = "Can access subscriptions?";
 $lang["show_in_subscription"] = "Show in subscription";
 $lang["subscription_total"] = "Total da recorrência";
 $lang["start_subscription"] = "Start subscription";
+$lang["consultant_amount"] = "Valor Consultor";
+$lang["client_amount"] = "Valor Cliente";
 
 $lang["subscription_success_message"] = "You're subscription has been started successfully.";
 

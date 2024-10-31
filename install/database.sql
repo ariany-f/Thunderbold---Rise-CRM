@@ -873,6 +873,8 @@ CREATE TABLE IF NOT EXISTS `project_time` (
   `status` enum('open','logged','approved') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'logged',
   `note` text COLLATE utf8_unicode_ci,
   `task_id` int(11) NOT NULL DEFAULT '0',
+  `consultant_amount` double NULL,
+  `client_amount` double NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;

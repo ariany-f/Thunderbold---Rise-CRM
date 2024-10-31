@@ -202,6 +202,41 @@
             </div>
         </div>
 
+        <?php if($login_user->is_admin and $model_info->id) { ?>
+            <div class="form-group">
+                <div class="row">
+                    <label for="client_amount" class=" col-md-3"><?php echo app_lang('client_amount'); ?></label>
+                    <div class="col-md-9" id="dropdown-apploader-section">
+                        <?php
+                        echo form_input(array(
+                            "id" => "client_amount",
+                            "name" => "client_amount",
+                            "value" => $model_info->client_amount,
+                            "class" => "form-control",
+                            "placeholder" => app_lang('client_amount')
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="consultant_amount" class=" col-md-3"><?php echo app_lang('consultant_amount'); ?></label>
+                    <div class="col-md-9" id="dropdown-apploader-section">
+                        <?php
+                        echo form_input(array(
+                            "id" => "consultant_amount",
+                            "name" => "consultant_amount",
+                            "value" => $model_info->consultant_amount,
+                            "class" => "form-control",
+                            "placeholder" => app_lang('consultant_amount')
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+
         <?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => "col-md-3", "field_column" => " col-md-9")); ?>
 
     </div>
