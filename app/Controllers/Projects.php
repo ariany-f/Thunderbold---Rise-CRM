@@ -2754,6 +2754,8 @@ class Projects extends Security_Controller {
         }
 
 
+        $user_id = $this->request->getPost('user_id') ? $this->request->getPost('user_id') : $this->login_user->id;
+
         $data = array(
             "project_id" => $project_id,
             "start_time" => $start_date_time,
@@ -2766,7 +2768,36 @@ class Projects extends Security_Controller {
         //save user_id only on insert and it will not be editable
         if (!$id) {
             //insert mode
-            $data["user_id"] = $this->request->getPost('user_id') ? $this->request->getPost('user_id') : $this->login_user->id;
+            $data["user_id"] = $user_id;
+            $consultant_amount = 0;
+            $client_amount = 0;
+            $resource = $this->Project_resources_model->get_details(array("project_id" => $project_id, "user_id" => $user_id, "is_leader" => 0, "deleted" => 0))->getRow();
+            
+            if($resource) {
+                $consultant_amount = $resource->hour_amount;
+            }
+            else {
+                $team_job_info = $this->Users_model->get_job_info($user_id);
+                if($team_job_info)
+                {
+                    $consultant_amount = $team_job_info->salary;
+                }
+            }
+
+            $client_amount = $this->Project_settings_model->get_setting($project_id, 'project_amount_charge');
+            $data["consultant_amount"] = $consultant_amount;
+            $data["client_amount"] = $client_amount;
+        }
+        else
+        {
+            if($this->request->getPost('consultant_amount'))
+            {
+                $data["consultant_amount"] = $this->request->getPost('consultant_amount');
+            }
+            if($this->request->getPost('client_amount'))
+            {
+                $data["client_amount"] = $this->request->getPost('client_amount');
+            }
         }
 
         $this->check_timelog_update_permission($id, $project_id, get_array_value($data, "user_id"));
@@ -2982,18 +3013,15 @@ class Projects extends Security_Controller {
         {
             $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
         }
-
-        // Valor Consultor
-        $total_amount = $hour_amount * $duration_in_hours;
         
-       
+        // Valor Consultor
+        $total_amount = $data->project_resources_amount_by_duration;
+
         // Valor Gerente
         $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
 
-        // Valor Cliente        
-        $project_amount = ((!empty($data->project_client_amount)) ? $data->project_client_amount  : 0);
-
-        $project_total_amount = $project_amount * $duration_in_hours;
+        // Valor Cliente
+        $project_total_amount = $data->project_client_amount_by_duration;
         
         if($this->login_user->is_admin)
         {
@@ -3188,15 +3216,13 @@ class Projects extends Security_Controller {
             }
             
             // Valor Consultor
-            $total_amount = $hour_amount * $duration_in_hours;
+            $total_amount = $data->project_resources_amount_by_duration;
 
             // Valor Gerente
             $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
 
-            $project_amount = ((!empty($data->project_client_amount)) ? $data->project_client_amount  : 0);
-
             // Valor Cliente
-            $project_total_amount = $project_amount * $duration_in_hours;
+            $project_total_amount = $data->project_client_amount_by_duration;
 
             if($this->login_user->is_admin)
             {
