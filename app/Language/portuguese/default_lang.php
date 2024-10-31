@@ -249,6 +249,8 @@ $lang["announcement"] = "Aviso";
 $lang["announcements"] = "Avisos";
 $lang["all_team_members"] = "Todos os membros da equipe";
 $lang["all_team_clients"] = "Todos os clientes";
+$lang["start_timesheet_filter"] = "Início filtro Horas registradas";
+$lang["end_timesheet_filter"] = "Fim filtro Horas registradas";
 
 /* settings */
 $lang["app_settings"] = "Configurações do Sistema";

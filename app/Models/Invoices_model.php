@@ -49,6 +49,12 @@ class Invoices_model extends Crud_model {
         if ($start_date && $end_date) {
             $where .= " AND ($invoices_table.due_date BETWEEN '$start_date' AND '$end_date') ";
         }
+        
+        $start_timesheet_filter = $this->_get_clean_value($options, "start_timesheet_filter");
+        $end_timesheet_filter = $this->_get_clean_value($options, "end_timesheet_filter");
+        if ($start_timesheet_filter && $end_timesheet_filter) {
+            $where .= " AND ($invoices_table.start_timesheet_filter >= '$start_timesheet_filter' AND $invoices_table.end_timesheet_filter <= '$end_timesheet_filter') ";
+        }
 
         $reminder_due_date = $this->_get_clean_value($options, "reminder_due_date");
         $reminder_due_date2 = $this->_get_clean_value($options, "reminder_due_date2");

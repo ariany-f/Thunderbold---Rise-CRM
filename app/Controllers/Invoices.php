@@ -565,7 +565,9 @@ class Invoices extends Security_Controller {
             to_currency($data->invoice_value, $data->currency_symbol),
             to_currency($data->payment_received, $data->currency_symbol),
             $due,
-            $this->_get_invoice_status_label($data) . $invoice_labels
+            $this->_get_invoice_status_label($data) . $invoice_labels,
+            format_to_date($data->start_timesheet_filter, false),
+            format_to_date($data->end_timesheet_filter, false)
         );
 
         foreach ($custom_fields as $field) {
