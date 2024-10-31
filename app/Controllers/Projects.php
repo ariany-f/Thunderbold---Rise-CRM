@@ -724,12 +724,14 @@ class Projects extends Security_Controller {
         $copy_tasks_start_date_and_deadline = $this->request->getPost("copy_tasks_start_date_and_deadline");
         $change_the_tasks_start_date_and_deadline_based_on_project_start_date = $this->request->getPost("change_the_tasks_start_date_and_deadline_based_on_project_start_date");
         $project_type = $this->request->getPost('project_type');
+        $is_ticket = $this->request->getPost('is_ticket');
 
         //prepare new project data
         $now = get_current_utc_time();
         $data = array(
             "title" => $this->request->getPost('title'),
             "description" => $this->request->getPost('description'),
+            "is_ticket" => $is_ticket,
             "client_id" => ($project_type === "internal_project") ? 0 : $this->request->getPost('client_id'),
             "start_date" => $project_start_date,
             "deadline" => $this->request->getPost('deadline'),
@@ -926,7 +928,7 @@ class Projects extends Security_Controller {
 
             log_notification("project_created", array("project_id" => $new_project_id));
 
-            echo json_encode(array("success" => true, 'id' => $new_project_id, 'message' => app_lang('project_cloned_successfully')));
+            echo json_encode(array("success" => true, 'id' => $new_project_id, "is_ticket" => $is_ticket, 'message' => app_lang('project_cloned_successfully')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
