@@ -3247,7 +3247,7 @@ class Projects extends Security_Controller {
                     $invoice_url = anchor(get_uri("invoices/preview/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
                 }
 
-                $button_generate_invoice = "Fatura com status " . get_invoice_status_label($invoice_for_project, true) . $invoice_labels;
+                $button_generate_invoice = "<a href='".get_uri("invoices/view/" . $invoice_for_project->id)."'>Fatura</a> com status " . get_invoice_status_label($invoice_for_project, true) . $invoice_labels;
             }
             else
             {
