@@ -195,7 +195,7 @@ class Timesheets_model extends Crud_model {
 
         $user_id = $this->_get_clean_value($options, "user_id");
         if ($user_id) {
-            $where .= " AND manageer_id=$user_id";
+            $where .= " AND manager_id=$user_id";
         }
         
         $manager_id = $this->_get_clean_value($options, "manager_id");
