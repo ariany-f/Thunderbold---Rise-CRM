@@ -456,7 +456,8 @@ class Dashboard extends Security_Controller {
         $widgets = $this->_check_widgets_permissions();
         $first_row = $this->_get_first_row_of_admin_and_team_dashboard($widgets);
 
-        $row_columns = $this->_get_second_and_third_row_of_admin_and_team_dashboard_widget_columns($widgets);
+        $row_columns = $this->_get_third_and_fifth_row_of_admin_and_team_dashboard_widget_columns($widgets);
+
         $second_row = $this->_get_second_row_of_admin_and_team_dashboard($widgets);
         $third_row = $this->_get_third_row_of_admin_and_team_dashboard($row_columns);
 
@@ -533,7 +534,7 @@ class Dashboard extends Security_Controller {
         return $row;
     }
 
-    private function _get_second_and_third_row_of_admin_and_team_dashboard_widget_columns($widgets) {
+    private function _get_third_and_fifth_row_of_admin_and_team_dashboard_widget_columns($widgets) {
         $columns = array();
 
         if (get_array_value($widgets, "projects_overview")) {
@@ -554,8 +555,8 @@ class Dashboard extends Security_Controller {
         }
 
 
-        if (get_array_value($widgets, "all_tasks_overview")) {
-            $columns[] = array("all_tasks_overview");
+        if (get_array_value($widgets, "open_projects_list")) {
+            $columns[] = array("open_projects_list");
         }
 
         if (get_array_value($widgets, "team_members_overview")) {
@@ -594,13 +595,14 @@ class Dashboard extends Security_Controller {
         $columns = array();
 
         $columns[] = array("project_timeline");
-        if (get_array_value($widgets, "events") && get_array_value($widgets, "open_projects_list")) {
-            $columns[] = array("events", "open_projects_list");
-        } else if (get_array_value($widgets, "open_projects_list") && get_array_value($widgets, "starred_projects")) {
-            $columns[] = array("open_projects_list", "starred_projects");
+       
+        if (get_array_value($widgets, "events") && get_array_value($widgets, "all_tasks_overview")) {
+            $columns[] = array("events", "all_tasks_overview");
+        } else if (get_array_value($widgets, "all_tasks_overview") && get_array_value($widgets, "starred_projects")) {
+            $columns[] = array("all_tasks_overview", "starred_projects");
         }
 
-        $columns[] = array("todo_list");
+        $columns[] = array("my_tasks_list");
 
         $row["columns"] = $columns;
         $row["ratio"] = "4-4-4";
@@ -639,7 +641,7 @@ class Dashboard extends Security_Controller {
         $row = array();
         $columns = array();
 
-        $columns[] = array("my_tasks_list");
+        $columns[] = array("todo_list");
         $columns[] = array("sticky_note");
 
         $row["columns"] = $columns;
