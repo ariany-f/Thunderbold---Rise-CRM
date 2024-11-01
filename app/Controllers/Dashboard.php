@@ -21,7 +21,7 @@ class Dashboard extends Security_Controller {
         if ($dashboards) {
             $view_data["dashboards"] = $dashboards->getResult();
         }
-
+        
         $view_data["dashboard_type"] = "default";
 
         if ($this->login_user->user_type === "staff" && $this->show_staff_on_staff) {
@@ -30,7 +30,7 @@ class Dashboard extends Security_Controller {
             if ($staff_default_dashboard) {
                 return $this->view($staff_default_dashboard);
             }
-
+           
             $view_data["widget_columns"] = $this->make_dashboard($this->_get_admin_and_team_dashboard_data());
             $view_data["dashboard_id"] = 0;
 
@@ -83,6 +83,7 @@ class Dashboard extends Security_Controller {
     }
 
     private function _check_widgets_for_staffs() {
+        
         //check which widgets are viewable to current logged in user
         $widget = array();
 
@@ -396,7 +397,7 @@ class Dashboard extends Security_Controller {
         }
 
         $dashboard_info = $this->_get_my_dashboard($id, $this->is_staff_dashboard($id));
-
+        
         if ($dashboard_info) {
             if (get_setting("disable_dashboard_customization_by_clients") && $this->login_user->user_type == "client") {
                 app_redirect("forbidden");
@@ -456,11 +457,11 @@ class Dashboard extends Security_Controller {
         $first_row = $this->_get_first_row_of_admin_and_team_dashboard($widgets);
 
         $row_columns = $this->_get_second_and_third_row_of_admin_and_team_dashboard_widget_columns($widgets);
-        $second_row = $this->_get_second_row_of_admin_and_team_dashboard($row_columns);
+        $second_row = $this->_get_second_row_of_admin_and_team_dashboard($widgets);
         $third_row = $this->_get_third_row_of_admin_and_team_dashboard($row_columns);
 
         $fourth_row = $this->_get_fourth_row_of_admin_and_team_dashboard($widgets);
-        $fifth_row = $this->_get_fifth_row_of_admin_and_team_dashboard($widgets);
+        $fifth_row = $this->_get_fifth_row_of_admin_and_team_dashboard($row_columns);
 
         $row_widgets = array(
             $first_row,
@@ -587,27 +588,21 @@ class Dashboard extends Security_Controller {
         return $columns;
     }
 
-    private function _get_second_row_of_admin_and_team_dashboard($all_columns) {
+    private function _get_second_row_of_admin_and_team_dashboard($widgets) {
 
         $row = array();
         $columns = array();
 
-        $column1 = get_array_value($all_columns, 0);
-        $column2 = get_array_value($all_columns, 1);
-        $column3 = get_array_value($all_columns, 2);
+        $columns[] = array("project_timeline");
+        if (get_array_value($widgets, "events") && get_array_value($widgets, "open_projects_list")) {
+            $columns[] = array("events", "open_projects_list");
+        } else if (get_array_value($widgets, "open_projects_list") && get_array_value($widgets, "starred_projects")) {
+            $columns[] = array("open_projects_list", "starred_projects");
+        }
 
-        if ($column1) {
-            $columns[] = $column1;
-        }
-        if ($column2) {
-            $columns[] = $column2;
-        }
-        if ($column3) {
-            $columns[] = $column3;
-        }
+        $columns[] = array("todo_list");
 
         $row["columns"] = $columns;
-
         $row["ratio"] = "4-4-4";
 
         return $row;
@@ -644,31 +639,37 @@ class Dashboard extends Security_Controller {
         $row = array();
         $columns = array();
 
-        $columns[] = array("project_timeline");
-        if (get_array_value($widgets, "events") && get_array_value($widgets, "open_projects_list")) {
-            $columns[] = array("events", "open_projects_list");
-        } else if (get_array_value($widgets, "open_projects_list") && get_array_value($widgets, "starred_projects")) {
-            $columns[] = array("open_projects_list", "starred_projects");
-        }
-
-        $columns[] = array("todo_list");
-
-        $row["columns"] = $columns;
-        $row["ratio"] = "4-4-4";
-
-        return $row;
-    }
-
-    private function _get_fifth_row_of_admin_and_team_dashboard($widgets) {
-
-        $row = array();
-        $columns = array();
-
         $columns[] = array("my_tasks_list");
         $columns[] = array("sticky_note");
 
         $row["columns"] = $columns;
         $row["ratio"] = "8-4";
+
+        return $row;
+    }
+
+    private function _get_fifth_row_of_admin_and_team_dashboard($all_columns) {
+
+        $row = array();
+        $columns = array();
+
+        $column1 = get_array_value($all_columns, 0);
+        $column2 = get_array_value($all_columns, 1);
+        $column3 = get_array_value($all_columns, 2);
+
+        if ($column1) {
+            $columns[] = $column1;
+        }
+        if ($column2) {
+            $columns[] = $column2;
+        }
+        if ($column3) {
+            $columns[] = $column3;
+        }
+
+        $row["columns"] = $columns;
+
+        $row["ratio"] = "4-4-4";
 
         return $row;
     }
