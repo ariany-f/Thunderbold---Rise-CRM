@@ -99,7 +99,7 @@ class Notifications_model extends Crud_model {
         //find team members
         if ($notification_settings->notify_to_team_members && $to_user_id && $to_user_id != 0 && $actual_message_id) {
             
-            $where .= " OR FIND_IN_SET($users_table.id, '$notification_settings->notify_to_team_members') AND $users_table.deleted=0 AND ($users_table.id=(SELECT $messages_table.to_user_id FROM $messages_table WHERE $messages_table.id=$actual_message_id))";
+            $where .= " OR (FIND_IN_SET($users_table.id, '$notification_settings->notify_to_team_members') AND $users_table.deleted=0 AND ($users_table.id=(SELECT $messages_table.to_user_id FROM $messages_table WHERE $messages_table.id=$actual_message_id)))";
         }
         else if($notification_settings->notify_to_team_members)
         {
