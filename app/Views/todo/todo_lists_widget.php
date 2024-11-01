@@ -35,7 +35,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         initScrollbar('#todo-list-widget-table', {
-            setHeight: 653
+            setHeight: 250
         });
 
         $("#todo-table").appTable({
