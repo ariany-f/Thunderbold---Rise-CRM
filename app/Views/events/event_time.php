@@ -26,7 +26,7 @@ if ($model_info->start_date == $model_info->end_date) {
 
     $day_name = app_lang("short_" . strtolower(date("l", strtotime($model_info->start_date)))); //get short day name from language
     $month_name = app_lang(strtolower(date("F", strtotime($model_info->start_date)))); //get month name from language
-    echo $day_name . ", " . $month_name . " " . date("d", strtotime($model_info->start_date));
+    echo $day_name . ", " . date("d", strtotime($model_info->start_date)) . " de " . $month_name;
 
     if (is_date_exists($model_info->start_time)) {
         echo ", " . format_to_time($model_info->start_time, false);
