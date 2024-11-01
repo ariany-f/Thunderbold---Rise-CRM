@@ -19,7 +19,7 @@
                         $tomorrow = get_tomorrow_date();
 
                         if ($next_reminder->start_date === $today) {
-                            echo format_to_time($next_reminder->start_date . " " . $next_reminder->start_time, false); //If reminder is today, then show only time.
+                            echo format_to_datetime($next_reminder->start_date . " " . $next_reminder->start_time, false); //If reminder is today, then show only time.
                         } else if ($next_reminder->start_date === $tomorrow) {
                             echo app_lang("tomorrow"); //If reminder is tomorrow, show only tomorrow.
                         } else {
