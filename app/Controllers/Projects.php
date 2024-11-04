@@ -4517,7 +4517,7 @@ class Projects extends Security_Controller {
             "description" => $this->request->getPost('description'),
             "project_id" => $project_id,
             "milestone_id" => $this->request->getPost('milestone_id'),
-            "points" => $this->request->getPost('points'),
+            "points" => 1,
             "status_id" => $status_id,
             "priority_id" => $priority_id ? $priority_id : 0,
             "labels" => $this->request->getPost('labels'),
