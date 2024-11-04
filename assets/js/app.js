@@ -1675,7 +1675,7 @@ var $appFilterXhrRequest = 'new';
                 searchPlaceholder: AppLanugage.search,
                 printButtonText: AppLanugage.print,
                 excelButtonText: AppLanugage.excel,
-                printBUttonTitle: AppLanugage.print_title,
+                printButtonTitle: AppLanugage.print_title,
                 excelButtonTitle: AppLanugage.excel_title,
                 printButtonToolTip: AppLanugage.printButtonTooltip,
                 today: AppLanugage.today,
@@ -2108,7 +2108,7 @@ var $appFilterXhrRequest = 'new';
                     extend: 'excelHtml5',
                     footer: true,
                     text: settings.customLanguage.excelButtonText,
-                    titleAttr: settings.customLanguage.excelButtonText,
+                    titleAttr: settings.customLanguage.excelButtonTitle,
                     exportOptions: {
                         columns: settings.xlsColumns
                     },
@@ -2180,7 +2180,7 @@ var $appFilterXhrRequest = 'new';
                     extend: 'print',
                     autoPrint: false,
                     text: settings.customLanguage.printButtonText,
-                    titleAttr: settings.customLanguage.printButtonText,
+                    titleAttr: settings.customLanguage.printButtonTitle,
                     footer: true,
                     exportOptions: {
                         columns: settings.printColumns
