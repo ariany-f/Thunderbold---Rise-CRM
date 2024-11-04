@@ -1675,6 +1675,8 @@ var $appFilterXhrRequest = 'new';
                 searchPlaceholder: AppLanugage.search,
                 printButtonText: AppLanugage.print,
                 excelButtonText: AppLanugage.excel,
+                printBUttonTitle: AppLanugage.print_title,
+                excelButtonTitle: AppLanugage.excel_title,
                 printButtonToolTip: AppLanugage.printButtonTooltip,
                 today: AppLanugage.today,
                 yesterday: AppLanugage.yesterday,
