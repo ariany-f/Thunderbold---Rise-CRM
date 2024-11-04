@@ -584,7 +584,7 @@ $lang["add_payment"] = "Adicionar pagamento";
 $lang["never"] = "Nunca";
 $lang["email_invoice_to_client"] = "Enviar fatura para o e-mail do cliente";
 $lang["download_pdf"] = "Baixar PDF";
-$lang["print"] = "Imprimir";
+$lang["print"] = "<i data-feather='printer' class='icon-16'></i>";
 $lang["actions"] = "Ações";
 $lang["balance_due"] = "Saldo devedor";
 $lang["paid"] = "Pago";
@@ -891,7 +891,7 @@ $lang["project_cloned_successfully"] = "O projeto foi duplicado com sucesso";
 
 $lang["search"] = "Pesquisar";
 $lang["no_record_found"] = "Nenhum registro encontrado.";
-$lang["excel"] = "Excel";
+$lang["excel"] = "<i data-feather='file-text' class='icon-16'></i>";
 $lang["print_button_help_text"] = "Clique no botão de ajuda se precisar";
 $lang["are_you_sure"] = "Você tem certeza?";
 $lang["file_upload_instruction"] = "Arraste e solte documentos aqui <br /> (ou clique para navegar...)";
