@@ -2106,6 +2106,7 @@ var $appFilterXhrRequest = 'new';
                     extend: 'excelHtml5',
                     footer: true,
                     text: settings.customLanguage.excelButtonText,
+                    titleAttr: settings.customLanguage.excelButtonText,
                     exportOptions: {
                         columns: settings.xlsColumns
                     },
@@ -2177,6 +2178,7 @@ var $appFilterXhrRequest = 'new';
                     extend: 'print',
                     autoPrint: false,
                     text: settings.customLanguage.printButtonText,
+                    titleAttr: settings.customLanguage.printButtonText,
                     footer: true,
                     exportOptions: {
                         columns: settings.printColumns
