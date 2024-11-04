@@ -5257,6 +5257,8 @@ class Projects extends Security_Controller {
         if (($this->login_user->user_type == "staff" && can_edit_this_task_status($data->assigned_to)) || ($this->login_user->user_type == "client" && $this->can_edit_tasks())) {
             //show changeable status checkbox and link to team members
             $check_status = js_anchor("<span class='$checkbox_class mr15 float-start'></span>", array('title' => "", "class" => "js-task", "data-id" => $data->id, "data-value" => $data->status_key_name === "done" ? "1" : "3", "data-act" => "update-task-status-checkbox")) . $data->id;
+            
+            $check_status = $data->id;
             $status = js_anchor($data->status_key_name ? app_lang($data->status_key_name) : $data->status_title, array('title' => "", "class" => "badge $status_class", "data-id" => $data->id, "data-value" => $data->status_id, "data-act" => "update-task-status"));
         } else {
             //don't show clickable checkboxes/status to client
@@ -5267,7 +5269,6 @@ class Projects extends Security_Controller {
             $status = $data->status_key_name ? app_lang($data->status_key_name) : $data->status_title;
         }
 
-        $check_status = $data->id;
 
         $deadline_text = "-";
         if ($data->deadline && is_date_exists($data->deadline)) {
