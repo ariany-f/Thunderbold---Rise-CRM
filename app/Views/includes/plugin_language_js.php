@@ -18,6 +18,8 @@
     AppLanugage.noRecordFound = "<?php echo app_lang('no_record_found'); ?>";
     AppLanugage.print = "<?php echo app_lang('print'); ?>";
     AppLanugage.excel = "<?php echo app_lang('excel'); ?>";
+    AppLanugage.print_title = "<?php echo app_lang('print_title'); ?>";
+    AppLanugage.excel_title = "<?php echo app_lang('excel_title'); ?>";
     AppLanugage.printButtonTooltip = "<?php echo app_lang('print_button_help_text'); ?>";
 
     AppLanugage.fileUploadInstruction = "<?php echo app_lang('file_upload_instruction'); ?>";
