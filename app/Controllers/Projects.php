@@ -5267,7 +5267,7 @@ class Projects extends Security_Controller {
             $status = $data->status_key_name ? app_lang($data->status_key_name) : $data->status_title;
         }
 
-
+        $check_status = $data->id;
 
         $deadline_text = "-";
         if ($data->deadline && is_date_exists($data->deadline)) {
