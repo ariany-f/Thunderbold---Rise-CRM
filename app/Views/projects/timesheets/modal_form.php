@@ -195,7 +195,10 @@
                         "name" => "task_id",
                         "value" => $task_id ?? $model_info->task_id,
                         "class" => "form-control",
-                        "placeholder" => app_lang('task')
+                        "placeholder" => app_lang('task'),
+                        "required" => true,
+                        "data-rule-required" => true,
+                        "data-msg-required" => app_lang("field_required"),
                     ));
                     ?>
                 </div>
