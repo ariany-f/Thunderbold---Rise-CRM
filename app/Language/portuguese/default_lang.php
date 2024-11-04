@@ -892,6 +892,8 @@ $lang["project_cloned_successfully"] = "O projeto foi duplicado com sucesso";
 $lang["search"] = "Pesquisar";
 $lang["no_record_found"] = "Nenhum registro encontrado.";
 $lang["excel"] = "<i data-feather='file-text' class='icon-16'></i>";
+$lang["excel_title"] = "Excel";
+$lang["print_title"] = "Imprimir";
 $lang["print_button_help_text"] = "Clique no botão de ajuda se precisar";
 $lang["are_you_sure"] = "Você tem certeza?";
 $lang["file_upload_instruction"] = "Arraste e solte documentos aqui <br /> (ou clique para navegar...)";
