@@ -1003,6 +1003,7 @@ $lang["notification_invoice_payment_confirmation"] = "Pagamento recebido";
 
 $lang["client_can_create_projects"] = "O cliente pode criar projetos?";
 $lang["client_can_view_timesheet"] = "O cliente pode visualizar a Gestão de Tempo?";
+$lang["can_view_timesheet"] = "Cliente vê G.T.";
 $lang["client_can_view_gantt"] = "O cliente pode visualizar o evolutivo?";
 $lang["client_can_view_overview"] = "O cliente pode visualizar a visão geral de um projeto?";
 $lang["client_can_view_milestones"] = "O cliente pode visualizar as etapas?";
