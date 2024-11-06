@@ -1280,7 +1280,8 @@ class Projects extends Security_Controller {
             $data->deadline,
             $dateline,
             $progress_bar,
-            app_lang($data->status)
+            app_lang($data->status),
+            $this->Project_settings_model->get_setting($data->id, "client_can_view_timesheet") ? app_lang("yes") : app_lang("no"),
         );
 
         foreach ($custom_fields as $field) {
