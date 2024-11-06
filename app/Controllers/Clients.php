@@ -286,6 +286,7 @@ class Clients extends Security_Controller {
             $data->primary_contact ? $primary_contact : "",
             $group_list,
             to_decimal_format($data->total_projects),
+            to_decimal_format($data->total_tickets),
             to_currency($data->invoice_value, $data->currency_symbol),
             to_currency($data->payment_received, $data->currency_symbol),
             to_currency($due, $data->currency_symbol)

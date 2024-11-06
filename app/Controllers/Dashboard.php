@@ -284,6 +284,9 @@ class Dashboard extends Security_Controller {
             if (!in_array("projects", $hidden_menu)) {
                 $widget["total_projects"] = true;
             }
+            if (!in_array("new_tickets", $hidden_menu)) {
+                $widget["total_tickets"] = true;
+            }
             if (!in_array("invoices", $hidden_menu)) {
                 $widget["total_invoices"] = true;
             }
@@ -881,6 +884,7 @@ class Dashboard extends Security_Controller {
         } else {
             $default_widgets_array = array(
                 "total_projects",
+                "total_tickets",
                 "open_projects_list",
                 "project_timeline",
                 "total_invoices",
@@ -1216,6 +1220,8 @@ class Dashboard extends Security_Controller {
         if (get_array_value($widgets_array, $widget)) {
             if ($widget == "total_projects") {
                 return $this->template->view("clients/info_widgets/tab", array("tab" => "projects", "client_info" => $client_info));
+            } else if ($widget == "total_tickets") {
+                return $this->template->view("clients/info_widgets/tab", array("tab" => "new_tickets", "client_info" => $client_info));
             } else if ($widget == "total_invoices") {
                 return $this->template->view("clients/info_widgets/tab", array("tab" => "total_invoiced", "client_info" => $client_info));
             } else if ($widget == "total_payments") {

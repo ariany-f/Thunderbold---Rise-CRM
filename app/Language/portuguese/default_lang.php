@@ -1224,6 +1224,7 @@ $lang["clock_in_out"] = "Clock in-out";
 $lang["custom_widget_details"] = "Detalhes do widget personalizado";
 
 $lang["total_projects"] = "Total de projetos";
+$lang["total_tickets"] = "Total de chamados";
 $lang["total_invoices"] = "Faturas totais";
 $lang["total_payments"] = "Pagamentos totais";
 $lang["total_due"] = "Total devido";
@@ -1237,8 +1238,8 @@ $lang["open_projects_list"] = "Lista de Projetos Abertos";
 $lang["starred_projects"] = "Projetos com estrela";
 $lang["completed_projects"] = "Projetos completos";
 
-$lang["new_tickets"] = "Novos ingressos";
-$lang["closed_tickets"] = "Ingressos Fechados";
+$lang["new_tickets"] = "Chamados";
+$lang["closed_tickets"] = "Chamados Fechados";
 
 $lang["clocked_in_team_members"] = "Cronometrados em membros da equipe";
 $lang["clocked_out_team_members"] = "Cronometrado para fora os membros da equipe";

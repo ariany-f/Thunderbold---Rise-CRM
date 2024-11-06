@@ -32,7 +32,7 @@
         <?php } ?>
 
         <div class="table-responsive" id="client-projects-list">
-            <table id="project-table" class="display" width="100%">            
+            <table id="tickets-table" class="display" width="100%">            
             </table>
         </div>
     </div>
@@ -84,7 +84,7 @@ if (isset($page_type) && $page_type === 'dashboard') {
         }
 
 
-        $("#project-table").appTable({
+        $("#tickets-table").appTable({
             source: '<?php echo_uri("projects/projects_list_ticket_of_client/" . $client_id) ?>',
             order: [[0, "desc"]],
             hideTools: hideTools,
