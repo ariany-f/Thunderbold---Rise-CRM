@@ -41,6 +41,7 @@
 
         $("#all-project-timesheet-table").appTable({
             source: '<?php echo_uri("projects/timesheet_list_data/") ?>',
+            stateSave:true,
             filterDropdown: [
                 {name: "user_id", class: "w200", options: <?php echo $members_dropdown; ?>},
                 {name: "manager_id", class: "w200", options: <?php echo $managers_dropdown; ?>},
@@ -66,9 +67,9 @@
                 {visible: false, title: "<?php echo app_lang('hours') ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-right w50"},
                 {title: "<?php echo app_lang('consultant') ?>", order_by: "member_name"},
-                {title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
+                {visible:projectAmount, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
-                {title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
+                {visible:projectAmount, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right w50"}
                 <?php echo $custom_field_headers; ?>,
                 {visible: optionVisibility, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
