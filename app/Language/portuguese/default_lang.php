@@ -1237,8 +1237,8 @@ $lang["open_projects_list"] = "Lista de Projetos Abertos";
 $lang["starred_projects"] = "Projetos com estrela";
 $lang["completed_projects"] = "Projetos completos";
 
-$lang["new_tickets"] = "Novos ingressos";
-$lang["closed_tickets"] = "Ingressos Fechados";
+$lang["new_tickets"] = "Chamados";
+$lang["closed_tickets"] = "Chamados Fechados";
 
 $lang["clocked_in_team_members"] = "Cronometrados em membros da equipe";
 $lang["clocked_out_team_members"] = "Cronometrado para fora os membros da equipe";

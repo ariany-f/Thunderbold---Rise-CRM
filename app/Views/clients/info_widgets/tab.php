@@ -13,6 +13,7 @@ if (!is_object($client_info)) {
     $client_info = new stdClass();
     $client_info->id = 0;
     $client_info->total_projects = 0;
+    $client_info->total_tickets = 0;
     $client_info->invoice_value = 0;
     $client_info->currency_symbol = "$";
     $client_info->payment_received = 0;
@@ -29,6 +30,17 @@ if ($tab == "projects") {
         $link = get_uri('projects/index');
     } else {
         $link = get_uri('clients/view/' . $client_info->id . '/projects');
+    }
+} else if ($tab == "new_tickets") {
+    $card = "bg-info";
+    $icon = "tag";
+    if (property_exists($client_info, "total_tickets")) {
+        $value = to_decimal_format($client_info->total_tickets);
+    }
+    if ($view_type == "client_dashboard") {
+        $link = get_uri('projects/new_ticket/index');
+    } else {
+        $link = get_uri('clients/view/' . $client_info->id . '/projects/new_ticket');
     }
 } else if ($tab == "total_invoiced") {
     $card = "bg-primary";

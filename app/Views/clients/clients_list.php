@@ -44,6 +44,7 @@
             {title: "<?php echo app_lang("primary_contact") ?>", order_by: "primary_contact"},
             {title: "<?php echo app_lang("client_groups") ?>", order_by: "client_groups"},
             {title: "<?php echo app_lang("projects") ?>"},
+            {title: "<?php echo app_lang("tickets") ?>"},
             {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php echo app_lang("total_invoiced") ?>"},
             {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php echo app_lang("payment_received") ?>"},
             {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php echo app_lang("due") ?>"}

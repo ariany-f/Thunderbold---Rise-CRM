@@ -16,6 +16,22 @@
             </div>
         <?php } ?>
 
+        <?php if (!in_array("new_tickets", $hidden_menu)) { ?>
+            <div class="col-md-3 col-sm-6 widget-container">
+                <div class="card dashboard-icon-widget">
+                    <div class="card-body ">
+                        <div class="widget-icon bg-info">
+                            <i data-feather='tag' class='icon'></i>
+                        </div>
+                        <div class="widget-details">
+                            <h1><?php echo to_decimal_format($client_info->total_tickets); ?></h1>
+                            <span><?php echo app_lang("tickets"); ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+
         <?php if (!in_array("invoices", $hidden_menu)) { ?>
             <div class="col-md-3 col-sm-6  widget-container">
                 <div class="card dashboard-icon-widget">

@@ -73,6 +73,7 @@
 
                     <?php if ($show_project_info) { ?>
                         <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/projects/" . $client_info->id); ?>" data-bs-target="#client-projects"><?php echo app_lang('projects'); ?></a></li>
+                        <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/tickets/" . $client_info->id); ?>" data-bs-target="#client-tickets"><?php echo app_lang('tickets'); ?></a></li>
                     <?php } ?>
 
                     <?php if ($show_invoice_info) { ?>
@@ -123,6 +124,7 @@
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade" id="client-projects"></div>
+                    <div role="tabpanel" class="tab-pane fade" id="client-tickets"></div>
                     <div role="tabpanel" class="tab-pane fade" id="client-files"></div>
                     <div role="tabpanel" class="tab-pane fade" id="client-info"></div>
                     <div role="tabpanel" class="tab-pane fade" id="client-contacts"></div>
