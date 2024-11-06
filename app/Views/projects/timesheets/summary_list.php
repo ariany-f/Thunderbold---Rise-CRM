@@ -31,7 +31,7 @@
                 {title: "<?php echo app_lang("consultant"); ?>", "class": "w15p"},
                 {visible: projectAmount, title: "<?php echo app_lang("consultant") . ' (R$)'; ?>", "class": "text-right"},
                 {title: "<?php echo app_lang("manager_name"); ?>", "class": "text-center"},
-                {visible:projectAmount, title: "<?php echo app_lang("comission"). ' (R$)'; ?>", "class": "text-right"},
+                {visible: projectAmount, title: "<?php echo app_lang("comission"). ' (R$)'; ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right"},
                 {visible: false, searchable: false}
             ],
