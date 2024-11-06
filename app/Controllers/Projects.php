@@ -1269,6 +1269,17 @@ class Projects extends Security_Controller {
             $collaborators = "-";
         }
 
+        $client_can_view_timesheet = "";
+
+        if($this->Project_settings_model->get_setting($data->id, "client_can_view_timesheet"))
+        {
+            $client_can_view_timesheet = '<span class="mt0 badge  clickable" style="background-color:#0abb87;" title="Legenda">'.app_lang("yes") . '</span>';
+        }
+        else
+        {
+            $client_can_view_timesheet = '<span class="mt0 badge  clickable" style="background-color:#f5325c;" title="Legenda">'.app_lang("no") . '</span>';
+        }
+
         $row_data = array(
             $first_column,
             $title,
@@ -1281,7 +1292,7 @@ class Projects extends Security_Controller {
             $dateline,
             $progress_bar,
             app_lang($data->status),
-            $this->Project_settings_model->get_setting($data->id, "client_can_view_timesheet") ? app_lang("yes") : app_lang("no"),
+            $client_can_view_timesheet,
         );
 
         foreach ($custom_fields as $field) {
