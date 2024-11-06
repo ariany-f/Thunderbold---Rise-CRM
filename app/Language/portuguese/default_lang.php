@@ -1224,6 +1224,7 @@ $lang["clock_in_out"] = "Clock in-out";
 $lang["custom_widget_details"] = "Detalhes do widget personalizado";
 
 $lang["total_projects"] = "Total de projetos";
+$lang["total_tickets"] = "Total de chamados";
 $lang["total_invoices"] = "Faturas totais";
 $lang["total_payments"] = "Pagamentos totais";
 $lang["total_due"] = "Total devido";
