@@ -222,6 +222,7 @@ class Settings extends Security_Controller {
         $hidden_menus = array(
             "announcements",
             "contracts",
+            "timesheets",
             "events",
             "proposals",
             "estimates",

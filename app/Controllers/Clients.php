@@ -198,6 +198,100 @@ class Clients extends Security_Controller {
         }
     }
 
+    /* load all time sheets view  */
+
+    function all_timesheets() {
+        $members = $this->_get_members_to_manage_timesheet();
+
+        $view_data['managers_dropdown'] = "{}";
+        $view_data['members_dropdown'] = json_encode($this->_prepare_members_dropdown_for_timesheet_filter($members));
+        $view_data['projects_dropdown'] = json_encode($this->_get_all_projects_dropdown_list_for_timesheets_filter());
+        $view_data['clients_dropdown'] = "{}";
+
+        $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("timesheets", $this->login_user->is_admin, $this->login_user->user_type);
+        $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("timesheets", $this->login_user->is_admin, $this->login_user->user_type);
+       
+        return $this->template->rander("clients/timesheets/all_timesheets", $view_data);
+    }
+
+    /* load all timesheets summary view */
+
+    function all_timesheet_summary() {
+
+        $members = $this->_get_members_to_manage_timesheet();
+
+        $view_data['group_by_dropdown'] = json_encode(
+                array(
+                    array("id" => "", "text" => "- " . app_lang("group_by") . " -"),
+                    array("id" => "member", "text" => app_lang("member")),
+                    array("id" => "project", "text" => app_lang("project")),
+                    array("id" => "task", "text" => app_lang("task"))
+        ));
+
+        $view_data['managers_dropdown'] = "{}";
+        $view_data['members_dropdown'] = json_encode($this->_prepare_members_dropdown_for_timesheet_filter($members));
+        $view_data['projects_dropdown'] = json_encode($this->_get_all_projects_dropdown_list_for_timesheets_filter());
+        $view_data['clients_dropdown'] = "{}";
+        $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("timesheets", $this->login_user->is_admin, $this->login_user->user_type);
+
+        return $this->template->view("clients/timesheets/all_summary_list", $view_data);
+    }
+
+    /* get all projects list according to the login user */
+
+    private function _get_all_projects_dropdown_list_for_timesheets_filter() {
+        $options = array();
+
+        if (!$this->can_manage_all_projects()) {
+            $options["user_id"] = $this->login_user->id;
+        }
+
+        $projects = $this->Projects_model->get_details($options)->getResult();
+
+        $projects_dropdown = array(array("id" => "", "text" => "- " . app_lang("project") . " -"));
+        foreach ($projects as $project) {
+            $projects_dropdown[] = array("id" => $project->id, "text" => $project->title);
+        }
+
+        return $projects_dropdown;
+    }
+
+    /* prepare dropdown list */
+
+    private function _prepare_members_dropdown_for_timesheet_filter($members) {
+        $where = array("user_type" => "staff");
+
+        if ($members != "all" && is_array($members) && count($members)) {
+            $where["where_in"] = array("id" => $members);
+        }
+
+        $users = $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id", $where);
+
+        $members_dropdown = array(array("id" => "", "text" => "- " . app_lang("member") . " -"));
+        foreach ($users as $id => $name) {
+            $members_dropdown[] = array("id" => $id, "text" => $name);
+        }
+        return $members_dropdown;
+    }
+
+    /*
+     * admin can manage all members timesheet
+     * allowed member can manage other members timesheet accroding to permission
+     */
+
+     private function _get_members_to_manage_timesheet() {
+        $access_info = $this->get_access_info("timesheet_manage_permission");
+        $access_type = $access_info->access_type;
+
+        if (!$access_type || $access_type === "own") {
+            return array($this->login_user->id); //permission: no / own
+        } else if (($access_type === "specific" || $access_type === "specific_excluding_own") && count($access_info->allowed_members)) {
+            return $access_info->allowed_members; //permission: specific / specific_excluding_own
+        } else {
+            return $access_type; //permission: all / own_project_members / own_project_members_excluding_own
+        }
+    }
+
     /* list of clients, prepared for datatable  */
 
     function list_data() {
