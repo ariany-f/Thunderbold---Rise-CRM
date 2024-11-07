@@ -3123,7 +3123,7 @@ class Projects extends Security_Controller {
                 "<span style='color: green'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>"
             );
         }
-        else
+        else if($this->login_user->user_type !== 'client')
         {
             // Visão Consultor
             $row_data = array(
@@ -3140,6 +3140,28 @@ class Projects extends Security_Controller {
                 "",
                 get_team_member_profile_link($data->user_id, $user),
                 "<span style='color: green'>".to_currency($total_amount)."</span>",
+                $manager_member,
+                "",
+                ""
+            );
+        }
+        else
+        {
+             // Visão Admin
+             $row_data = array(
+                $client_name,
+                $project_title,
+                $task_title,
+                $data->start_time,
+                $data->note,
+                ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
+                $data->end_time,
+                $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
+                $duration,
+                to_decimal_format(convert_time_string_to_decimal($duration)),
+                "<span style='color: blue'>".to_currency($project_total_amount)."</span>",
+                get_team_member_profile_link($data->user_id, $user),
+                "",
                 $manager_member,
                 "",
                 ""
@@ -3565,7 +3587,7 @@ class Projects extends Security_Controller {
                     $menus
                 );
             }
-            else
+            else if($this->login_user->user_type !== 'client')
             {
                 $result[] = array(
                     $client_name,
@@ -3576,6 +3598,23 @@ class Projects extends Security_Controller {
                     "",
                     $member,
                     "<span style='color: green;'>".to_currency($total_amount)."</span>",
+                    $manager_member,
+                    "",
+                    "",
+                    ""
+                );
+            }
+            else
+            {
+                $result[] = array(
+                    $client_name,
+                    $project_title,
+                    $task_title,
+                    $duration,
+                    to_decimal_format(convert_time_string_to_decimal($duration)),
+                    "<span style='color: blue;'>".to_currency($project_total_amount)."</span>",
+                    $member,
+                    "",
                     $manager_member,
                     "",
                     "",
