@@ -2928,6 +2928,12 @@ class Projects extends Security_Controller {
         }
 
         $all_options = append_server_side_filtering_commmon_params($options);
+        
+        
+        if($this->login_user->user_type == "client")
+        {
+            $all_options["allowed_projects"] = true;
+        }
 
         $result = $this->Timesheets_model->get_details($all_options);
 
@@ -2993,7 +2999,7 @@ class Projects extends Security_Controller {
         }
 
         $all_options = append_server_side_filtering_commmon_params($options);
-
+        
         $result = $this->Timesheets_model->get_details($all_options);
 
         //by this, we can handel the server side or client side from the app table prams.
@@ -3416,6 +3422,11 @@ class Projects extends Security_Controller {
             //if user has permission to access all members, query param is not required
             //client can view all timesheet
             $options["allowed_members"] = $members;
+        }
+
+        if($this->login_user->user_type == "client")
+        {
+            $options["allowed_projects"] = true;
         }
 
         $list_data = $this->Timesheets_model->get_summary_details($options)->getResult();

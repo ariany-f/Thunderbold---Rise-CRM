@@ -566,7 +566,7 @@ class Left_menu {
                 $sidebar_menu[] = array("name" => "knowledge_base", "url" => "knowledge_base", "class" => "help-circle");
             }
             
-            if (get_setting("module_project_timesheet") && (!get_array_value($this->ci->login_user->permissions, "do_not_show_projects"))) {
+            if (get_setting("module_project_timesheet") && (!get_array_value($this->ci->login_user->permissions, "do_not_show_projects")) && !in_array("timesheets", $hidden_menu)) {
                 $sidebar_menu[] = array("name" => "timesheets", "url" => "clients/all_timesheets", "class" => "clock");
             }
 

@@ -80,6 +80,11 @@ class Timesheets_model extends Crud_model {
             $where .= $this->get_timesheet_own_project_memeber_only_query($timesheet_table);
         }
 
+        $allowed_projects = $this->_get_clean_value($options, "allowed_projects");
+        if ($allowed_projects) {
+            $where .= " AND $project_settings_table.setting_value = 1";
+        }
+
         //prepare custom fild binding query
         $custom_fields = get_array_value($options, "custom_fields");
         $custom_field_filter = get_array_value($options, "custom_field_filter");
@@ -148,6 +153,7 @@ class Timesheets_model extends Crud_model {
             $projects_table.client_id AS timesheet_client_id, 
             (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name $select_custom_fieds
         FROM $timesheet_table
+        LEFT JOIN $project_settings_table ON $project_settings_table.project_id = $timesheet_table.project_id AND $project_settings_table.setting_name='client_can_view_timesheet'
         LEFT JOIN $users_table ON $users_table.id= $timesheet_table.user_id
         LEFT JOIN $tasks_table ON $tasks_table.id= $timesheet_table.task_id
         LEFT JOIN $projects_table ON $projects_table.id= $timesheet_table.project_id
@@ -180,6 +186,7 @@ class Timesheets_model extends Crud_model {
         $clients_table = $this->db->prefixTable('clients');
         $project_resources_table = $this->db->prefixTable('project_resources');
         $team_member_job_info_table = $this->db->prefixTable('team_member_job_info');
+        $project_settings_table = $this->db->prefixTable('project_settings');
 
         $where = "";
         $where_manager = "";
@@ -240,6 +247,11 @@ class Timesheets_model extends Crud_model {
             $where .= $this->get_timesheet_own_project_memeber_only_query($timesheet_table);
         }
 
+        $allowed_projects = $this->_get_clean_value($options, "allowed_projects");
+        if ($allowed_projects) {
+            $where .= " AND $project_settings_table.setting_value = 1";
+        }
+
         //group by
         $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
         $group_general = "new_summary_table.user_id, new_summary_table.task_id, new_summary_table.project_id";
@@ -283,6 +295,7 @@ class Timesheets_model extends Crud_model {
                     $projects_table.client_id AS timesheet_client_id, 
                     (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$projects_table.client_id AND $clients_table.deleted=0) AS timesheet_client_company_name
             FROM (SELECT DISTINCT
+                    $project_settings_table.setting_value,
                     $timesheet_table.id AS id,
                     $timesheet_table.project_id AS project_id, 
                     $timesheet_table.user_id AS user_id, 
@@ -294,6 +307,7 @@ class Timesheets_model extends Crud_model {
                     ($timesheet_table.client_amount * ((TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time) + ROUND(($timesheet_table.hours * 60), 0) * 60) / 3600)) AS project_client_amount_by_duration
             FROM 
                 $timesheet_table
+                LEFT JOIN $project_settings_table ON $project_settings_table.project_id = $timesheet_table.project_id AND $project_settings_table.setting_name='client_can_view_timesheet' AND $project_settings_table.deleted = 0
             WHERE 
                 $timesheet_table.deleted = 0
                 AND $timesheet_table.status = 'logged'
@@ -306,7 +320,7 @@ class Timesheets_model extends Crud_model {
             LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id= $project_resources_table.user_id       
             WHERE 1 = 1 $where_manager
             GROUP BY $group_general";
-            log_message('info', 'sql: '.$sql);
+            
         return $this->db->query($sql);
     }
 
