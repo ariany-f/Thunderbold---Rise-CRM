@@ -25,7 +25,6 @@
         var optionVisibility = false;    
         var projectAmount = false;
 
-
         $("#all-project-timesheet-table").appTable({
             source: '<?php echo_uri("projects/timesheet_client_list_data/") ?>',
             filterDropdown: [
@@ -36,9 +35,6 @@
 <?php } ?>
                 , <?php echo $custom_field_filters; ?>
             ],
-            onSuccess:function(data){
-                console.log(data)
-            },
             //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
             dateRangeType: "monthly",
             columns: [
@@ -54,10 +50,10 @@
                 {visible: false, title: "<?php echo app_lang('hours') ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-right w50"},
                 {title: "<?php echo app_lang('consultant') ?>", order_by: "member_name"},
-                {visible: projectAmount, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
+                {visible: false, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
-                {visible:projectAmount, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
-                {visible: projectAmount, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right w50"}
+                {visible:false, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
+                {visible: false, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right w50"}
                 <?php echo $custom_field_headers; ?>,
                 {visible: optionVisibility, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],
