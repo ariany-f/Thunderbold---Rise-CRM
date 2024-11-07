@@ -30,7 +30,7 @@
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>"},
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
-                {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-right"},
+                {visible: projectAmount, title: "<?php echo app_lang('amount'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang("consultant"); ?>"},
                 {visible: false, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
