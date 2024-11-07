@@ -54,6 +54,7 @@
 
                     showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 6, true);
+
                 } else if (filterParams && filterParams.group_by === "project") {
                     //show project
                     showHideAppTableColumn(tableInstance, 0, true);
@@ -61,6 +62,7 @@
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 5, true);
                     showHideAppTableColumn(tableInstance, 6, false);
 
                 } else if (filterParams && filterParams.group_by === "task") {
@@ -70,14 +72,18 @@
                     showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 5, true);
                     showHideAppTableColumn(tableInstance, 6, true);
+
                 } else {
+
                     //show all
                     showHideAppTableColumn(tableInstance, 0, true);
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 5, true);
                     showHideAppTableColumn(tableInstance, 6, true);
                 }
 
