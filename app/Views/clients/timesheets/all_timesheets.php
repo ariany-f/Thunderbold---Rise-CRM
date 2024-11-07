@@ -28,11 +28,7 @@
         $("#all-project-timesheet-table").appTable({
             source: '<?php echo_uri("projects/timesheet_client_list_data/") ?>',
             filterDropdown: [
-                {name: "user_id", class: "w200", options: <?php echo $members_dropdown; ?>},
-                {name: "manager_id", class: "w200", options: <?php echo $managers_dropdown; ?>},
                 {name: "project_id", class: "w200", options: <?php echo $projects_dropdown; ?>, dependency: ["client_id"], dataSource: '<?php echo_uri("projects/get_projects_of_selected_client_for_filter") ?>', selfDependency: true} //projects are dependent on client. but we have to show all projects, if there is no selected client
-<?php if ($login_user->is_admin || get_array_value($login_user->permissions, "client")) { ?>
-<?php } ?>
                 , <?php echo $custom_field_filters; ?>
             ],
             //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
