@@ -131,10 +131,6 @@ if (!function_exists("make_project_tabs_data")) {
                                 $project_tabs["customer_feedback"] = "projects/customer_feedback/" . $project_info->id;
                             }
 
-                            if ($show_timesheet_info) {
-                                $project_tabs["timesheets"] = "projects/timesheets/" . $project_info->id;
-                            }
-
                             if ($show_invoice_info && $project_info->project_type === "client_project" && !$project_info->is_ticket) {
                                 $project_tabs["invoices"] = "projects/invoices/" . $project_info->id;
                                 $project_tabs["payments"] = "projects/payments/" . $project_info->id;
@@ -150,6 +146,10 @@ if (!function_exists("make_project_tabs_data")) {
 
                             if ($show_ticket_info && $project_info->project_type === "client_project" && !$project_info->is_ticket) {
                                 $project_tabs["tickets"] = "projects/tickets/" . $project_info->id;
+                            }
+
+                            if ($show_timesheet_info) {
+                                $project_tabs["timesheets"] = "projects/timesheets/" . $project_info->id;
                             }
 
                             if ($show_timesheet_info and $login_user->is_admin) {
@@ -226,12 +226,12 @@ if (!function_exists("make_project_tabs_data")) {
                     <div role="tabpanel" class="tab-pane fade" id="project-comments-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-customer_feedback-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-notes-section"></div>
-                    <div role="tabpanel" class="tab-pane fade" id="project-timesheets-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-invoices-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-payments-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-expenses-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-contracts-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-tickets-section"></div>
+                    <div role="tabpanel" class="tab-pane fade" id="project-timesheets-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-resources-section"></div>
 
 
