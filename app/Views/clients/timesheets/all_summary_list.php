@@ -20,7 +20,7 @@
             //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
             dateRangeType: "monthly",
             columns: [
-                {title: "<?php echo app_lang('client') ?>"},
+                {visible: false},
                 {title: "<?php echo app_lang("project"); ?>"},
                 {title: "<?php echo app_lang("task"); ?>"},
                 {title: "<?php echo app_lang("duration"); ?>"},
@@ -42,7 +42,6 @@
 
                 if (filterParams && filterParams.group_by === "member") {
                     //show member
-                    showHideAppTableColumn(tableInstance, 0, false);
                     showHideAppTableColumn(tableInstance, 1, false);
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 4, false);
@@ -52,7 +51,6 @@
 
                 } else if (filterParams && filterParams.group_by === "project") {
                     //show project
-                    showHideAppTableColumn(tableInstance, 0, true);
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
@@ -62,7 +60,6 @@
 
                 } else if (filterParams && filterParams.group_by === "task") {
                     //show task
-                    showHideAppTableColumn(tableInstance, 0, true);
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, true);
@@ -71,9 +68,7 @@
                     showHideAppTableColumn(tableInstance, 6, true);
 
                 } else {
-
                     //show all
-                    showHideAppTableColumn(tableInstance, 0, true);
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
