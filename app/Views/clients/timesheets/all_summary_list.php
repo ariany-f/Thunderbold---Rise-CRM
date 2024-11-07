@@ -32,10 +32,10 @@
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang("consultant"); ?>"},
-                {visible: projectAmount, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
+                {visible: false, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
-                {visible:projectAmount, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
-                {visible: projectAmount, title: "<?php echo app_lang('liquid') . ' (R$)'?>", "class": "text-right"},
+                {visible: false, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
+                {visible: false, title: "<?php echo app_lang('liquid') . ' (R$)'?>", "class": "text-right"},
                 {visible:false, title: "<i data-feather='menu' class='icon-16'></i>", "class": "text-center w150"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
@@ -55,9 +55,6 @@
                     showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 6, true);
 
-                    showHideAppTableColumn(tableInstance, 8, false);
-                    showHideAppTableColumn(tableInstance, 9, false);
-                    showHideAppTableColumn(tableInstance, 11, true);
                 } else if (filterParams && filterParams.group_by === "project") {
                     //show project
                     showHideAppTableColumn(tableInstance, 0, true);
@@ -65,11 +62,9 @@
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 5, true);
                     showHideAppTableColumn(tableInstance, 6, false);
 
-                    showHideAppTableColumn(tableInstance, 8, true);
-                    showHideAppTableColumn(tableInstance, 9, true);
-                    showHideAppTableColumn(tableInstance, 11, true);
                 } else if (filterParams && filterParams.group_by === "task") {
                     //show task
                     showHideAppTableColumn(tableInstance, 0, true);
@@ -77,23 +72,19 @@
                     showHideAppTableColumn(tableInstance, 2, true);
                     showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 5, true);
                     showHideAppTableColumn(tableInstance, 6, true);
 
-                    showHideAppTableColumn(tableInstance, 8, true);
-                    showHideAppTableColumn(tableInstance, 9, true);
-                    showHideAppTableColumn(tableInstance, 11, false);
                 } else {
+
                     //show all
                     showHideAppTableColumn(tableInstance, 0, true);
                     showHideAppTableColumn(tableInstance, 1, true);
                     showHideAppTableColumn(tableInstance, 2, false);
                     showHideAppTableColumn(tableInstance, 3, true);
                     showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 5, true);
                     showHideAppTableColumn(tableInstance, 6, true);
-
-                    showHideAppTableColumn(tableInstance, 8, true);
-                    showHideAppTableColumn(tableInstance, 9, true);
-                    showHideAppTableColumn(tableInstance, 11, false);
                 }
 
                 //clear this status for next time load
