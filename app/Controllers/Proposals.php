@@ -516,6 +516,17 @@ class Proposals extends Security_Controller {
             $proposal_id = $view_data['model_info']->proposal_id;
         }
         $view_data['proposal_id'] = $proposal_id;
+        
+        $users = $this->Users_model->get_details(array("user_type" => "staff"))->getResult();
+
+        $users_dropdown[] = app_lang('assign_to');
+
+        foreach ($users as $user) {
+            $users_dropdown[$user->id] = ($user->first_name . ' ' . $user->last_name);
+        }
+
+        $view_data['users_dropdown'] = $users_dropdown;
+
         return $this->template->view('proposals/item_modal_form', $view_data);
     }
 
@@ -558,6 +569,7 @@ class Proposals extends Security_Controller {
 
         $proposal_item_data = array(
             "proposal_id" => $proposal_id,
+            "user_id" => $this->request->getPost('user_id'),
             "title" => $this->request->getPost('proposal_item_title'),
             "description" => $this->request->getPost('proposal_item_description'),
             "quantity" => $quantity,
