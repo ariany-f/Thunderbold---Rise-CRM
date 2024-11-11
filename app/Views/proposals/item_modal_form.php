@@ -43,6 +43,14 @@
         </div>
         <div class="form-group">
             <div class="row">
+                <label for="user_id" class=" col-md-3"><?php echo app_lang('assign_to'); ?></label>
+                <div class="col-md-9" id="dropdown-apploader-section">
+                     <?php echo form_dropdown("user_id", $users_dropdown, (isset($model_info->user_id) ? $model_info->user_id : ''), "class='select2 col-md-10 p0' id='user_id'"); ?>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
                 <label for="proposal_item_quantity" class=" col-md-3"><?php echo app_lang('quantity'); ?></label>
                 <div class="col-md-9">
                     <?php
@@ -161,7 +169,9 @@
             applySelect2OnItemTitle();
         })
 
+        $(".select2").select2();
     });
+    
 
     function applySelect2OnItemTitle() {
         $("#proposal_item_title").select2({
