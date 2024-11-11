@@ -186,6 +186,7 @@
                 {title: "<?php echo app_lang("rate") ?>", "class": "text-center w10p", "bSortable": false},
                 {title: "<?php echo app_lang("quantity") ?>", "class": "text-center w10p", "bSortable": false},
                 {title: "<?php echo app_lang("quantity_gp") ?>", "class": "text-center w10p", "bSortable": false},
+                {title: "<?php echo app_lang("quantity_add") ?>", "class": "text-center w10p", "bSortable": false},
                 {title: "<?php echo app_lang("sum_quantity") ?>", "class": "text-center w10p", "bSortable": false},
                 {title: "<?php echo app_lang("total") ?>", "class": "text-right w10p", "bSortable": false},
                 {title: "<i data-feather='menu' class='icon-16'></i>", "class": "text-right option w100", "bSortable": false}

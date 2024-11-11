@@ -79,6 +79,24 @@
         </div>
         <div class="form-group">
             <div class="row">
+                <label for="proposal_item_quantity_add" class=" col-md-3"><?php echo app_lang('quantity_add'); ?></label>
+                <div class="col-md-9">
+                    <?php
+                    echo form_input(array(
+                        "id" => "proposal_item_quantity_add",
+                        "name" => "proposal_item_quantity_add",
+                        "value" => $model_info->quantity_add ? to_decimal_format($model_info->quantity_add) : "",
+                        "class" => "form-control",
+                        "placeholder" => app_lang('quantity_add'),
+                        "data-rule-required" => true,
+                        "data-msg-required" => app_lang("field_required"),
+                    ));
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
                 <label for="proposal_unit_type" class=" col-md-3"><?php echo app_lang('unit_type'); ?></label>
                 <div class="col-md-9">
                     <?php

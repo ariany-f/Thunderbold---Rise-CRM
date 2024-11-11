@@ -574,6 +574,7 @@ $lang["create_new_item"] = "Criar novo item";
 $lang["select_or_create_new_item"] = "Escolher da lista ou criar novo item ...";
 $lang["quantity"] = "Qtd";
 $lang["quantity_gp"] = "Qtd GP";
+$lang["quantity_add"] = "Qtd Adicional";
 $lang["sum_quantity"] = "Total Qtd";
 $lang["rate"] = "Custo/unidade";
 $lang["total_of_all_pages"] = "Total de todas as páginas";
