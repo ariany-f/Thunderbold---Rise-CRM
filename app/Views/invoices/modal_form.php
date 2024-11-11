@@ -52,6 +52,25 @@
                         ?>
                     </div>
                 </div>
+            </div> 
+            <div class="form-group">
+                <div class="row">
+                    <label for="nfe_number" class=" col-md-3"><?php echo app_lang('nfe_number'); ?></label>
+                    <div class="col-md-9">
+                        <?php
+                        echo form_input(array(
+                            "id" => "nfe_number",
+                            "name" => "nfe_number",
+                            "value" => $model_info->nfe_number ? $model_info->nfe_number : "",
+                            "class" => "form-control recurring_element",
+                            "placeholder" => app_lang('nfe_number'),
+                            "autocomplete" => "off",
+                            "data-rule-required" => true,
+                            "data-msg-required" => app_lang("field_required"),
+                        ));
+                        ?>
+                    </div>
+                </div>
             </div>
 
             <?php if (count($companies_dropdown) > 1) { ?>

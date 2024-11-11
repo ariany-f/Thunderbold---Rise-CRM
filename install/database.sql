@@ -396,6 +396,7 @@ CREATE TABLE IF NOT EXISTS `invoices` (
   `subscription_id` int(11) NOT NULL DEFAULT 0,
   `start_timesheet_filter` date NULL,
   `end_timesheet_filter` date NULL,
+  `nfe_number` text COLLATE utf8_unicode_ci,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
