@@ -135,7 +135,7 @@ class Proposals_model extends Crud_model {
         $result->proposal_total_sum_quantity = $item->proposal_total_sum_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade somado gp+comum
         $result->proposal_total_quantity_gp = $item->proposal_total_quantity_gp . ' ' . $item->unit_type; // Adicionado total de quantidade gp
         $result->proposal_total_quantity_add = $item->proposal_total_quantity_add . ' ' . $item->unit_type; // Adicionado total de quantidade gp
-        $result->proposal_total_gp_quantity = ($item->proposal_total_quantity_gp + $item->proposal_total_quantity_add). ' ' . $item->unit_type; // Adicionado total de quantidade gp
+        $result->proposal_total_gp_quantity = (($item->proposal_total_quantity_gp ?? 0) + ($item->proposal_total_quantity_add ?? 0)). ' ' . $item->unit_type; // Adicionado total de quantidade gp
         $result->proposal_total_quantity = $item->proposal_total_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade comum
         $result->tax_percentage = $proposal->tax_percentage;
         $result->tax_percentage2 = $proposal->tax_percentage2;
