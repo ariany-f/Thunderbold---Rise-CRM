@@ -917,6 +917,7 @@ CREATE TABLE IF NOT EXISTS `proposal_items` (
   `description` text COLLATE utf8_unicode_ci,
   `quantity` double NOT NULL,
   `quantity_gp` double DEFAULT NULL,
+  `quantity_add` double DEFAULT NULL,
   `unit_type` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `rate` double NOT NULL,
   `total` double NOT NULL,

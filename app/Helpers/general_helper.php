@@ -2323,8 +2323,8 @@ if (!function_exists('prepare_proposal_view')) {
             $unit_type = "";
 
             foreach ($proposal_items as $item) {
-                $total_quantity += $item->quantity + $item->quantity_gp;
-                $total_amount += $item->rate * ($item->quantity + $item->quantity_gp);
+                $total_quantity += $item->quantity + $item->quantity_gp + $item->quantity_add;
+                $total_amount += $item->rate * ($item->quantity + $item->quantity_gp + $item->quantity_add);
                 $currency_symbol = $item->currency_symbol;
                 $unit_type = $item->unit_type;
             }

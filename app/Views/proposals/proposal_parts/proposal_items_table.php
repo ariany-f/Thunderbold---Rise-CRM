@@ -39,9 +39,9 @@ $total_after_discount_row = '<tr>
             <!--<td style="text-align: right; width: 20%; border: 1px solid #fff;"> <?php echo to_currency($item->rate, $item->currency_symbol); ?></td>-->
             <?php if($proposal_total_summary->gp_apart) : ?>
                 <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity . " " . $item->unit_type; ?></td>
-                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity_gp . " " . $item->unit_type; ?></td>
+                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_gp + $item->quantity_add) . " " . $item->unit_type; ?></td>
             <?php else: ?>
-                <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity + $item->quantity_gp  . " " . $item->unit_type; ?></td>
+                <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity + $item->quantity_gp + $item->quantity_add) . " " . $item->unit_type; ?></td>
             <?php endif; ?>
             <td style="text-align: right; width: 15%; border: 1px solid #fff;"> <?php echo to_currency($item->total, $item->currency_symbol); ?></td>
         </tr>
@@ -53,7 +53,7 @@ $total_after_discount_row = '<tr>
                 <?php echo $proposal_total_summary->proposal_total_quantity; ?>
             </td>
             <td style="text-align: center; width: 10%; border: 1px solid #fff; background-color: #f4f4f4;">
-                <?php echo $proposal_total_summary->proposal_total_quantity_gp; ?>
+                <?php echo $proposal_total_summary->proposal_total_gp_quantity; ?>
             </td>
             <td style="text-align: right; width: 15%; border: 1px solid #fff; background-color: #f4f4f4;">
                 <?php echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?>
