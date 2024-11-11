@@ -544,6 +544,7 @@ $lang["payment_method"] = "Método de pagamento";
 $lang["payment_methods"] = "Métodos de Pagamento";
 $lang["edit_payment_method"] = "Editar método de pagamento";
 $lang["delete_payment_method"] = "Excluir método de pagamento";
+$lang["nfe_number"] = "Número da NFe";
 
 /* invoices */
 

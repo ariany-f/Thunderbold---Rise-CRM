@@ -80,6 +80,7 @@
             {title: "<?php echo app_lang("bill_date") ?>", "class": "w10p", "iDataSort": 4},
             {visible: false, searchable: false},
             {title: "<?php echo app_lang("due_date") ?>", "class": "w10p", "iDataSort": 6},
+            {title: "<?php echo app_lang("nfe_number") ?>", "class": "w10p text-right"},
             {title: "<?php echo app_lang("total_invoiced") ?>", "class": "w10p text-right"},
             {title: "<?php echo app_lang("payment_received") ?>", "class": "w10p text-right"},
             {title: "<?php echo app_lang("due") ?>", "class": "w10p text-right"},
