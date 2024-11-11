@@ -2,8 +2,8 @@
     <tr>
         <td style="width: 120px;"><?php echo app_lang("sub_total"); ?></td>
         <td style="width: 120px;"><?php echo $proposal_total_summary->proposal_total_quantity; ?></td>
-        <td style="width: 120px;"><?php echo $proposal_total_summary->proposal_total_quantity_gp; ?></td>
-        <td style="width: 120px;"><?php echo $proposal_total_summary->proposal_total_quantity_add; ?></td>
+        <td style="width: 120px;"><?php echo ($proposal_total_summary->proposal_total_quantity_gp ?? 0); ?></td>
+        <td style="width: 120px;"><?php echo ($proposal_total_summary->proposal_total_quantity_add ?? 0); ?></td>
         <td style="width: 120px;"><?php echo $proposal_total_summary->proposal_total_sum_quantity; ?></td>
         <td style="width: 130px;"><?php echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?></td>
         <td style="width: 130px;"> </td>
