@@ -183,6 +183,7 @@
             columns: [
                 {visible: false, searchable: false},
                 {title: "<?php echo app_lang("item") ?> ", "bSortable": false},
+                {title: "<?php echo app_lang("assigned_to") ?>", "class": "w20p", "bSortable": false},
                 {title: "<?php echo app_lang("rate") ?>", "class": "text-center w10p", "bSortable": false},
                 {title: "<?php echo app_lang("quantity") ?>", "class": "text-center w10p", "bSortable": false},
                 {title: "<?php echo app_lang("quantity_gp") ?>", "class": "text-center w10p", "bSortable": false},

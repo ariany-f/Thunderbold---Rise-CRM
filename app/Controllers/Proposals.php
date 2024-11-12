@@ -645,9 +645,19 @@ class Proposals extends Security_Controller {
         }
         $type = $data->unit_type ? $data->unit_type : "";
 
+        $assigned_to = "";
+
+        if($data->assigned_to_user_id)
+        {
+            $image_url = get_avatar($data->assigned_to_user_avatar, $data->assigned_to);
+            $user = "<span title='".$data->assigned_to."' class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span>";
+            $assigned_to = get_team_member_profile_link($data->assigned_to_user_id, $user);
+        }
+        
         return array(
             $data->sort,
             $item,
+            $assigned_to,
             to_currency($data->rate, $data->currency_symbol),
             to_decimal_format($data->quantity) . " " . $type,
             to_decimal_format($data->quantity_gp) . " " . $type,
