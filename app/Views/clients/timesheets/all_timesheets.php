@@ -47,7 +47,7 @@
                 {visible: projectAmount, title: "<?php echo app_lang('amount'). ' (R$)' ?>", "class": "text-right w50"},
                 {title: "<?php echo app_lang('consultant') ?>", order_by: "member_name"},
                 {visible: false, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
-                {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
+                {visible: false, title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {visible:false, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right w50"}
                 <?php echo $custom_field_headers; ?>,
