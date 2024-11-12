@@ -3331,7 +3331,7 @@ class Projects extends Security_Controller {
             ];
 
             $menus = $nfe = "";
-            if($group_by == "project") {
+            if($group_by != "member") {
                 $options_invoices = array(
                     "project_id" => $data->project_id,
                     "start_timesheet_filter" => $period["start_date"],

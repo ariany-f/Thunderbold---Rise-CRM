@@ -58,7 +58,7 @@
 
                     showHideAppTableColumn(tableInstance, 8, false);
                     showHideAppTableColumn(tableInstance, 9, false);
-                    showHideAppTableColumn(tableInstance, 11, true);
+                    showHideAppTableColumn(tableInstance, 11, false);
                     showHideAppTableColumn(tableInstance, 12, false);
                 } else if (filterParams && filterParams.group_by === "project") {
                     //show project
@@ -84,8 +84,8 @@
 
                     showHideAppTableColumn(tableInstance, 8, true);
                     showHideAppTableColumn(tableInstance, 9, true);
-                    showHideAppTableColumn(tableInstance, 11, false);
-                    showHideAppTableColumn(tableInstance, 12, false);
+                    showHideAppTableColumn(tableInstance, 11, true);
+                    showHideAppTableColumn(tableInstance, 12, true);
                 } else {
                     //show all
                     showHideAppTableColumn(tableInstance, 0, true);
@@ -97,8 +97,8 @@
 
                     showHideAppTableColumn(tableInstance, 8, true);
                     showHideAppTableColumn(tableInstance, 9, true);
-                    showHideAppTableColumn(tableInstance, 11, false);
-                    showHideAppTableColumn(tableInstance, 12, false);
+                    showHideAppTableColumn(tableInstance, 11, true);
+                    showHideAppTableColumn(tableInstance, 12, true);
                 }
 
                 //clear this status for next time load
