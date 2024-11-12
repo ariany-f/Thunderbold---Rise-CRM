@@ -3524,8 +3524,8 @@ class Projects extends Security_Controller {
                 "end_date" => $this->request->getPost("end_date")
             ];
 
-            $menus = "";
-            if($group_by == "project") {
+            $menus = $nfe = "";
+            if($group_by != "member") {
                 $options_invoices = array(
                     "project_id" => $data->project_id,
                     "start_timesheet_filter" => $period["start_date"],
@@ -3534,9 +3534,10 @@ class Projects extends Security_Controller {
         
                 $invoice_for_project = $this->Invoices_model->get_details($options_invoices)->getRow();
 
-
                 if($invoice_for_project && $invoice_for_project->id)
                 {
+                    $nfe = $invoice_for_project->nfe_number ? $invoice_for_project->nfe_number : "";
+
                     $invoice_labels = make_labels_view_data($invoice_for_project->labels_list, true, true);
 
                     if ($this->login_user->user_type == "staff") {
@@ -3587,6 +3588,7 @@ class Projects extends Security_Controller {
                     $manager_member,
                     "<span style='color: red;'>".to_currency($total_manager_amount)."</span>",
                     "<span style='color: green;'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>",
+                    "",
                     $menus
                 );
             }
@@ -3604,6 +3606,7 @@ class Projects extends Security_Controller {
                     $manager_member,
                     "",
                     "",
+                    $nfe,
                     ""
                 );
             }

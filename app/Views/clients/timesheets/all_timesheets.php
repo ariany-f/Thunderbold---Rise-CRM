@@ -49,7 +49,7 @@
                 {visible: false, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {visible:false, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
-                {visible: false, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right w50"}
+                {visible: false, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right w50"},
                 <?php echo $custom_field_headers; ?>,
                 {visible: optionVisibility, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],
