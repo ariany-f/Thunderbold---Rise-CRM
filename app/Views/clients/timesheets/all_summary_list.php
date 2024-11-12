@@ -31,6 +31,7 @@
                 {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('liquid') . ' (R$)'?>", "class": "text-right"},
+                {visible: true, title: "NFe"},
                 {visible:false, title: "<i data-feather='menu' class='icon-16'></i>", "class": "text-center w150"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
