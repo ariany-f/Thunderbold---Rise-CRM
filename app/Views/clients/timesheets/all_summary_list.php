@@ -28,7 +28,7 @@
                 {visible: projectAmount, title: "<?php echo app_lang('amount'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang("consultant"); ?>"},
                 {visible: false, title: "<?php echo app_lang('consultant'). ' (R$)' ?>", "class": "text-right"},
-                {title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
+                {visible: false, title: "<?php echo app_lang('manager_name') ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('liquid') . ' (R$)'?>", "class": "text-right"},
                 {visible: true, title: "NFe"},
@@ -80,6 +80,10 @@
 
                 //clear this status for next time load
                 clearAppTableState(tableInstance);
+            },
+            onInitComplete: function() {
+                // Acessar o dropdown group_by e definir o valor para 'project'
+                $('select[name="group_by"]').val('project').change();
             }
         });
     });

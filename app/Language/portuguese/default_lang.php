@@ -577,6 +577,7 @@ $lang["quantity_gp"] = "Qtd GP";
 $lang["quantity_add"] = "Qtd Adicional";
 $lang["sum_quantity"] = "Total Qtd";
 $lang["rate"] = "Custo/unidade";
+$lang["no_grouping"] = "Sem agrupamento";
 $lang["total_of_all_pages"] = "Total de todas as páginas";
 $lang["sub_total"] = "Sub Total";
 $lang["total"] = "Total";
