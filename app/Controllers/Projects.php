@@ -3624,6 +3624,7 @@ class Projects extends Security_Controller {
                     $manager_member,
                     "",
                     "",
+                    "",
                     ""
                 );
             }
