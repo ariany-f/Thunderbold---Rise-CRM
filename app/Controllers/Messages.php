@@ -1325,6 +1325,18 @@ class Messages extends Security_Controller {
         $this->Messages_model->delete_messages_for_user($id, $this->login_user->id);
     }
 
+    function delete_my_messages_for_everyone($id = 0) {
+
+        if (!$id) {
+            exit();
+        }
+
+        validate_numeric_value($id);
+
+        //delete messages for current user.
+        $this->Messages_model->delete_messages($id);
+    }
+
     function end_my_messages($id = 0) {
 
         if (!$id) {
