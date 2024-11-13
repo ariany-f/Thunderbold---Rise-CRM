@@ -45,8 +45,8 @@
                      $ticket_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>';
                      $project_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid icon"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>';
                      $group_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-coffee icon-18 me-2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>';
-             
-             
+
+
                      $link = null;
                      $group_name = "";
                      if($message_info->project_id)
@@ -60,7 +60,7 @@
                              $link = anchor(get_uri("projects/view/" . $message_info->project_id), "<div style='color: initial;'>" . $project_icon . '&nbsp;' . $message_info->group_name . "</div>");
                          }
                      }
-                     
+
                      if($link)
                      {
                          $group_name = $link;
@@ -72,7 +72,7 @@
                              $group_name = $group_icon . $message_info->group_name;
                          }
                      }
-                     
+
                     ?>
                     <div class="d-flex justify-content-between b-b pt-15 mb-3">
                         <b><?php echo $group_name; ?>
@@ -116,7 +116,7 @@
                                 $message_user_id = $message_info->from_user_id;
                                 if ($mode === "list_groups" && $is_reply != "1" || $mode === "sent_items" && $is_reply != "1" || $mode === "inbox" && $is_reply == "1") {
                                     if(!empty($message_info->to_user_id)) {
-                                        
+
                                         $message_user_id = $message_info->to_user_id;
                                     }
                                     ?>
@@ -136,8 +136,7 @@
                                         <i data-feather="settings" class="icon"></i>
                                     </div>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete_just_for_me'), array("class" => "dropdown-item", "title" => app_lang('delete_just_for_me'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
-                                        <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages_for_everyone/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete_for_good'), array("class" => "dropdown-item", "title" => app_lang('delete_for_good'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
+                                        <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete'), array("class" => "dropdown-item", "title" => app_lang('delete'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
                                         <?php if($login_user->user_type === 'staff') { ?>
                                             <?php if($message_info->ended) { ?>
                                                 <li role="presentation"><?php echo ajax_anchor(get_uri("messages/reactive_my_messages/$message_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reactive_conversation'), array("class" => "dropdown-item", "title" => app_lang('reactive_conversation'), "data-reload-on-success" => "1")); ?> </li>
@@ -177,9 +176,9 @@
                                         {
                                             $status_class = 'bg-green';
                                         }
-                                            
+
                                         $status = "<span class='badge ".$status_class."'>" . ($message_info->task_status_key_name ? app_lang($message_info->task_status_key_name) : $message_info->task_status) . "</span>";
-                                        
+
                                         echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?> <?php echo $status; ?>
                                     <?php } else { ?>
                                         Tarefa: # <?php echo $message_info->task_id . ' ' . $message_info->subject ?>  <span class='badge bg-danger'>Excluída</span>
@@ -219,29 +218,29 @@
     </div>
 
 
-    <div style="max-height: 45vh;overflow-y:scroll;">
-        <?php
-        //if there are more then 5 messages, we'll show load more option.
 
-        if ($found_rows > 5) {
-            ?>    
-            <div id="load-messages" class="b-b">
-                <?php
-                echo js_anchor(app_lang("load_more"), array("class" => "btn btn-default w-100 mt15 spinning-btn", "title" => app_lang("load_more"), "id" => "load-more-messages-link"));
-                ?>
-            </div>
-            <div id="load-more-messages-container"></div>
+    <?php
+    //if there are more then 5 messages, we'll show load more option.
+
+    if ($found_rows > 5) {
+        ?>    
+        <div id="load-messages" class="b-b">
             <?php
-        }
-
-
-        
-
-        foreach ($replies as $reply_info) {
+            echo js_anchor(app_lang("load_more"), array("class" => "btn btn-default w-100 mt15 spinning-btn", "title" => app_lang("load_more"), "id" => "load-more-messages-link"));
             ?>
-            <?php echo view("messages/reply_row", array("reply_info" => $reply_info, "ended" => $message_info->ended)); ?>
-        <?php } ?>
-    </div>
+        </div>
+        <div id="load-more-messages-container"></div>
+        <?php
+    }
+
+
+
+
+    foreach ($replies as $reply_info) {
+        ?>
+        <?php echo view("messages/reply_row", array("reply_info" => $reply_info, "ended" => $message_info->ended)); ?>
+    <?php } ?>
+
     <?php if(!$message_info->ended) { ?>
     <div id="reply-form-container">
         <div id="reply-form-dropzone" class="post-dropzone">
@@ -250,7 +249,7 @@
                     <div class="box-content avatar avatar-md pr15 d-table-cell">
                         <img src="<?php echo get_avatar($login_user->image, ($login_user->first_name . ' ' . $login_user->last_name)); ?>" alt="..." />
                     </div>
-                
+
                     <div class="box-content mb-3 form-group">
                         <input type="hidden" name="message_id" value="<?php echo $message_info->id; ?>">
                         <?php
@@ -290,7 +289,6 @@
                         data: {group_id: <?php echo $message_info->group_id; ?>}
                     });
                 <?php } ?>
-
                 $("#message-reply-form").appForm({
                     isModal: false,
                     onSuccess: function (result) {
@@ -337,4 +335,3 @@
             });
         }
     </script>
-</div>
