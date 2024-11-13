@@ -136,7 +136,8 @@
                                         <i data-feather="settings" class="icon"></i>
                                     </div>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete'), array("class" => "dropdown-item", "title" => app_lang('delete'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
+                                        <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete_just_for_me'), array("class" => "dropdown-item", "title" => app_lang('delete_just_for_me'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
+                                        <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages_for_everyone/$message_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete_for_good'), array("class" => "dropdown-item", "title" => app_lang('delete_for_good'), "data-fade-out-on-success" => ".message-container-$message_info->id")); ?> </li>
                                         <?php if($login_user->user_type === 'staff') { ?>
                                             <?php if($message_info->ended) { ?>
                                                 <li role="presentation"><?php echo ajax_anchor(get_uri("messages/reactive_my_messages/$message_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reactive_conversation'), array("class" => "dropdown-item", "title" => app_lang('reactive_conversation'), "data-reload-on-success" => "1")); ?> </li>

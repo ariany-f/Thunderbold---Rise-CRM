@@ -433,6 +433,14 @@ class Messages_model extends Crud_model {
         return $this->db->query($sql);
     }
 
+    function delete_messages($message_id = 0) {
+        $messages_table = $this->db->prefixTable('messages');
+
+        $sql = "UPDATE $messages_table SET $messages_table.deleted = 1
+        WHERE $messages_table.id=$message_id OR $messages_table.message_id=$message_id";
+        return $this->db->query($sql);
+    }
+
     function reactive_messages_for_user($message_id = 0, $user_id = 0) {
         $messages_table = $this->db->prefixTable('messages');
 

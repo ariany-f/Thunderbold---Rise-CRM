@@ -367,6 +367,9 @@ $lang["invite_an_user"] = "Convidar um usuário para %s"; // Convidar um usuári
 $lang["unit_type"] = "Tipo de unidade";
 
 /* projects */
+$lang["delete_for_everyone"] = "Excluir para todos";
+$lang["delete_for_good"] = "Excluir permanentemente";
+$lang["delete_just_for_me"] = "Excluir apenas para mim";
 $lang["select"] = "Selecione usuário/cliente";
 $lang["save_member"] = "Add membro";
 $lang["add_project"] = "Add projeto";
