@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table id="message-table" class="display no-thead no-padding clickable" width="100%">            
+                                <table id="message-table" class="display no-thead no-padding clickable" cellspacing="0" width="100%">            
                                 </table>
                             </div>
                         </div>
@@ -92,7 +92,7 @@
     /* .datatable-tools:first-child {
         display:  none;
     } */
-     .datatable-tools #message-table_filter {
+    .datatable-tools #message-table_filter {
         display: none;
      }
 </style>
