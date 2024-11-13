@@ -33,7 +33,7 @@
                                         <li role="presentation"><?php echo modal_anchor(get_uri("messages/edit_message_modal_form/$reply_info->id"), "<i data-feather='edit-2' class='icon-16'></i> " . app_lang('edit'), array("class" => "dropdown-item", "title" => app_lang('edit'), "data-post-id" => $reply_info->id)); ?> </li>
                                         <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages_for_everyone/$reply_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete_for_everyone'), array("class" => "dropdown-item", "title" => app_lang('delete_for_everyone'), "data-fade-out-on-success" => ".message-reply-$reply_info->id")); ?> </li>
                                     <?php } else { ?>
-                                        <li role="presentation"><?php //echo ajax_anchor(get_uri("messages/reply_reply_message/$reply_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reply'), array("class" => "dropdown-item", "title" => app_lang('reply'))); ?> </li>
+                                        <!-- <li role="presentation"><?php //echo ajax_anchor(get_uri("messages/reply_reply_message/$reply_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reply'), array("class" => "dropdown-item", "title" => app_lang('reply'))); ?> </li> -->
                                     <?php } ?>
                                 </ul>
                             </span>
