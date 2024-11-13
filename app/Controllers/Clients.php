@@ -109,10 +109,12 @@ class Clients extends Security_Controller {
         ));
 
         $company_name = $this->request->getPost('company_name');
+        $legal_name = $this->request->getPost('legal_name');
         $company_cnpj = $this->request->getPost('company_cnpj');
 
         $data = array(
             "company_name" => $company_name,
+            "legal_name" => $legal_name,
             "company_cnpj" => $company_cnpj,
             "type" => $this->request->getPost('account_type'),
             "address" => $this->request->getPost('address'),
@@ -155,6 +157,12 @@ class Clients extends Security_Controller {
         //check duplicate company name, if found then show an error message
         if (get_setting("disallow_duplicate_client_company_name") == "1" && $this->Clients_model->is_duplicate_company_name($data["company_name"], $client_id)) {
             echo json_encode(array("success" => false, 'message' => app_lang("account_already_exists_for_your_company_name")));
+            exit();
+        }
+
+        //check duplicate company name, if found then show an error message
+        if ($this->Clients_model->is_duplicate_company_cnpj($data["company_cnpj"], $client_id)) {
+            echo json_encode(array("success" => false, 'message' => app_lang("account_already_exists_for_your_company_cnpj")));
             exit();
         }
 
@@ -2050,7 +2058,7 @@ class Clients extends Security_Controller {
 
         //add company info
         $client_info = $this->Clients_model->get_one($user_info->client_id);
-        $required_client_info_array = array("company_name", "address", "city", "state", "zip", "country", "phone", "website", "vat_number");
+        $required_client_info_array = array("company_name", "legal_name", "address", "city", "state", "zip", "country", "phone", "website", "company_cnpj");
         foreach ($required_client_info_array as $field) {
             if ($client_info->$field) {
                 $data .= app_lang($field) . ": " . $client_info->$field . "\n";

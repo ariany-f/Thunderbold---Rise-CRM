@@ -345,6 +345,17 @@ class Clients_model extends Crud_model {
         }
     }
 
+    function is_duplicate_company_cnpj($company_cnpj, $id = 0) {
+
+        $result = $this->get_all_where(array("company_cnpj" => $company_cnpj, "is_lead" => 0, "deleted" => 0));
+        if (count($result->getResult()) && $result->getRow()->id != $id) {
+            return $result->getRow();
+        } else {
+            return false;
+        }
+    }
+
+
     function get_leads_kanban_details($options = array()) {
         $clients_table = $this->db->prefixTable('clients');
         $lead_source_table = $this->db->prefixTable('lead_source');
