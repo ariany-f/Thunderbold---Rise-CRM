@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS `lead_status` (
 CREATE TABLE IF NOT EXISTS `clients` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `company_name` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
+  `legal_name` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   `company_cnpj` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `image` text COLLATE utf8_unicode_ci,
   `type` enum('organization','person') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'organization',

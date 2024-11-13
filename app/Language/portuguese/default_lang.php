@@ -64,6 +64,7 @@ $lang["title"] = "Título";
 $lang["reset"] = "Resetar";
 $lang["share_with"] = "Compartilhar com";
 $lang["company_name"] = "Nome da empresa";
+$lang["legal_name"] = "Razão Social";
 $lang["company_cnpj"] = "CNPJ";
 $lang["address"] = "Endereço";
 $lang["city"] = "Cidade";
@@ -1268,6 +1269,7 @@ $lang["client_permissions"] = "Permissões de cliente";
 
 $lang["invoice_over_payment_error_message"] = "Você não pode pagar mais do que a fatura devida.";
 $lang["account_already_exists_for_your_company_name"] = "Já existe uma conta para o nome da sua empresa.";
+$lang["account_already_exists_for_your_company_cnpj"] = "Já existe uma conta para o CNPJ da sua empresa.";
 $lang["personal_language"] = "Linguagem pessoal";
 $lang["no_messages_text"] = "Você ainda não tem mensagens";
 $lang["no_users_found"] = "Nenhum usuário encontrado";

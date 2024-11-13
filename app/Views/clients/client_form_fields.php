@@ -99,6 +99,23 @@
 
 <div class="form-group">
     <div class="row">
+        <label for="legal_name" class="<?php echo $label_column; ?>"><?php echo app_lang('legal_name'); ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "legal_name",
+                "name" => "legal_name",
+                "value" => $model_info->legal_name ? $model_info->legal_name : "",
+                "class" => "form-control",
+                "placeholder" => app_lang('legal_name')
+            ));
+            ?>
+
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <div class="row">
         <label for="company_cnpj" class="<?php echo $label_column; ?>"><?php echo app_lang('company_cnpj'); ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
