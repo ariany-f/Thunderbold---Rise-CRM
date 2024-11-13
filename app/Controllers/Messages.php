@@ -1070,6 +1070,7 @@ class Messages extends Security_Controller {
         if ($save_id) {
             $options = array("id" => $save_id, "user_id" => $this->login_user->id);
             $view_data['reply_info'] = $this->Messages_model->get_details($options)->row;
+            $view_data['ended'] = 0;
 
             echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), "id" => $save_id, 'data' => $this->template->view("messages/reply_row", $view_data)));
         } else {
@@ -1218,6 +1219,7 @@ class Messages extends Security_Controller {
                 } else {
                     $options = array("id" => $save_id, "user_id" => $this->login_user->id);
                     $view_data['reply_info'] = $this->Messages_model->get_details($options)->row;
+                    $view_data['ended'] = 0;
                     echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), 'data' => $this->template->view("messages/reply_row", $view_data)));
                 }
 
