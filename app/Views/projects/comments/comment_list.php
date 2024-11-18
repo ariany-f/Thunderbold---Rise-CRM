@@ -76,13 +76,23 @@ foreach ($comments as $comment) {
                         </span>
 
                     </div>
-                    <?php if(strpos($comment->description, '`') !== false) { ?>
-                        <p style="background: #f4f4f4;border: 1px solid #ddd;border-left: 3px solid #f36d33;color: #666;page-break-inside: avoid;font-family: monospace;font-size: 15px;line-height: 1.6;margin-bottom: 1.6em;max-width: 100%;overflow: auto;padding: 1em 1.5em;display: block;word-wrap: break-word;">
-                            <?php echo convert_mentions(convert_comment_link(process_images_from_content(str_replace('`', '', $comment->description)))); ?>
-                        </p>
-                    <?php } else { ?>
-                        <p><?php echo convert_mentions(convert_comment_link(process_images_from_content($comment->description))); ?></p>
-                    <?php } ?>
+                    <?php 
+                        $pattern = '/`([^`]+)`/'; // Regex para capturar texto entre crases
+                        $parts = preg_split($pattern, $comment->description, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+                        foreach ($parts as $index => $part) {
+                            // Alterna entre texto normal e código baseado no índice
+                            if ($index % 2 === 0) {
+                                // Texto normal
+                                echo '<p>' . convert_mentions(convert_comment_link(process_images_from_content($part))) . '</p>';
+                            } else {
+                                // Texto entre crases (código)
+                                echo '<p style="background: #f4f4f4; border: 1px solid #ddd; border-left: 3px solid #f36d33; color: #666; page-break-inside: avoid; font-family: monospace; font-size: 15px; line-height: 1.6; margin-bottom: 1.6em; max-width: 100%; overflow: auto; padding: 1em 1.5em; display: block; word-wrap: break-word;">';
+                                echo $part;
+                                echo '</p>';
+                            }
+                        }
+                    ?>
 
                     <div class="comment-image-box clearfix">
 
