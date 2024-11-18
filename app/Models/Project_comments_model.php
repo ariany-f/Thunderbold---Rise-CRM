@@ -185,6 +185,7 @@ class Project_comments_model extends Crud_model {
             $data["project_id"] = $customer_feedback_id;
             parent::init_activity_log("customer_feedback", "description", "project", "project_id", "customer_feedback", "customer_feedback_id");
         }
+        
         return parent::ci_save($data);
     }
 
