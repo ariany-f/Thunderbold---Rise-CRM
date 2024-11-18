@@ -64,14 +64,38 @@ if (isset($task_id)) {
         $('#code_comment').on('click', function() {
             let input = $('#comment_description');
             let value = input.val();
+            let selectionStart = input[0].selectionStart; // Posição inicial da seleção
+            let selectionEnd = input[0].selectionEnd;   // Posição final da seleção
 
-            // Verifica se o valor começa e termina com crase
-            if (value.startsWith('`') && value.endsWith('`')) {
-                // Remove as crases
-                input.val(value.slice(1, -1));
+            if (selectionStart !== selectionEnd) {
+                // Texto selecionado
+                let beforeSelection = value.slice(0, selectionStart); // Texto antes da seleção
+                let selectedText = value.slice(selectionStart, selectionEnd); // Texto selecionado
+                let afterSelection = value.slice(selectionEnd); // Texto após a seleção
+
+                // Verifica se o texto selecionado já está entre crases
+                if (selectedText.startsWith('`') && selectedText.endsWith('`')) {
+                    // Remove as crases do texto selecionado
+                    selectedText = selectedText.slice(1, -1);
+                } else {
+                    // Adiciona crases ao texto selecionado
+                    selectedText = '`' + selectedText + '`';
+                }
+
+                // Atualiza o valor do input com o texto modificado
+                input.val(beforeSelection + selectedText + afterSelection);
+
+                // Mantém a seleção ao redor do texto modificado
+                input[0].setSelectionRange(selectionStart, selectionStart + selectedText.length);
             } else {
-                // Adiciona as crases
-                input.val('`' + value + '`');
+                // Sem texto selecionado: Aplica comportamento ao texto completo
+                if (value.startsWith('`') && value.endsWith('`')) {
+                    // Remove as crases do texto completo
+                    input.val(value.slice(1, -1));
+                } else {
+                    // Adiciona crases ao texto completo
+                    input.val('`' + value + '`');
+                }
             }
         });
 
