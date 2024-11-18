@@ -95,6 +95,10 @@ class Clean_data {
             return $str;
         }
 
+        if (preg_match('/^UPDATE|INSERT|DELETE|SELECT|FROM|WHERE/i', $str)) {
+            return $str; // Retorna o SQL original sem modificação
+        }
+
         // Remove Invisible Characters
         $str = is_null($str) ? "" : $str;
         $str = remove_invisible_characters($str);
