@@ -154,16 +154,19 @@ class Clients extends Security_Controller {
 
         $data = clean_data($data);
 
-        //check duplicate company name, if found then show an error message
-        if (get_setting("disallow_duplicate_client_company_name") == "1" && $this->Clients_model->is_duplicate_company_name($data["company_name"], $client_id)) {
-            echo json_encode(array("success" => false, 'message' => app_lang("account_already_exists_for_your_company_name")));
-            exit();
-        }
+        if(!$client_id) {
 
-        //check duplicate company name, if found then show an error message
-        if ($this->Clients_model->is_duplicate_company_cnpj($data["company_cnpj"], $client_id)) {
-            echo json_encode(array("success" => false, 'message' => app_lang("account_already_exists_for_your_company_cnpj")));
-            exit();
+            //check duplicate company name, if found then show an error message
+            if (get_setting("disallow_duplicate_client_company_name") == "1" && $this->Clients_model->is_duplicate_company_name($data["company_name"], $client_id)) {
+                echo json_encode(array("success" => false, 'message' => app_lang("account_already_exists_for_your_company_name")));
+                exit();
+            }
+
+            //check duplicate company name, if found then show an error message
+            if ($this->Clients_model->is_duplicate_company_cnpj($data["company_cnpj"], $client_id)) {
+                echo json_encode(array("success" => false, 'message' => app_lang("account_already_exists_for_your_company_cnpj")));
+                exit();
+            }
         }
 
         $save_id = $this->Clients_model->ci_save($data, $client_id);
