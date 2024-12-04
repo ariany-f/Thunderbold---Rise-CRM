@@ -86,7 +86,7 @@
         <?php } else { ?>
 
             <div class="row">
-                <label for="start_date" class=" col-md-3 col-sm-3"><?php echo app_lang('start_date'); ?></label>
+                <label for="start_dt" class=" col-md-3 col-sm-3"><?php echo app_lang('start_date'); ?></label>
                 <div class="col-md-4 col-sm-4 form-group">
                     <?php
                     $in_time = is_date_exists($model_info->start_time) ? convert_date_utc_to_local($model_info->start_time) : "";
@@ -98,7 +98,7 @@
                     }
 
                     echo form_input(array(
-                        "id" => "start_date",
+                        "id" => "start_dt",
                         "name" => "start_date",
                         "value" => $in_time ? date("Y-m-d", strtotime($in_time)) : "",
                         "class" => "form-control",
@@ -145,7 +145,7 @@
                         "autocomplete" => "off",
                         "data-rule-required" => true,
                         "data-msg-required" => app_lang("field_required"),
-                        "data-rule-greaterThanOrEqual" => "#start_date",
+                        "data-rule-greaterThanOrEqual" => "#start_dt",
                         "data-msg-greaterThanOrEqual" => app_lang("end_date_must_be_equal_or_greater_than_start_date")
                     ));
                     ?>
@@ -291,12 +291,13 @@
         $("#user_id").select2({data: <?php echo json_encode($project_members_dropdown); ?>});
         $("#task_id").select2({data: <?php echo $tasks_dropdown; ?>});
 
-        setDatePicker("#start_date, #end_date, #date");
+        setDatePicker("#start_dt, #end_date");
+        setDatePicker("#date");
         //setTimePicker("#start_time, #end_time");
        
         setTimeout(() => {
             $("input[name='start_time']").mask('00:00');
-            $("#end_time").mask('00:00');
+            $("input[name='end_time']").mask('00:00');
         }, 1000);
 
         $('[data-bs-toggle="tooltip"]').tooltip();
