@@ -18,7 +18,13 @@ class Expenses extends Security_Controller {
 
         $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("expenses", $this->login_user->is_admin, $this->login_user->user_type);
         $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("expenses", $this->login_user->is_admin, $this->login_user->user_type);
-
+        $view_data['group_by_dropdown'] = json_encode(
+            array(
+                array("id" => "", "text" => "- " . app_lang("group_by") . " -"),
+                array("id" => "member", "text" => app_lang("member")),
+                array("id" => "project", "text" => app_lang("project")),
+                array("id" => "member/project", "text" => app_lang("member/project"))
+        ));
         $view_data['categories_dropdown'] = $this->_get_categories_dropdown();
         $view_data['members_dropdown'] = $this->_get_team_members_dropdown();
         $view_data["projects_dropdown"] = $this->_get_projects_dropdown_for_income_and_expenses("expenses");
@@ -235,10 +241,11 @@ class Expenses extends Security_Controller {
         $category_id = $this->request->getPost('category_id');
         $project_id = $this->request->getPost('project_id');
         $user_id = $this->request->getPost('user_id');
+        $group_by = $this->request->getPost("group_by");
 
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("expenses", $this->login_user->is_admin, $this->login_user->user_type);
 
-        $options = array("start_date" => $start_date, "end_date" => $end_date, "category_id" => $category_id, "project_id" => $project_id, "user_id" => $user_id, "custom_fields" => $custom_fields, "recurring" => $recurring, "custom_field_filter" => $this->prepare_custom_field_filter_values("expenses", $this->login_user->is_admin, $this->login_user->user_type));
+        $options = array("group_by" => $group_by, "start_date" => $start_date, "end_date" => $end_date, "category_id" => $category_id, "project_id" => $project_id, "user_id" => $user_id, "custom_fields" => $custom_fields, "recurring" => $recurring, "custom_field_filter" => $this->prepare_custom_field_filter_values("expenses", $this->login_user->is_admin, $this->login_user->user_type));
         $list_data = $this->Expenses_model->get_details($options)->getResult();
 
         $result = array();
@@ -339,9 +346,19 @@ class Expenses extends Security_Controller {
             $tax2 = $data->amount * ($data->tax_percentage2 / 100);
         }
 
+
+        $member = "-";
+
+       
+        $image_url = get_avatar($data->linked_user_avatar, $data->linked_user_name);
+        $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->linked_user_name";
+
+        $member = get_team_member_profile_link($data->user_id, $user);
+
         $row_data = array(
             $data->expense_date,
             modal_anchor(get_uri("expenses/expense_details"), format_to_date($data->expense_date, false), array("title" => app_lang("expense_details"), "data-post-id" => $data->id)),
+            $member,
             $data->category_title,
             $data->title,
             $description,

@@ -3192,7 +3192,6 @@ class Projects extends Security_Controller {
     }
 
     /* load timesheets summary view for a project */
-
     function timesheet_summary($project_id) {
         validate_numeric_value($project_id);
 
@@ -3202,8 +3201,6 @@ class Projects extends Security_Controller {
         if (!$this->can_view_timesheet($project_id)) {
             app_redirect("forbidden");
         }
-
-
 
         $view_data['project_id'] = $project_id;
 
@@ -3281,7 +3278,7 @@ class Projects extends Security_Controller {
                 $member = get_team_member_profile_link($data->user_id, $user);
             }
 
-            if($data->manager_id and $group_by != "member")
+            if($data->manager_id and $group_by != "member" and $group_by != "member/project" )
             {
                 $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
                 $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
@@ -3296,7 +3293,7 @@ class Projects extends Security_Controller {
             
             $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
 
-            if ($group_by != "member") {
+            if ($group_by != "member" and $group_by != "member/project" ) {
                 $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
                 if (!$data->task_title) {
                     $task_title = app_lang("not_specified");
@@ -3336,7 +3333,7 @@ class Projects extends Security_Controller {
             ];
 
             $menus = $nfe = "";
-            if($group_by != "member") {
+            if($group_by != "member" and $group_by != "member/project" ) {
                 $options_invoices = array(
                     "project_id" => $data->project_id,
                     "start_timesheet_filter" => $period["start_date"],
@@ -3365,12 +3362,18 @@ class Projects extends Security_Controller {
                 }
             }
 
-            if($group_by == "member") {
+            if($group_by == "member" or $group_by == "member/project") {
+
                 $options_expenses = array(
                     "user_id" => $data->user_id,
                     "start_timesheet_filter" => $period["start_date"],
                     "end_timesheet_filter" => $period["end_date"]
                 );
+
+                if($group_by == "member/project")
+                {
+                    $options_expenses["project_id"] = $data->project_id;
+                }
         
                 $expenses_for_member = $this->Expenses_model->get_details($options_expenses)->getRow();
                 
@@ -3381,7 +3384,14 @@ class Projects extends Security_Controller {
                 }
                 else
                 {
-                    $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense'), "data-reload-on-success" => "1"));
+                    if($group_by == "member/project")
+                    {
+                        $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"] . "/" . $data->project_id), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense'), "data-reload-on-success" => "1"));
+                    }
+                    else
+                    {
+                        $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense'), "data-reload-on-success" => "1"));
+                    }
                 }
             }
 
@@ -3475,7 +3485,7 @@ class Projects extends Security_Controller {
                 $member = get_team_member_profile_link($data->user_id, $user);
             }
 
-            if($data->manager_id and $group_by != "member")
+            if($data->manager_id and $group_by != "member" and $group_by != "member/project")
             {
                 $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
                 $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
@@ -3490,7 +3500,7 @@ class Projects extends Security_Controller {
             
             $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
 
-            if ($group_by != "member") {
+            if ($group_by != "member" and $group_by != "member/project" ) {
                 $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
                 if (!$data->task_title) {
                     $task_title = app_lang("not_specified");
@@ -3530,7 +3540,7 @@ class Projects extends Security_Controller {
             ];
 
             $menus = $nfe = "";
-            if($group_by != "member") {
+            if($group_by != "member" and $group_by != "member/project" ) {
                 $options_invoices = array(
                     "project_id" => $data->project_id,
                     "start_timesheet_filter" => $period["start_date"],
@@ -3559,7 +3569,7 @@ class Projects extends Security_Controller {
                 }
             }
 
-            if($group_by == "member") {
+            if($group_by == "member" or $group_by == "member/project" ) {
                 $options_expenses = array(
                     "user_id" => $data->user_id,
                     "start_timesheet_filter" => $period["start_date"],
@@ -3692,7 +3702,7 @@ class Projects extends Security_Controller {
     
     
     /* generate expense for a consultant in a specific period */
-    function generate_expense($user_id = 0, $start_date = "", $end_date = "") {
+    function generate_expense($user_id = 0, $start_date = "", $end_date = "", $project_id = 0) {
         
         $this->access_only_team_members();
         if($user_id == 0)
@@ -3702,12 +3712,19 @@ class Projects extends Security_Controller {
 
         $user_info = $this->Users_model->get_one($user_id);
 
-        $timesheet_info = $this->Timesheets_model->get_summary_details(array("group_by" => "member", "user_id" => $user_id, "start_date" => $start_date, "end_date" => $end_date))->getRow();
+        if($project_id == 0)
+        {
+            $timesheet_info = $this->Timesheets_model->get_summary_details(array("group_by" => "member", "user_id" => $user_id, "start_date" => $start_date, "end_date" => $end_date))->getRow();
+        }
+        else {
+            $timesheet_info = $this->Timesheets_model->get_summary_details(array("group_by" => "member/project", "project_id" => $project_id, "user_id" => $user_id, "start_date" => $start_date, "end_date" => $end_date))->getRow();
+        }
 
         if($timesheet_info)
         {
             $expense_data = [
                 "user_id" => $user_id,
+                "project_id" => $project_id,
                 "expense_date" => get_current_utc_time(),
                 "start_timesheet_filter" => $start_date,
                 "end_timesheet_filter" => $end_date,
@@ -3844,6 +3861,7 @@ class Projects extends Security_Controller {
                     array("id" => "", "text" => "- " . app_lang("group_by") . " -"),
                     array("id" => "member", "text" => app_lang("member")),
                     array("id" => "project", "text" => app_lang("project")),
+                    array("id" => "member/project", "text" => app_lang("member/project")),
                     array("id" => "task", "text" => app_lang("task"))
         ));
 

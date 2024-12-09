@@ -65,6 +65,18 @@
                     showHideAppTableColumn(tableInstance, 9, false);
                     showHideAppTableColumn(tableInstance, 11, false);
                     showHideAppTableColumn(tableInstance, 12, true);
+                } else if (filterParams && filterParams.group_by === "member/project") {
+                    //show member
+                    showHideAppTableColumn(tableInstance, 0, true);
+                    showHideAppTableColumn(tableInstance, 1, true);
+                    showHideAppTableColumn(tableInstance, 2, false);
+                    showHideAppTableColumn(tableInstance, 3, true);
+                    showHideAppTableColumn(tableInstance, 4, false);
+                    showHideAppTableColumn(tableInstance, 6, true);
+                    showHideAppTableColumn(tableInstance, 8, false);
+                    showHideAppTableColumn(tableInstance, 9, false);
+                    showHideAppTableColumn(tableInstance, 11, false);
+                    showHideAppTableColumn(tableInstance, 12, true);
                 } else if (filterParams && filterParams.group_by === "project") {
                     //show project
                     showHideAppTableColumn(tableInstance, 0, true);

@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('America/Sao_Paulo');
+
 /**
  * get user's time zone offset 
  * 
@@ -251,6 +253,7 @@ if (!function_exists('calculate_hours_diff')) {
         $start_timestamp = strtotime($start_time);
         $end_timestamp = strtotime($end_time);
         $diff_in_seconds = $end_timestamp - $start_timestamp;
+        
         return $diff_in_seconds / 3600; // Convertendo para horas
     }
 }
