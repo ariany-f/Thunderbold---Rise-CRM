@@ -3365,7 +3365,6 @@ class Projects extends Security_Controller {
             if($group_by == "member" or $group_by == "member/project") {
 
                 $options_expenses = array(
-                    "user_id" => $data->user_id,
                     "start_timesheet_filter" => $period["start_date"],
                     "end_timesheet_filter" => $period["end_date"]
                 );
@@ -3374,13 +3373,19 @@ class Projects extends Security_Controller {
                 {
                     $options_expenses["project_id"] = $data->project_id;
                 }
-        
-                $expenses_for_member = $this->Expenses_model->get_details($options_expenses)->getRow();
-                
-                if($expenses_for_member && $expenses_for_member->id)
+                if( $group_by == "member" or $group_by == "member/project")
                 {
-                    $menus .= modal_anchor(get_uri("expenses/expense_details"), "Despesa #" . $expenses_for_member->id , array("title" => app_lang("expense_details"), "data-post-id" => $expenses_for_member->id));
-                   // $menus.= "<br/><a class='' href='".get_uri("expenses/view/" . $expenses_for_member->id)."'>Despesa #" .$expenses_for_member->id . "</a>";
+                    $options_expenses["user_id"] = $data->user_id;
+                }
+        
+                $expenses_for_member = $this->Expenses_model->get_details($options_expenses)->getResult();
+                
+                if($expenses_for_member && count($expenses_for_member) > 0)
+                {
+                    if(count($expenses_for_member) == 1)
+                    {
+                        $menus .= modal_anchor(get_uri("expenses/expense_details"), "Despesa #" . $expenses_for_member[0]->id , array("title" => app_lang("expense_details"), "data-post-id" => $expenses_for_member[0]->id));
+                    }
                 }
                 else
                 {
