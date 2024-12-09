@@ -93,9 +93,9 @@
             printColumns: combineCustomFieldsColumns([1, 2, 3, 4, 7, 8, 9, 10, 11], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([1, 2, 3, 4, 7, 8, 9, 10, 11], '<?php echo $custom_field_headers; ?>'),
             summation: [
-            {column: 8, dataType: 'currency', conversionRate: <?php echo $conversion_rate; ?>},
             {column: 9, dataType: 'currency', conversionRate: <?php echo $conversion_rate; ?>},
-            {column: 10, dataType: 'currency', conversionRate: <?php echo $conversion_rate; ?>}
+            {column: 10, dataType: 'currency', conversionRate: <?php echo $conversion_rate; ?>},
+            {column: 11, dataType: 'currency', conversionRate: <?php echo $conversion_rate; ?>}
             ]
     });
     };
