@@ -261,6 +261,9 @@ class Timesheets_model extends Crud_model {
         if ($group_by === "member") {
             $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
             $group_general = "new_summary_table.user_id";
+        } else if ($group_by === "member/project") {
+            $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
+            $group_general = "new_summary_table.user_id, new_summary_table.project_id";
         } else if ($group_by === "task") {
             $group_by_option = "$timesheet_table.user_id, $timesheet_table.task_id, $timesheet_table.project_id";
             $group_general = "new_summary_table.task_id";

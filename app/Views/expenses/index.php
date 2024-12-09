@@ -49,10 +49,11 @@
             dateRangeType: dateRange,
             filterDropdown: [
             {name: "category_id", class: "w200", options: <?php echo $categories_dropdown; ?>},
-            {name: "user_id", class: "w200", options: <?php echo $members_dropdown; ?>}
+            {name: "user_id", class: "w200", options: <?php echo $members_dropdown; ?>},
 <?php if ($projects_dropdown) { ?>
-                , {name: "project_id", class: "w200", options: <?php echo $projects_dropdown; ?>}
+                 {name: "project_id", class: "w200", options: <?php echo $projects_dropdown; ?>},
 <?php } ?>
+            {name: "group_by", class: "w200", options: <?php echo $group_by_dropdown; ?>}
             ,<?php echo $custom_field_filters; ?>
             ],
             order: [[0, "asc"]],
@@ -60,6 +61,7 @@
             columns: [
             {visible: false, searchable: false},
             {title: '<?php echo app_lang("date") ?>', "iDataSort": 0, "class": "all"},
+            {title: '<?php echo app_lang("member") ?>'},
             {title: '<?php echo app_lang("category") ?>'},
             {title: '<?php echo app_lang("title") ?>', "class": "all"},
             {title: '<?php echo app_lang("description") ?>'},
@@ -75,7 +77,37 @@
             ],
             printColumns: combineCustomFieldsColumns([1, 2, 3, 4, 6, 7, 8, 9], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([1, 2, 3, 4, 6, 7, 8, 9], '<?php echo $custom_field_headers; ?>'),
-            summation: [{column: 6, dataType: 'currency'}, {column: 7, dataType: 'currency'}, {column: 8, dataType: 'currency'}, {column: 9, dataType: 'currency'}]
+            summation: [{column: 6, dataType: 'currency'}, {column: 7, dataType: 'currency'}, {column: 8, dataType: 'currency'}, {column: 9, dataType: 'currency'}],
+            onRelaodCallback: function (tableInstance, filterParams) {
+
+            //we'll show/hide the task/member column based on the group by status
+            if (filterParams && filterParams.group_by === "member") {
+                showHideAppTableColumn(tableInstance, 2, true);
+                showHideAppTableColumn(tableInstance, 4, false);
+                showHideAppTableColumn(tableInstance, 5, false);
+                showHideAppTableColumn(tableInstance, 6, false);
+            } else if (filterParams && filterParams.group_by === "project") {
+                showHideAppTableColumn(tableInstance, 2, false);
+                showHideAppTableColumn(tableInstance, 4, true);
+                showHideAppTableColumn(tableInstance, 5, true);
+                showHideAppTableColumn(tableInstance, 6, true);
+            } else if (filterParams && filterParams.group_by === "member/project") {
+                showHideAppTableColumn(tableInstance, 2, true);
+                showHideAppTableColumn(tableInstance, 4, true);
+                showHideAppTableColumn(tableInstance, 5, true);
+                showHideAppTableColumn(tableInstance, 6, true);
+            } else {
+                showHideAppTableColumn(tableInstance, 2, true);
+                showHideAppTableColumn(tableInstance, 4, true);
+                showHideAppTableColumn(tableInstance, 5, true);
+                showHideAppTableColumn(tableInstance, 6, true);
+                // showHideAppTableColumn(tableInstance, 2, false);
+                // showHideAppTableColumn(tableInstance, 6, true);
+            }
+
+            //clear this status for next time load
+            clearAppTableState(tableInstance);
+            }
     });
     };
     $(document).ready(function () {

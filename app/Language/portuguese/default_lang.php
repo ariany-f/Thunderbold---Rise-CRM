@@ -380,6 +380,7 @@ $lang["project"] = "Projeto";
 $lang["projects"] = "Projetos";
 $lang["all_projects"] = "Todos os Projetos";
 $lang["member"] = "Membro";
+$lang["member/project"] = "Membro/Projeto";
 $lang["overview"] = "Visão geral";
 $lang["project_members"] = "Os membros do projeto";
 $lang["hour_amount"] = "Valor/Hora";
