@@ -8,6 +8,11 @@
             projectAmount = true;
     <?php } ?>
 
+    var optionVisibility = false;
+    <?php if ($login_user->user_type === "staff" && ($login_user->is_admin || get_array_value($login_user->permissions, "timesheet_manage_permission"))) { ?>
+                optionVisibility = true;
+    <?php } ?>
+
     $(document).ready(function () {
         $("#all-timesheet-summary-table").appTable({
             source: '<?php echo_uri("projects/timesheet_summary_list_data/"); ?>',
@@ -37,7 +42,7 @@
                 {visible:projectAmount, title: "<?php echo app_lang('comission'). ' (R$)' ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('liquid') . ' (R$)'?>", "class": "text-right"},
                 {visible: true, title: "NFe"},
-                {visible:false, title: "<i data-feather='menu' class='icon-16'></i>", "class": "text-center w150"}
+                {visible: optionVisibility, title: "<i data-feather='menu' class='icon-16'></i>", "class": "text-center w150"}
             ],
             printColumns: [0, 1, 2, 3, 4, 5],
             xlsColumns: [0, 1, 2, 3, 4, 5],
@@ -59,7 +64,7 @@
                     showHideAppTableColumn(tableInstance, 8, false);
                     showHideAppTableColumn(tableInstance, 9, false);
                     showHideAppTableColumn(tableInstance, 11, false);
-                    showHideAppTableColumn(tableInstance, 12, false);
+                    showHideAppTableColumn(tableInstance, 12, true);
                 } else if (filterParams && filterParams.group_by === "project") {
                     //show project
                     showHideAppTableColumn(tableInstance, 0, true);
