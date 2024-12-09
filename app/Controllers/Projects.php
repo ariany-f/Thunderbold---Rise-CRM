@@ -2702,6 +2702,7 @@ class Projects extends Security_Controller {
                 $start_time = convert_time_to_24hours_format($start_time);
                 $end_time = convert_time_to_24hours_format($end_time);
             }
+
             
             $end_time = round_up_time_interval($start_time, $end_time);
 
@@ -2712,6 +2713,8 @@ class Projects extends Security_Controller {
             //add time offset
             $start_date_time = convert_date_local_to_utc($start_date_time);
             $end_date_time = convert_date_local_to_utc($end_date_time);
+
+            
         } else {
             //date and hour mode
             $date = $this->request->getPost("date");
@@ -2729,10 +2732,11 @@ class Projects extends Security_Controller {
         $project_id = $this->request->getPost('project_id');
         $project_hour_limit = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours');
 
-        if($project_hour_limit)
+        if($project_hour_limit && (!$id))
         {
             // Calcular o tempo registrado em horas
             $hours_logged = calculate_hours_diff($start_date_time, $end_date_time);
+
     
             // Verificar se o tempo registrado excede o limite de horas do projeto
             if ($hours_logged > $project_hour_limit) {
@@ -2779,6 +2783,7 @@ class Projects extends Security_Controller {
             "hours" => $hours
         );
 
+       
         //save user_id only on insert and it will not be editable
         if (!$id) {
             //insert mode
@@ -2804,16 +2809,16 @@ class Projects extends Security_Controller {
         }
         else
         {
-            if($this->request->getPost('consultant_amount'))
+            if(!is_null($this->request->getPost('consultant_amount')))
             {
                 $data["consultant_amount"] = $this->request->getPost('consultant_amount');
             }
-            if($this->request->getPost('client_amount'))
+            if(!is_null($this->request->getPost('client_amount')))
             {
                 $data["client_amount"] = $this->request->getPost('client_amount');
             }
         }
-
+        
         $this->check_timelog_update_permission($id, $project_id, get_array_value($data, "user_id"));
 
         $save_id = $this->Timesheets_model->ci_save($data, $id);
