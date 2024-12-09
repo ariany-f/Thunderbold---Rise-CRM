@@ -356,6 +356,7 @@ class Expenses extends Security_Controller {
         $member = get_team_member_profile_link($data->user_id, $user);
 
         $row_data = array(
+            $data->id,
             $data->expense_date,
             modal_anchor(get_uri("expenses/expense_details"), format_to_date($data->expense_date, false), array("title" => app_lang("expense_details"), "data-post-id" => $data->id)),
             $member,

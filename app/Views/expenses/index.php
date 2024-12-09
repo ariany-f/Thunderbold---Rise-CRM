@@ -59,6 +59,7 @@
             order: [[0, "asc"]],
             rangeDatepicker: customDatePicker,
             columns: [
+            {title: '<?php echo app_lang("id") ?>', "class": "w50"},
             {visible: false, searchable: false},
             {title: '<?php echo app_lang("date") ?>', "iDataSort": 0, "class": "all"},
             {title: '<?php echo app_lang("member") ?>'},
@@ -67,8 +68,8 @@
             {title: '<?php echo app_lang("description") ?>'},
             {title: '<?php echo app_lang("files") ?>'},
             {title: '<?php echo app_lang("amount") ?>', "class": "text-right"},
-            {title: '<?php echo app_lang("tax") ?>', "class": "text-right"},
-            {title: '<?php echo app_lang("second_tax") ?>', "class": "text-right"},
+            {visible: false, title: '<?php echo app_lang("tax") ?>', "class": "text-right"},
+            {visible: false, title: '<?php echo app_lang("second_tax") ?>', "class": "text-right"},
             {title: '<?php echo app_lang("total") ?>', "class": "text-right"},
             {title: "<?php echo app_lang("start_timesheet_filter") ?>"},
             {title: "<?php echo app_lang("end_timesheet_filter") ?>"}
@@ -77,34 +78,31 @@
             ],
             printColumns: combineCustomFieldsColumns([1, 2, 3, 4, 6, 7, 8, 9], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([1, 2, 3, 4, 6, 7, 8, 9], '<?php echo $custom_field_headers; ?>'),
-            summation: [{column: 6, dataType: 'currency'}, {column: 7, dataType: 'currency'}, {column: 8, dataType: 'currency'}, {column: 9, dataType: 'currency'}],
+            summation: [{column: 8, dataType: 'currency'}, {column: 11, dataType: 'currency'}],
             onRelaodCallback: function (tableInstance, filterParams) {
 
             //we'll show/hide the task/member column based on the group by status
             if (filterParams && filterParams.group_by === "member") {
-                showHideAppTableColumn(tableInstance, 2, true);
-                showHideAppTableColumn(tableInstance, 4, false);
+                showHideAppTableColumn(tableInstance, 3, true);
                 showHideAppTableColumn(tableInstance, 5, false);
                 showHideAppTableColumn(tableInstance, 6, false);
+                showHideAppTableColumn(tableInstance, 7, false);
             } else if (filterParams && filterParams.group_by === "project") {
-                showHideAppTableColumn(tableInstance, 2, false);
-                showHideAppTableColumn(tableInstance, 4, true);
+                showHideAppTableColumn(tableInstance, 3, false);
                 showHideAppTableColumn(tableInstance, 5, true);
                 showHideAppTableColumn(tableInstance, 6, true);
+                showHideAppTableColumn(tableInstance, 7, true);
             } else if (filterParams && filterParams.group_by === "member/project") {
-                showHideAppTableColumn(tableInstance, 2, true);
-                showHideAppTableColumn(tableInstance, 4, true);
+                showHideAppTableColumn(tableInstance, 3, true);
                 showHideAppTableColumn(tableInstance, 5, true);
                 showHideAppTableColumn(tableInstance, 6, true);
+                showHideAppTableColumn(tableInstance, 7, true);
             } else {
-                showHideAppTableColumn(tableInstance, 2, true);
-                showHideAppTableColumn(tableInstance, 4, true);
+                showHideAppTableColumn(tableInstance, 3, true);
                 showHideAppTableColumn(tableInstance, 5, true);
                 showHideAppTableColumn(tableInstance, 6, true);
-                // showHideAppTableColumn(tableInstance, 2, false);
-                // showHideAppTableColumn(tableInstance, 6, true);
+                showHideAppTableColumn(tableInstance, 7, true);
             }
-
             //clear this status for next time load
             clearAppTableState(tableInstance);
             }
