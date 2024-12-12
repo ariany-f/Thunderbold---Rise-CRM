@@ -4547,6 +4547,7 @@ body.modal-open {
 }
 .message-button-list .list-group {
   gap: 5px;
+  overflow-x: auto;
 }
 .message-button-list .list-group .list-group-item {
   border-radius: 5px !important;
