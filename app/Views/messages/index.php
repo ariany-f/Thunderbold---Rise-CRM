@@ -3,8 +3,8 @@
     <div class="row">
 
         <div class="d-flex flex-column gap-3" style="height: fit-content;">
-            <div class="box-content message-button-list ps-3" style="width: auto;background-color: white;">
-                <ul class="list-group d-flex flex-row p-3">
+            <div class="box-content message-button-list ps-3" style="width: auto;">
+                <ul class="list-group d-flex flex-row p-3" style="background-color: white;">
                     <?php if(get_setting('module_message_group')) { ?>
 
                         <?php $count_group = count_unread_group_message(); ?>
