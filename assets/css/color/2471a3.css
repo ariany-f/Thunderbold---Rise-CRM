@@ -53,6 +53,7 @@
 .list-group-item.active:focus, .list-group-item.active:hover {
   background: #2471a3;
   border-color: #2471a3;
+  color: white;
 }
 .btn-primary {
   background-color: #2471a3;

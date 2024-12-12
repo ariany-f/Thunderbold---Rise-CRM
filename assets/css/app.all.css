@@ -4545,8 +4545,11 @@ body.modal-open {
 .message-button-list {
   width: 150px;
 }
+.message-button-list .list-group {
+  gap: 5px;
+}
 .message-button-list .list-group .list-group-item {
-  border-radius: 0 !important;
+  border-radius: 5px !important;
   border: none !important;
   background: transparent;
   color: #4e5e6a;
@@ -4560,7 +4563,7 @@ body.modal-open {
     max-height: 2em;
 }
 .message-button-list .list-group-item:hover, .message-button-list .list-group-item.active {
-  background: rgba(0, 0, 0, 0.02);
+  background: rgba(217, 217, 217, .9);
 }
 #message-details-section .dropdown {
   position: absolute;
