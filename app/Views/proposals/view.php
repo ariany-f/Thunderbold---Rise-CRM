@@ -1,5 +1,5 @@
 <div id="page-content" class="clearfix">
-    <div style="max-width: 1000px; margin: auto;">
+    <div class="ps-3" style="margin: auto;">
         <div class="page-title clearfix mt15">
             <h1><?php echo get_proposal_id($proposal_info->id); ?> - <?php echo $proposal_info->name ?></h1>
             
