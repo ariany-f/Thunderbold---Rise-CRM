@@ -412,7 +412,5 @@ if ($total_sub_tasks) {
             $("[data-bs-target='#task-timesheets']").trigger("click");
         }
     }, 210);
-        
-    $('[data-bs-toggle="tooltip"]').tooltip();
 
 </script>
