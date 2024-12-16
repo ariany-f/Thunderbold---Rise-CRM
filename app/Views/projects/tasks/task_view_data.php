@@ -396,7 +396,7 @@ if ($total_sub_tasks) {
     <div class="box-title"><span ><?php echo app_lang("activity"); ?></span></div>
     <div class="pl15 pr15 mt15 list-container project-activity-logs-container">
         <?php echo activity_logs_widget(array("limit" => 20, "offset" => 0, "log_type" => "task", "log_type_id" => $model_info->id)); ?>
-    </div>
+    </div>0
 <?php } ?>
 
 <script>
@@ -405,7 +405,7 @@ if ($total_sub_tasks) {
     });
 
     setTimeout(function () {
-        var tab = "<?php echo ($tab ?? "comments"); ?>";
+        var tab = "<?php echo ($tab ? $tab : "comments"); ?>";
         if (tab === "comments") {
             $("[data-bs-target='#task-comments']").trigger("click");
         } else if (tab === "timesheets") {
