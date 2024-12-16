@@ -29,7 +29,6 @@
                 {visible: false, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right w50"},
                 {visible: false, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],
-            summation: [{column: 3, dataType: 'time'}, {column: 5, dataType: 'currency'}, {column: 7, dataType: 'currency'},  {column: 9, dataType: 'currency'},  {column: 10, dataType: 'currency'}],
             onRelaodCallback: function (tableInstance, filterParams) {
                 //clear this status for next time load
                 clearAppTableState(tableInstance);
