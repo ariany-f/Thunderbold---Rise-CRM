@@ -366,23 +366,25 @@ if ($total_sub_tasks) {
 
                         <?php echo form_close(); ?>
                     </div>
-
-                    <ul id="task-tabs" data-bs-toggle="ajax-tab" class="nav nav-tabs scrollable-tabs" role="tablist">
-                        <li><a  role="presentation" data-bs-toggle="tab" data-bs-target="#task-comments"><?php echo app_lang('comments'); ?></a></li>
-                        <li><a  role="presentation" data-bs-toggle="tab" data-bs-target="#task-timesheets"><?php echo app_lang('timesheets'); ?></a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade" id="task-comments">
-                            <div class="b-t pt10 list-container">
-                                <?php if ($can_comment_on_tasks) { ?>
-                                    <?php echo view("projects/comments/comment_form"); ?>
-                                <?php } ?>
-                                <?php echo view("projects/comments/comment_list"); ?>
+                    <div class="clearfix">
+                        <strong><?php echo app_lang('select_to_see')  . ' ' .app_lang('comments')  . ' ' . app_lang('or')  . ' ' . app_lang('timesheets')  . '/' . app_lang('notes'); ?></strong>
+                        <ul id="task-tabs" data-bs-toggle="ajax-tab" class="nav nav-tabs scrollable-tabs" role="tablist">
+                            <li><a  role="presentation" data-bs-toggle="tab" data-bs-target="#task-comments"><?php echo app_lang('comments'); ?></a></li>
+                            <li><a  role="presentation" data-bs-toggle="tab" data-bs-target="#task-timesheets"><?php echo app_lang('timesheets'); ?></a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade" id="task-comments">
+                                <div class="b-t pt10 list-container">
+                                    <?php if ($can_comment_on_tasks) { ?>
+                                        <?php echo view("projects/comments/comment_form"); ?>
+                                    <?php } ?>
+                                    <?php echo view("projects/comments/comment_list"); ?>
+                                </div>
                             </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane fade" id="task-timesheets">
-                            <div class="b-t pt10 list-container">
-                                <?php echo view("projects/tasks/summary_list"); ?>
+                            <div role="tabpanel" class="tab-pane fade" id="task-timesheets">
+                                <div class="b-t pt10 list-container">
+                                    <?php echo view("projects/tasks/summary_list"); ?>
+                                </div>
                             </div>
                         </div>
                     </div>
