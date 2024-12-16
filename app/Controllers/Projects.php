@@ -4492,7 +4492,7 @@ class Projects extends Security_Controller {
         }
     }
 
-    function task_view($task_id = 0) {
+    function task_view($task_id = 0, $tab = "") {
         validate_numeric_value($task_id);
         $view_type = "";
 
@@ -4616,7 +4616,8 @@ class Projects extends Security_Controller {
         $info = $this->Timesheets_model->count_total_time($timesheet_options);
         $view_data["total_task_hours"] = convert_seconds_to_time_format($info->timesheet_total);
         $view_data["show_timesheet_info"] = $this->can_view_timesheet($model_info->project_id);
-       
+        $view_data["tab"] = clean_data($tab);
+
         if ($view_type == "details") {
             return $this->template->rander('projects/tasks/view', $view_data);
         } else {

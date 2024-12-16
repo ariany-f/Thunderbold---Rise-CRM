@@ -15,9 +15,13 @@
             filterParams: {project_id: "<?php echo $project_id; ?>"},
             filterDropdown: [
                 {name: "user_id", class: "w200", options: <?php echo $project_members_dropdown; ?>},
+                <?php if(isset($tasks_dropdown) && $tasks_dropdown) { ?>
                 {name: "task_id", class: "w200", options: <?php echo $tasks_dropdown; ?>},
-                {name: "group_by", class: "w200", options: <?php echo $group_by_dropdown; ?>},
-                <?php echo $custom_field_filters; ?>
+                <?php } ?>
+                {name: "group_by", class: "w200", options: <?php echo $group_by_dropdown; ?>}
+                <?php if(isset($custom_field_filters) && $custom_field_filters) { ?>
+                ,<?php echo $custom_field_filters; ?>
+                <?php } ?>
             ],
             //rangeDatepicker: [{startDate: {name: "start_date", value: ""}, endDate: {name: "end_date", value: ""}, showClearButton: true}],
             dateRangeType: "monthly",
