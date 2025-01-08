@@ -8,6 +8,11 @@
             projectAmount = true;
     <?php } ?>
 
+    var optionVisibility = false;
+    <?php if ($login_user->user_type === "staff") { ?>
+                optionVisibility = true;
+    <?php } ?>
+
     $(document).ready(function () {
         $("#timesheet-summary-table").appTable({
             source: '<?php echo_uri("projects/timesheet_summary_list_data/"); ?>',
@@ -33,7 +38,7 @@
                 {visible: false, title: "<?php echo app_lang("hours"); ?>"},
                 {visible: projectAmount, title: "<?php echo app_lang('charge'). ' (R$)' ?>", "class": "text-right"},
                 {title: "<?php echo app_lang("consultant"); ?>", "class": "w15p"},
-                {visible: projectAmount, title: "<?php echo app_lang("consultant") . ' (R$)'; ?>", "class": "text-right"},
+                {visible: optionVisibility, title: "<?php echo app_lang("consultant") . ' (R$)'; ?>", "class": "text-right"},
                 {title: "<?php echo app_lang("manager_name"); ?>", "class": "text-center"},
                 {visible: projectAmount, title: "<?php echo app_lang("comission"). ' (R$)'; ?>", "class": "text-right"},
                 {visible: projectAmount, title: "<?php echo app_lang('liquid'). ' (R$)' ?>", "class": "text-right"},
