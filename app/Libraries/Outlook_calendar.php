@@ -209,6 +209,11 @@ class Outlook_calendar {
         if($this->cis->login_user)
         {
             $user = $this->ci->Users_model->get_one($this->cis->login_user->id);
+            if(!$user->outlook_calendar_authorized)
+            {
+                echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+                exit();
+            }
             $oauth_access_token = $user->outlook_calendar_access_token;
             $oauth_access_token = json_decode($oauth_access_token);
 

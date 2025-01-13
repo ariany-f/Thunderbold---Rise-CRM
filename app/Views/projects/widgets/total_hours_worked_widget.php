@@ -1,7 +1,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex">
-            <div class="widget-icon bg-info">
+            <div class="widget-icon bg-warning">
                 <i data-feather="clock" class="icon"></i>
             </div>
             <div class="w-100 text-end">

@@ -203,6 +203,7 @@ class Invoices extends Security_Controller {
             "project_id" => $this->request->getPost('invoice_project_id') ? $this->request->getPost('invoice_project_id') : 0,
             "bill_date" => $bill_date,
             "due_date" => $this->request->getPost('invoice_due_date'),
+            "nfe_number" => $this->request->getPost('nfe_number'),
             "tax_id" => $this->request->getPost('tax_id') ? $this->request->getPost('tax_id') : 0,
             "tax_id2" => $this->request->getPost('tax_id2') ? $this->request->getPost('tax_id2') : 0,
             "tax_id3" => $this->request->getPost('tax_id3') ? $this->request->getPost('tax_id3') : 0,
@@ -562,10 +563,13 @@ class Invoices extends Security_Controller {
             format_to_date($data->bill_date, false),
             $data->due_date,
             format_to_date($data->due_date, false),
+            $data->nfe_number,
             to_currency($data->invoice_value, $data->currency_symbol),
             to_currency($data->payment_received, $data->currency_symbol),
             $due,
-            $this->_get_invoice_status_label($data) . $invoice_labels
+            $this->_get_invoice_status_label($data) . $invoice_labels,
+            format_to_date($data->start_timesheet_filter, false),
+            format_to_date($data->end_timesheet_filter, false)
         );
 
         foreach ($custom_fields as $field) {

@@ -58,14 +58,15 @@
                 {title: "<?php echo app_lang("amount") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("quantity") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("quantity_gp") ?>", "class": "text-right w5p"},
+                {title: "<?php echo app_lang("quantity_add") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("sum_quantity") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("status") ?>", "class": "text-center"}
-<?php echo $custom_field_headers; ?>,
+                <?php echo $custom_field_headers; ?>,
                 {title: "<i data-feather='menu' class='icon-16'></i>", "class": "text-center option w150"}
             ],
             printColumns: combineCustomFieldsColumns([0, 1, 3, 5, 6, 7, 8, 9], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([0, 1, 3, 5, 6, 7, 8, 9], '<?php echo $custom_field_headers; ?>'),
-            summation: [{column: 7, dataType: 'currency', currencySymbol: AppHelper.settings.currencySymbol}, {column: 8, dataType: 'number'}, {column: 9, dataType: 'number'}, {column: 10, dataType: 'number'}]
+            summation: [{column: 7, dataType: 'currency', currencySymbol: AppHelper.settings.currencySymbol}, {column: 8, dataType: 'number'}, {column: 9, dataType: 'number'}, {column: 10, dataType: 'number'}, {column: 10, dataType: 'number'}]
         });
     };
 

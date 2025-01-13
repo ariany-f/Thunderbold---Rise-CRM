@@ -16,6 +16,7 @@ class Notifications_model extends Crud_model {
     }
 
     function create_notification($event, $user_id, $options = array()) {
+        
         $notification_settings_table = $this->db->prefixTable('notification_settings');
         $users_table = $this->db->prefixTable('users');
         $team_table = $this->db->prefixTable('team');
@@ -96,8 +97,13 @@ class Notifications_model extends Crud_model {
 
 
         //find team members
-        if ($notification_settings->notify_to_team_members) {
-            $where .= " OR FIND_IN_SET($users_table.id, '$notification_settings->notify_to_team_members') ";
+        if ($notification_settings->notify_to_team_members && $to_user_id && $to_user_id != 0 && $actual_message_id) {
+            
+            $where .= " OR (FIND_IN_SET($users_table.id, '$notification_settings->notify_to_team_members') AND $users_table.deleted=0 AND ($users_table.id=(SELECT $messages_table.to_user_id FROM $messages_table WHERE $messages_table.id=$actual_message_id)))";
+        }
+        else if($notification_settings->notify_to_team_members)
+        {
+            $where .= " OR FIND_IN_SET($users_table.id, '$notification_settings->notify_to_team_members') AND $users_table.deleted=0";
         }
 
         //find team
@@ -601,6 +607,7 @@ class Notifications_model extends Crud_model {
             $extra_data["notification_multiple_tasks_user_wise"] = get_array_value($notification_multiple_tasks_users, "user_wise_tasks");
         }
 
+      
         //notification saved. send emails
         if ($notification_id && $email_notify_to) {
             send_notification_emails($notification_id, $email_notify_to, $extra_data);

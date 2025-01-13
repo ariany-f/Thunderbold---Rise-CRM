@@ -114,7 +114,9 @@ class Proposals extends Security_Controller {
         $id = $this->request->getPost("id");
 
         $proposal_data = array(
-            "content" => decode_ajax_post_data($this->request->getPost('view'))
+            "content" => decode_ajax_post_data($this->request->getPost('view')),
+            "template_id" => $this->request->getPost('template_id'),
+            "gp_apart" => $this->request->getPost('gp_apart')
         );
 
         $this->Proposals_model->ci_save($proposal_data, $id);
@@ -279,6 +281,7 @@ class Proposals extends Security_Controller {
             "client_id" => $this->request->getPost("client_id"),
             "start_date" => $this->request->getPost("start_date"),
             "end_date" => $this->request->getPost("end_date"),
+            "search_by" => $this->request->getPost("search_by"),
             "custom_fields" => $custom_fields,
             "custom_field_filter" => $this->prepare_custom_field_filter_values("proposals", $this->login_user->is_admin, $this->login_user->user_type)
         );
@@ -363,6 +366,7 @@ class Proposals extends Security_Controller {
             to_currency($data->proposal_value, $data->currency_symbol),
             $data->proposal_quantity . ' ' . $data->unit_type,
             $data->proposal_quantity_gp . ' ' . $data->unit_type,
+            $data->proposal_quantity_add . ' ' . $data->unit_type,
             $data->proposal_sum_quantity . ' ' . $data->unit_type,
             $this->_get_proposal_status_label($data),
         );
@@ -512,6 +516,17 @@ class Proposals extends Security_Controller {
             $proposal_id = $view_data['model_info']->proposal_id;
         }
         $view_data['proposal_id'] = $proposal_id;
+        
+        $users = $this->Users_model->get_details(array("user_type" => "staff"))->getResult();
+
+        $users_dropdown[] = app_lang('assign_to');
+
+        foreach ($users as $user) {
+            $users_dropdown[$user->id] = ($user->first_name . ' ' . $user->last_name);
+        }
+
+        $view_data['users_dropdown'] = $users_dropdown;
+
         return $this->template->view('proposals/item_modal_form', $view_data);
     }
 
@@ -531,6 +546,7 @@ class Proposals extends Security_Controller {
         $rate = unformat_currency($this->request->getPost('proposal_item_rate'));
         $quantity = unformat_currency($this->request->getPost('proposal_item_quantity'));
         $quantity_gp = unformat_currency($this->request->getPost('proposal_item_quantity_gp'));
+        $quantity_add = unformat_currency($this->request->getPost('proposal_item_quantity_add'));
         $proposal_item_title = $this->request->getPost('proposal_item_title');
         $item_id = 0;
 
@@ -553,13 +569,15 @@ class Proposals extends Security_Controller {
 
         $proposal_item_data = array(
             "proposal_id" => $proposal_id,
+            "user_id" => $this->request->getPost('user_id'),
             "title" => $this->request->getPost('proposal_item_title'),
             "description" => $this->request->getPost('proposal_item_description'),
             "quantity" => $quantity,
             "quantity_gp" => $quantity_gp,
+            "quantity_add" => $quantity_add,
             "unit_type" => $this->request->getPost('proposal_unit_type'),
             "rate" => unformat_currency($this->request->getPost('proposal_item_rate')),
-            "total" => $rate * ($quantity + $quantity_gp),
+            "total" => $rate * ($quantity + $quantity_gp + $quantity_add),
         );
 
         if ($item_id) {
@@ -627,13 +645,24 @@ class Proposals extends Security_Controller {
         }
         $type = $data->unit_type ? $data->unit_type : "";
 
+        $assigned_to = "";
+
+        if($data->assigned_to_user_id)
+        {
+            $image_url = get_avatar($data->assigned_to_user_avatar, $data->assigned_to);
+            $user = "<span title='".$data->assigned_to."' class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span>";
+            $assigned_to = get_team_member_profile_link($data->assigned_to_user_id, $user);
+        }
+        
         return array(
             $data->sort,
             $item,
+            $assigned_to,
             to_currency($data->rate, $data->currency_symbol),
             to_decimal_format($data->quantity) . " " . $type,
             to_decimal_format($data->quantity_gp) . " " . $type,
-            to_decimal_format($data->quantity_gp + $data->quantity) . " " . $type,
+            to_decimal_format($data->quantity_add) . " " . $type,
+            to_decimal_format($data->quantity_gp + $data->quantity + $data->quantity_add) . " " . $type,
             to_currency($data->total, $data->currency_symbol),
             modal_anchor(get_uri("proposals/item_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_proposal'), "data-post-id" => $data->id))
             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("proposals/delete_item"), "data-action" => "delete"))

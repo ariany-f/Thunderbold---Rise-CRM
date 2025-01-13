@@ -45,7 +45,7 @@
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-2">
                                                     <span class="avatar avatar-sm">
-                                                        <img src="<?php echo get_avatar($post->created_by_avatar); ?>" alt="..." />
+                                                        <img src="<?php echo get_avatar($post->created_by_avatar, $post->created_by_user); ?>" alt="..." />
                                                     </span>
                                                 </div>
                                                 <div class="w-100">

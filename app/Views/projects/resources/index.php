@@ -1,14 +1,19 @@
 
 <div class="card">
-    <div class="row">
-        <?php if (get_setting('module_project_timesheet')) { ?>
-            <div class="col-md-6 col-sm-12">
-                <?php echo view("projects/widgets/total_hours_worked_widget"); ?>
-            </div>
-            <div class="col-md-6 col-sm-12">
-                <?php echo view("attendance/project_limit_hours"); ?>
-            </div>
-        <?php } ?>
+    <div class="clearfix default-bg">
+        <div class="row">
+            <?php if (get_setting('module_project_timesheet')) { ?>
+                <div class="col-md-4 col-sm-12">
+                    <?php echo view("projects/widgets/total_hours_worked_widget"); ?>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <?php echo view("attendance/project_balance_hours"); ?>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <?php echo view("attendance/project_limit_hours"); ?>
+                </div>
+            <?php } ?>
+        </div>
     </div>
 </div>
 
@@ -50,8 +55,11 @@
             source: '<?php echo_uri("projects/project_resource_list_data/" . $project_id . "/manager") ?>',
             hideTools: true,
             columns: [
-                {title: 'Nome', "class":"text-left w400"},
+                {title: 'Nome', "class":"text-left w550"},
+                {visible: false},
                 {title: 'Valor/Hora'},
+                {title: 'Horas'},
+                {title: 'Total'},
                 {title: '', "class": "text-center option w100"}
             ]
         });
@@ -62,7 +70,7 @@
             displayLength: 500,
             columns: [
                 {title: 'Membro', "class":"text-left w400"},
-                {title: 'Limite de Horas'},
+                {title: 'Limite de Horas', 'class': 'w450'},
                 {title: 'Valor/Hora'},
                 {title: 'Horas Trabalhadas'},
                 {title: 'Total'},

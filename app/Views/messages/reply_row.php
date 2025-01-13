@@ -1,4 +1,4 @@
-<div class="b-b p15 m0 bg-white js-message-reply" data-message_id="<?php echo $reply_info->id; ?>" href="#reply-<?php echo $reply_info->id; ?>" >
+<div class="b-b p15 m0 bg-white js-message-reply message-reply-<?php echo $reply_info->id; ?>" data-message_id="<?php echo $reply_info->id; ?>" href="#reply-<?php echo $reply_info->id; ?>" >
     <div class="row">
         <div class="col-md-12">
             <div class="d-flex">
@@ -31,15 +31,16 @@
                                 <ul class="dropdown-menu" role="menu">
                                     <?php if($reply_info->from_user_id === $login_user->id) { ?>
                                         <li role="presentation"><?php echo modal_anchor(get_uri("messages/edit_message_modal_form/$reply_info->id"), "<i data-feather='edit-2' class='icon-16'></i> " . app_lang('edit'), array("class" => "dropdown-item", "title" => app_lang('edit'), "data-post-id" => $reply_info->id)); ?> </li>
+                                        <li role="presentation"><?php echo ajax_anchor(get_uri("messages/delete_my_messages_for_everyone/$reply_info->id"), "<i data-feather='x' class='icon-16'></i> " . app_lang('delete_for_everyone'), array("class" => "dropdown-item", "title" => app_lang('delete_for_everyone'), "data-fade-out-on-success" => ".message-reply-$reply_info->id")); ?> </li>
                                     <?php } else { ?>
-                                        <li role="presentation"><?php //echo ajax_anchor(get_uri("messages/reply_reply_message/$reply_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reply'), array("class" => "dropdown-item", "title" => app_lang('reply'))); ?> </li>
+                                        <!-- <li role="presentation"><?php //echo ajax_anchor(get_uri("messages/reply_reply_message/$reply_info->id"), "<i data-feather='corner-down-left' class='icon-16'></i> " . app_lang('reply'), array("class" => "dropdown-item", "title" => app_lang('reply'))); ?> </li> -->
                                     <?php } ?>
                                 </ul>
                             </span>
                         <?php } ?>
                         <!-- Permitir responder uma mensagem diretamente -->
                     </div>
-                    <p><?php echo nl2br(link_it(process_images_from_content($reply_info->message))); ?></p>
+                    <p><?php echo convert_mentions(nl2br(link_it(process_images_from_content($reply_info->message)))); ?></p>
 
                     <div class="comment-image-box clearfix">
                         <?php

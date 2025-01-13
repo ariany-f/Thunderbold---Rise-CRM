@@ -684,8 +684,8 @@ if (!function_exists('send_app_mail')) {
         $email_protocol = get_setting("email_protocol");
         if ($email_protocol === "microsoft_outlook") {
            
-                // $Outlook_smtp = new Outlook_smtp();
-                // return $Outlook_smtp->send_app_mail($to, $subject, $message, $optoins, $convert_message_to_html);
+                $Outlook_smtp = new Outlook_smtp();
+                return $Outlook_smtp->send_app_mail($to, $subject, $message, $optoins, $convert_message_to_html);
           
                 return true;
         } else {
@@ -860,7 +860,7 @@ if (!function_exists('get_team_member_profile_link')) {
     function get_team_member_profile_link($id = 0, $name = "", $attributes = array()) {
         $ci = new Security_Controller(false);
         if ($ci->login_user->user_type === "staff") {
-            return anchor("team_members/view/" . $id, $name ? $name : "", $attributes);
+            return anchor("team_members/view/" . $id, ($name ? $name : ""), $attributes);
         } else {
             return js_anchor($name, $attributes);
         }
@@ -1901,7 +1901,7 @@ if (!function_exists('send_message_via_pusher')) {
             $message_info = $ci->Messages_model->get_one($message_id);
 
             $user_info = $ci->Users_model->get_one($ci->login_user->id);
-            $avatar = " <img alt='...' src='" . get_avatar($user_info->image) . "' class='dark strong' /> ";
+            $avatar = " <img alt='...' src='" . get_avatar($user_info->image, ($user_info->first_name . " " . $user_info->last_name)) . "' class='dark strong' /> ";
 
             $message_data = array(
                 "<div class='chat-other'>
@@ -2323,8 +2323,8 @@ if (!function_exists('prepare_proposal_view')) {
             $unit_type = "";
 
             foreach ($proposal_items as $item) {
-                $total_quantity += $item->quantity + $item->quantity_gp;
-                $total_amount += $item->rate * ($item->quantity + $item->quantity_gp);
+                $total_quantity += $item->quantity + $item->quantity_gp + $item->quantity_add;
+                $total_amount += $item->rate * ($item->quantity + $item->quantity_gp + $item->quantity_add);
                 $currency_symbol = $item->currency_symbol;
                 $unit_type = $item->unit_type;
             }

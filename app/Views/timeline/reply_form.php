@@ -1,7 +1,7 @@
 <?php echo form_open(get_uri("timeline/save"), array("class" => "reply-form general-form", "role" => "form")); ?>
 <div class="mb15 pr15 box">
     <div class="box-content avatar avatar-sm pr15">
-        <img src="<?php echo get_avatar($login_user->image); ?>" alt="..." />
+        <img src="<?php echo get_avatar($login_user->image, ($login_user->first_name . " " . $login_user->last_name)); ?>" alt="..." />
     </div>
     <div class="box-content form-group">
         <input type="hidden" name="post_id" value="<?php echo isset($post_id) ? $post_id : 0; ?>">

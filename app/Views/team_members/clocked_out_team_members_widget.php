@@ -12,7 +12,7 @@
                     <div class="message-row d-flex">
                         <div class="flex-shrink-0">
                             <span class="avatar avatar-xs">
-                                <img alt="..." src="<?php echo get_avatar($user->image); ?>">
+                                <img alt="..." src="<?php echo get_avatar($user->image, $user->member_name); ?>">
                             </span>
                         </div>
                         <div class="w-100 ps-2">

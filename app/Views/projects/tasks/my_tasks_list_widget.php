@@ -12,7 +12,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         initScrollbar('#my-task-list-widget-table', {
-            setHeight: 330
+            setHeight: 723
         });
 
         var showOption = true,

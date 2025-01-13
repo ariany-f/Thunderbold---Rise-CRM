@@ -86,7 +86,7 @@
         <?php } else { ?>
 
             <div class="row">
-                <label for="start_date" class=" col-md-3 col-sm-3"><?php echo app_lang('start_date'); ?></label>
+                <label for="start_dt" class=" col-md-3 col-sm-3"><?php echo app_lang('start_date'); ?></label>
                 <div class="col-md-4 col-sm-4 form-group">
                     <?php
                     $in_time = is_date_exists($model_info->start_time) ? convert_date_utc_to_local($model_info->start_time) : "";
@@ -98,7 +98,7 @@
                     }
 
                     echo form_input(array(
-                        "id" => "start_date",
+                        "id" => "start_dt",
                         "name" => "start_date",
                         "value" => $in_time ? date("Y-m-d", strtotime($in_time)) : "",
                         "class" => "form-control",
@@ -145,7 +145,7 @@
                         "autocomplete" => "off",
                         "data-rule-required" => true,
                         "data-msg-required" => app_lang("field_required"),
-                        "data-rule-greaterThanOrEqual" => "#start_date",
+                        "data-rule-greaterThanOrEqual" => "#start_dt",
                         "data-msg-greaterThanOrEqual" => app_lang("end_date_must_be_equal_or_greater_than_start_date")
                     ));
                     ?>
@@ -195,12 +195,50 @@
                         "name" => "task_id",
                         "value" => $task_id ?? $model_info->task_id,
                         "class" => "form-control",
-                        "placeholder" => app_lang('task')
+                        "placeholder" => app_lang('task'),
+                        "required" => true,
+                        "data-rule-required" => true,
+                        "data-msg-required" => app_lang("field_required"),
                     ));
                     ?>
                 </div>
             </div>
         </div>
+
+        <?php if($login_user->is_admin and $model_info->id) { ?>
+            <div class="form-group">
+                <div class="row">
+                    <label for="client_amount" class=" col-md-3"><?php echo app_lang('client_amount'); ?></label>
+                    <div class="col-md-9" id="dropdown-apploader-section">
+                        <?php
+                        echo form_input(array(
+                            "id" => "client_amount",
+                            "name" => "client_amount",
+                            "value" => $model_info->client_amount,
+                            "class" => "form-control",
+                            "placeholder" => app_lang('client_amount')
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="consultant_amount" class=" col-md-3"><?php echo app_lang('consultant_amount'); ?></label>
+                    <div class="col-md-9" id="dropdown-apploader-section">
+                        <?php
+                        echo form_input(array(
+                            "id" => "consultant_amount",
+                            "name" => "consultant_amount",
+                            "value" => $model_info->consultant_amount,
+                            "class" => "form-control",
+                            "placeholder" => app_lang('consultant_amount')
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
 
         <?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => "col-md-3", "field_column" => " col-md-9")); ?>
 
@@ -253,12 +291,13 @@
         $("#user_id").select2({data: <?php echo json_encode($project_members_dropdown); ?>});
         $("#task_id").select2({data: <?php echo $tasks_dropdown; ?>});
 
-        setDatePicker("#start_date, #end_date, #date");
+        setDatePicker("#start_dt, #end_date");
+        setDatePicker("#date");
         //setTimePicker("#start_time, #end_time");
        
         setTimeout(() => {
             $("input[name='start_time']").mask('00:00');
-            $("#end_time").mask('00:00');
+            $("input[name='end_time']").mask('00:00');
         }, 1000);
 
         $('[data-bs-toggle="tooltip"]').tooltip();

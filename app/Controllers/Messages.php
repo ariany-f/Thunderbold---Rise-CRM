@@ -1070,10 +1070,33 @@ class Messages extends Security_Controller {
         if ($save_id) {
             $options = array("id" => $save_id, "user_id" => $this->login_user->id);
             $view_data['reply_info'] = $this->Messages_model->get_details($options)->row;
+            $view_data['ended'] = 0;
 
             echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), "id" => $save_id, 'data' => $this->template->view("messages/reply_row", $view_data)));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
+    /* get member suggestion with start typing '@' */
+    function get_member_suggestion_to_mention() {
+
+        $this->validate_submitted_data(array(
+            "group_id" => "required|numeric"
+        ));
+
+        $group_id = $this->request->getPost("group_id");
+
+        $message_group_members = $this->Message_group_members_model->get_message_group_members_dropdown_list($group_id, "", true, true)->getResult();
+        $message_group_members_dropdown = array();
+        foreach ($message_group_members as $member) {
+            $message_group_members_dropdown[] = array("name" => $member->member_name, "content" => "@[" . $member->member_name . " :" . $member->user_id . "]");
+        }
+
+        if ($message_group_members_dropdown) {
+            echo json_encode(array("success" => TRUE, "data" => $message_group_members_dropdown));
+        } else {
+            echo json_encode(array("success" => FALSE));
         }
     }
 
@@ -1150,6 +1173,27 @@ class Messages extends Security_Controller {
                         }
                     }
 
+                    preg_match_all('#\@\[(.*?)\]#', $message, $matches);
+                    
+                    $members = array();
+
+                    $mentions = get_array_value($matches, 1);
+                    if ($mentions && count($mentions)) {
+                        foreach ($mentions as $mention) {
+                            $user = explode(":", $mention);
+                            $user_id = get_array_value($user, 1);
+                            $members[] = $user_id;
+                        }
+                    }
+
+                    if(!empty($members)) {
+                        foreach($members as $member)
+                        {
+                            log_notification("message_reply_sent_to_group_mentioning_you", array("user_id" => $this->login_user->id, "to_user_id" => $member, "actual_message_id" => $save_id, "parent_message_id" => $message_id));
+                        }
+                    }
+
+
                     log_notification("message_reply_sent_to_group", array("actual_message_id" => $save_id, "parent_message_id" => $message_id));
                 }
                 else
@@ -1175,6 +1219,7 @@ class Messages extends Security_Controller {
                 } else {
                     $options = array("id" => $save_id, "user_id" => $this->login_user->id);
                     $view_data['reply_info'] = $this->Messages_model->get_details($options)->row;
+                    $view_data['ended'] = 0;
                     echo json_encode(array("success" => true, 'message' => app_lang('message_sent'), 'data' => $this->template->view("messages/reply_row", $view_data)));
                 }
 
@@ -1280,6 +1325,18 @@ class Messages extends Security_Controller {
 
         //delete messages for current user.
         $this->Messages_model->delete_messages_for_user($id, $this->login_user->id);
+    }
+
+    function delete_my_messages_for_everyone($id = 0) {
+
+        if (!$id) {
+            exit();
+        }
+
+        validate_numeric_value($id);
+
+        //delete messages for current user.
+        $this->Messages_model->delete_messages($id);
     }
 
     function end_my_messages($id = 0) {

@@ -2,14 +2,14 @@
 
     <div class="row">
 
-        <div class="box">
-            <div class="box-content message-button-list">
-                <ul class="list-group ">
+        <div class="d-flex flex-column gap-3" style="height: fit-content;">
+            <div class="box-content message-button-list ps-3" style="width: auto;">
+                <ul class="list-group d-flex flex-row p-3" style="background-color: white;">
                     <?php if(get_setting('module_message_group')) { ?>
 
                         <?php $count_group = count_unread_group_message(); ?>
 
-                        <?php echo anchor(get_uri("messages/list_groups"), app_lang('groups') . ' <span class="badge '. ($count_group > 0 ? "bg-danger" : "badge-light") .'">' . $count_group . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+                        <?php echo anchor(get_uri("messages/list_groups"), app_lang('groups') . ' <span class="badge '. ($count_group > 0 ? "bg-danger" : "badge-light") .'">' . $count_group . '</span>', array("class" => "list-group-item " . ($mode == "list_groups" ? 'active' : '') , "style" => "gap: 4px;flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
 
                     <?php } ?>
                     
@@ -17,16 +17,16 @@
                     
                     <?php if($login_user->user_type == 'staff') { ?>
                         <?php echo modal_anchor(get_uri("messages/client_groups_modal_form/"), app_lang("compose_for_group"), array("class" => "list-group-item", "title" => app_lang('compose_for_group')));?>
-                        <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+                        <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item " . ($mode == "inbox" ? 'active' : ''), "style" => "gap: 4px;flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
                         <?php echo modal_anchor(get_uri("messages/modal_form"), app_lang('compose'), array("class" => "list-group-item", "title" => app_lang('send_message'))); ?>
                     <?php } else { ?>
                         <?php if($count_inbox > 0) { ?>
-                            <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item", "style" => "flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
+                            <?php echo anchor(get_uri("messages/inbox"), app_lang('inbox'). ' <span class="badge '.($count_inbox > 0 ? "bg-danger" : "badge-light") .'">' . $count_inbox . '</span>', array("class" => "list-group-item " . ($mode == "inbox" ? 'active' : ''), "style" => "gap: 4px;flex-direction: row;display: flex;align-items: center;justify-content: space-between;")); ?>
                         <?php } ?>
                         <?php echo modal_anchor(get_uri("messages/client_groups_modal_form/"), app_lang("compose"), array("class" => "list-group-item", "title" => app_lang('compose')));?>
                     <?php } ?>
                     
-                    <?php echo anchor(get_uri("messages/sent_items"), app_lang('sent_items'), array("class" => "list-group-item")); ?>
+                    <?php echo anchor(get_uri("messages/sent_items"), app_lang('sent_items'), array("class" => "list-group-item " . ($mode == "sent_items" ? 'active' : ''))); ?>
                 </ul>
             </div>
 
@@ -89,17 +89,22 @@
     </div>
 </div>
 <style type="text/css">
-    .datatable-tools:first-child {
+    /* .datatable-tools:first-child {
         display:  none;
-    }
+    } */
+    .datatable-tools #message-table_filter {
+        display: none;
+     }
 </style>
 
 <script type="text/javascript">
     $(document).ready(function () {
         var autoSelectIndex = "<?php echo $auto_select_index; ?>";
         $("#message-table").appTable({
+            server_side: true,
             source: '<?php echo_uri("messages/list_data/" . $mode) ?>',
             order: [[1, "desc"]],
+            displayLength: 10,
             columns: [
                 {title: '<?php echo app_lang("message") ?>'},
                 {targets: [1], visible: false},

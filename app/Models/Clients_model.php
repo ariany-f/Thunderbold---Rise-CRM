@@ -159,13 +159,13 @@ class Clients_model extends Crud_model {
         }
 
 
-        $sql = "SELECT SQL_CALC_FOUND_ROWS $clients_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS primary_contact, $users_table.id AS primary_contact_id, $users_table.image AS contact_avatar,  project_table.total_projects, $payment_value_select AS payment_received $select_custom_fieds,
+        $sql = "SELECT SQL_CALC_FOUND_ROWS $clients_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS primary_contact, $users_table.id AS primary_contact_id, $users_table.image AS contact_avatar, project_table.total_projects, project_table.total_tickets, $payment_value_select AS payment_received $select_custom_fieds,
                 IF((($invoice_value_select > $payment_value_select) AND ($invoice_value_select - $payment_value_select) <0.05), $payment_value_select, $invoice_value_select) AS invoice_value,
                 (SELECT GROUP_CONCAT($client_groups_table.title) FROM $client_groups_table WHERE FIND_IN_SET($client_groups_table.id, $clients_table.group_ids)) AS client_groups, $lead_status_table.title AS lead_status_title,  $lead_status_table.color AS lead_status_color,
                 owner_details.owner_name, owner_details.owner_avatar
         FROM $clients_table
         LEFT JOIN $users_table ON $users_table.client_id = $clients_table.id AND $users_table.deleted=0 AND $users_table.is_primary_contact=1 
-        LEFT JOIN (SELECT client_id, COUNT(id) AS total_projects FROM $projects_table WHERE deleted=0 AND project_type='client_project' GROUP BY client_id) AS project_table ON project_table.client_id= $clients_table.id
+        LEFT JOIN (SELECT client_id, COUNT(CASE WHEN is_ticket = 0 THEN 1 END) AS total_projects, COUNT(CASE WHEN is_ticket = 1 THEN 1 END) AS total_tickets FROM $projects_table WHERE deleted=0 AND project_type='client_project' GROUP BY client_id) AS project_table ON project_table.client_id= $clients_table.id
         LEFT JOIN (SELECT client_id, SUM(payments_table.payment_received) as payment_received, $invoice_value_calculation_query as invoice_value FROM $invoices_table
                    LEFT JOIN (SELECT $taxes_table.* FROM $taxes_table) AS tax_table ON tax_table.id = $invoices_table.tax_id
                    LEFT JOIN (SELECT $taxes_table.* FROM $taxes_table) AS tax_table2 ON tax_table2.id = $invoices_table.tax_id2 
@@ -344,6 +344,17 @@ class Clients_model extends Crud_model {
             return false;
         }
     }
+
+    function is_duplicate_company_cnpj($company_cnpj, $id = 0) {
+
+        $result = $this->get_all_where(array("company_cnpj" => $company_cnpj, "is_lead" => 0, "deleted" => 0));
+        if (count($result->getResult()) && $result->getRow()->id != $id) {
+            return $result->getRow();
+        } else {
+            return false;
+        }
+    }
+
 
     function get_leads_kanban_details($options = array()) {
         $clients_table = $this->db->prefixTable('clients');

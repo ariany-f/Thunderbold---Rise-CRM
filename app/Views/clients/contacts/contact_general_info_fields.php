@@ -41,6 +41,23 @@
             </div>
         </div>
     </div>
+    <div class="form-group">
+        <div class="row">
+            <label for="dob" class="<?php echo $label_column; ?>"><?php echo app_lang('date_of_birth'); ?></label>
+            <div class="<?php echo $field_column; ?>">
+                <?php
+                echo form_input(array(
+                    "id" => "dob",
+                    "name" => "dob",
+                    "value" => $model_info->dob,
+                    "class" => "form-control",
+                    "placeholder" => app_lang('date_of_birth'),
+                    "autocomplete" => "off"
+                ));
+                ?>
+            </div>
+        </div>
+    </div>
     <?php
 //show these filds during new contact creation
     if (!$model_info->id) {
@@ -235,5 +252,6 @@
                 $target.attr("type", "password");
             }
         });
+        setDatePicker("#dob");
     });
 </script>    

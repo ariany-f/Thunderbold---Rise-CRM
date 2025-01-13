@@ -17,6 +17,8 @@ $lang["delete"] = "Excluir";
 $lang["description"] = "Descrição";
 $lang["admin"] = "Admin";
 $lang["manager"] = "Gerente";
+$lang["manager_name"] = "Gerente";
+$lang["comission"] = "Comissão";
 $lang["options"] = "Opções";
 $lang["id"] = "ID";
 $lang["name"] = "Nome";
@@ -62,6 +64,7 @@ $lang["title"] = "Título";
 $lang["reset"] = "Resetar";
 $lang["share_with"] = "Compartilhar com";
 $lang["company_name"] = "Nome da empresa";
+$lang["legal_name"] = "Razão Social";
 $lang["company_cnpj"] = "CNPJ";
 $lang["address"] = "Endereço";
 $lang["city"] = "Cidade";
@@ -178,9 +181,11 @@ $lang["members_clocked_in"] = "Membros Ativos";
 $lang["members_clocked_out"] = "Membros Inativos";
 $lang["my_time_cards"] = "Meu controle de jornada";
 $lang["timecard_statistics"] = "Estatísticas de Controle de Jornada";
-$lang["total_hours_worked"] = "Total de horas trabalhadas";
+$lang["total_hours_worked"] = "Total de horas trabalhadas em desenvolvimento";
 $lang["total_project_hours"] = "Horas totais do projeto";
-$lang["project_limit_hours_help_message"] = "Ajuste em configurações";
+$lang["project_limit_hours_help_message"] = "Ajuste em configurações do projeto/chamado";
+$lang["project_balance_hours_help_message"] = "Saldo em horas disponíveis para desenvolvimento";
+$lang["project_worked_hours_help_message"] = "Horas trabalhadas em desenvolvimento";
 $lang["not_set"] = "Não definido";
 $lang["hour_limit"] = "Limite de horas";
 $lang["invalid_time_format_error_message"] = "Formato de hora inválido";
@@ -245,6 +250,10 @@ $lang["announcement"] = "Aviso";
 $lang["announcements"] = "Avisos";
 $lang["all_team_members"] = "Todos os membros da equipe";
 $lang["all_team_clients"] = "Todos os clientes";
+$lang["start_timesheet_filter"] = "Início filtro Horas registradas";
+$lang["end_timesheet_filter"] = "Fim filtro Horas registradas";
+$lang["generate_invoice"] = "Gerar Fatura";
+$lang["generate_expense"] = "Gerar Pagamento(Despesa)";
 
 /* settings */
 $lang["app_settings"] = "Configurações do Sistema";
@@ -359,7 +368,14 @@ $lang["invite_an_user"] = "Convidar um usuário para %s"; // Convidar um usuári
 $lang["unit_type"] = "Tipo de unidade";
 
 /* projects */
+$lang["delete_for_everyone"] = "Excluir para todos";
+$lang["delete_for_good"] = "Excluir permanentemente";
+$lang["delete_just_for_me"] = "Excluir apenas para mim";
 $lang["select"] = "Selecione usuário/cliente";
+$lang["or"] = "ou";
+$lang["select_to_see"] = "Selecione para ver";
+$lang["init"] = "Início";
+$lang["conclusion"] = "Conclusão";
 $lang["save_member"] = "Add membro";
 $lang["add_project"] = "Add projeto";
 $lang["edit_project"] = "Editar projeto";
@@ -368,6 +384,7 @@ $lang["project"] = "Projeto";
 $lang["projects"] = "Projetos";
 $lang["all_projects"] = "Todos os Projetos";
 $lang["member"] = "Membro";
+$lang["member/project"] = "Membro/Projeto";
 $lang["overview"] = "Visão geral";
 $lang["project_members"] = "Os membros do projeto";
 $lang["hour_amount"] = "Valor/Hora";
@@ -386,6 +403,7 @@ $lang["create_task"] = "Criar Tarefa";
 $lang["staff"] = "Usuário do sistema";
 $lang["group_name"] = "Nome do Grupo";
 $lang["create_conversation"] = "Criar Chat da Tarefa no Grupo";
+$lang["start_development"] = "Iniciar Desenvolvimento";
 $lang["enter_conversation"] = "Entrar no Chat da Tarefa";
 $lang["convert_task"] = "Criar Tarefa";
 $lang["project_timeline"] = "Cronograma do projeto";
@@ -535,6 +553,7 @@ $lang["payment_method"] = "Método de pagamento";
 $lang["payment_methods"] = "Métodos de Pagamento";
 $lang["edit_payment_method"] = "Editar método de pagamento";
 $lang["delete_payment_method"] = "Excluir método de pagamento";
+$lang["nfe_number"] = "Número da NFe";
 
 /* invoices */
 
@@ -564,8 +583,10 @@ $lang["create_new_item"] = "Criar novo item";
 $lang["select_or_create_new_item"] = "Escolher da lista ou criar novo item ...";
 $lang["quantity"] = "Qtd";
 $lang["quantity_gp"] = "Qtd GP";
+$lang["quantity_add"] = "Qtd Adicional";
 $lang["sum_quantity"] = "Total Qtd";
 $lang["rate"] = "Custo/unidade";
+$lang["no_grouping"] = "Sem agrupamento";
 $lang["total_of_all_pages"] = "Total de todas as páginas";
 $lang["sub_total"] = "Sub Total";
 $lang["total"] = "Total";
@@ -575,7 +596,7 @@ $lang["add_payment"] = "Adicionar pagamento";
 $lang["never"] = "Nunca";
 $lang["email_invoice_to_client"] = "Enviar fatura para o e-mail do cliente";
 $lang["download_pdf"] = "Baixar PDF";
-$lang["print"] = "Imprimir";
+$lang["print"] = "<i data-feather='printer' class='icon-16'></i>";
 $lang["actions"] = "Ações";
 $lang["balance_due"] = "Saldo devedor";
 $lang["paid"] = "Pago";
@@ -871,6 +892,7 @@ $lang["notification_estimate_accepted"] = "Aceitou um Orçamento";
 $lang["notification_estimate_rejected"] = "Rejeitou um Orçamento";
 
 $lang["clone_project"] = "Duplicar Projeto";
+$lang["clone_ticket"] = "Duplicar Chamado";
 $lang["copy_tasks"] = "Copiar Tarefas";
 $lang["copy_project_members"] = "Copiar membros do projeto";
 $lang["copy_milestones"] = "Copiar Etapas";
@@ -881,7 +903,9 @@ $lang["project_cloned_successfully"] = "O projeto foi duplicado com sucesso";
 
 $lang["search"] = "Pesquisar";
 $lang["no_record_found"] = "Nenhum registro encontrado.";
-$lang["excel"] = "Excel";
+$lang["excel"] = "<i data-feather='file-text' class='icon-16'></i>";
+$lang["excel_title"] = "Excel";
+$lang["print_title"] = "Imprimir";
 $lang["print_button_help_text"] = "Clique no botão de ajuda se precisar";
 $lang["are_you_sure"] = "Você tem certeza?";
 $lang["file_upload_instruction"] = "Arraste e solte documentos aqui <br /> (ou clique para navegar...)";
@@ -979,9 +1003,11 @@ $lang["notification_new_message_sent"] = "Enviou uma mensagem.";
 $lang["notification_message_reply_sent"] = "Respondeu uma mensagem.";
 
 $lang["new_message_sent_to_group"] = "Nova mensagem enviada no grupo";
+$lang["message_reply_sent_to_group_mentioning_you"] = "Mensagem respondida no grupo mencionando você";
 $lang["message_reply_sent_to_group"] = "Mensagem respondida no grupo";
 $lang["notification_new_message_sent_to_group"] = "Enviou uma mensagem no grupo.";
 $lang["notification_message_reply_sent_to_group"] = "Respondeu uma mensagem no grupo.";
+$lang["notification_message_reply_sent_to_group_mentioning_you"] = "Respondeu uma mensagem no grupo mencionando você.";
 $lang["invoice_payment_confirmation"] = "Confirmação de pagamento da fatura";
 $lang["notification_invoice_payment_confirmation"] = "Pagamento recebido";
 
@@ -989,6 +1015,7 @@ $lang["notification_invoice_payment_confirmation"] = "Pagamento recebido";
 
 $lang["client_can_create_projects"] = "O cliente pode criar projetos?";
 $lang["client_can_view_timesheet"] = "O cliente pode visualizar a Gestão de Tempo?";
+$lang["can_view_timesheet"] = "Cliente vê G.T.";
 $lang["client_can_view_gantt"] = "O cliente pode visualizar o evolutivo?";
 $lang["client_can_view_overview"] = "O cliente pode visualizar a visão geral de um projeto?";
 $lang["client_can_view_milestones"] = "O cliente pode visualizar as etapas?";
@@ -1046,6 +1073,7 @@ $lang["card_payment_failed_error_message"] = "Nós não pudemos processar o seu 
 
 $lang["message_received"] = "Mensagem recebida";
 $lang["message_received_in_group"] = "Mensagem recebida em grupo";
+$lang["message_received_in_group"] = "Mensagem recebida em grupo mencionando você";
 $lang["in_number_of_days"] = "Em %s dias"; //Ex. In 7 days
 $lang["details"] = "Detalhes";
 $lang["summary"] = "Resumo";
@@ -1063,7 +1091,8 @@ $lang["created_from"] = "Criado a partir de:"; //Ex. Created from Invoice#1
 $lang["recommended_execution_interval"] = "Intervalo de execução recomendado";
 
 /* Version 1.8 */
-
+$lang['consultant'] = 'Consultor';
+$lang['charge'] = 'Cliente';
 $lang["integration"] = "Integração";
 $lang["get_your_key_from_here"] = "Consiga sua chave de acesso aqui:";
 $lang["re_captcha_site_key"] = "Chave de acesso do site";
@@ -1132,6 +1161,8 @@ $lang["notification_new_announcement_created"] = "Criou um aviso.";
 
 $lang["month"] = "Mês";
 $lang["profit"] = "Lucro";
+$lang["liquid"] = "Liquido";
+
 
 $lang["invoice_due_reminder_before_due_date"] = "Lembrete de fatura próxima do vencimento";
 $lang["send_due_invoice_reminder_notification_before"] = "Enviar lembrete de vencimento de fatura em breve";
@@ -1206,6 +1237,7 @@ $lang["clock_in_out"] = "Clock in-out";
 $lang["custom_widget_details"] = "Detalhes do widget personalizado";
 
 $lang["total_projects"] = "Total de projetos";
+$lang["total_tickets"] = "Total de chamados";
 $lang["total_invoices"] = "Faturas totais";
 $lang["total_payments"] = "Pagamentos totais";
 $lang["total_due"] = "Total devido";
@@ -1219,8 +1251,8 @@ $lang["open_projects_list"] = "Lista de Projetos Abertos";
 $lang["starred_projects"] = "Projetos com estrela";
 $lang["completed_projects"] = "Projetos completos";
 
-$lang["new_tickets"] = "Novos ingressos";
-$lang["closed_tickets"] = "Ingressos Fechados";
+$lang["new_tickets"] = "Chamados";
+$lang["closed_tickets"] = "Chamados Fechados";
 
 $lang["clocked_in_team_members"] = "Cronometrados em membros da equipe";
 $lang["clocked_out_team_members"] = "Cronometrado para fora os membros da equipe";
@@ -1242,6 +1274,7 @@ $lang["client_permissions"] = "Permissões de cliente";
 
 $lang["invoice_over_payment_error_message"] = "Você não pode pagar mais do que a fatura devida.";
 $lang["account_already_exists_for_your_company_name"] = "Já existe uma conta para o nome da sua empresa.";
+$lang["account_already_exists_for_your_company_cnpj"] = "Já existe uma conta para o CNPJ da sua empresa.";
 $lang["personal_language"] = "Linguagem pessoal";
 $lang["no_messages_text"] = "Você ainda não tem mensagens";
 $lang["no_users_found"] = "Nenhum usuário encontrado";
@@ -1456,7 +1489,9 @@ $lang["delete_lead"] = "Excluir lead";
 $lang["lead_details"] = "Detalhes do lead";
 $lang["can_access_leads_information"] = "Pode acessar as informações do lead?";
 $lang["lead_info"] = "Informações de lead";
-$lang["project_limit_hours"] = "Limite de horas do projeto";
+$lang["project_limit_hours"] = "Limite de horas de desenvolvimento";
+$lang["project_amount_charge"] = "Valor Cobrança Projeto";
+$lang["project_balance_hours"] = "Saldo de horas de desenvolvimento";
 
 $lang["send_task_reminder_on_the_day_of_deadline"] = "Enviar lembrete de tarefa no dia do prazo";
 $lang["send_task_deadline_pre_reminder"] = "Enviar lembrete antes do prazo da tarefa";
@@ -2016,6 +2051,7 @@ $lang["delete_proposal_template"] = "Excluir modelo de proposta";
 $lang["use_template_from"] = "Usar modelo de";
 $lang["print_proposal"] = "Imprimir proposta";
 $lang["proposal_template_inserting_instruction"] = "Você perderá todas as alterações não salvas ao inserir um modelo.";
+$lang["gp_apart"] = "Separar GP";
 
 $lang["default"] = "Predefinição";
 
@@ -2372,19 +2408,21 @@ $lang["subscription_sent_message"] = "The subscription has been sent!";
 $lang["add_subscription"] = "Add subscription";
 $lang["edit_subscription"] = "Edit subscription";
 $lang["delete_subscription"] = "Delete subscription";
-$lang["subscription"] = "Subscription";
-$lang["subscriptions"] = "Subscriptions";
-$lang["subscription_value"] = "Subscription Value";
-$lang["subscription_items"] = "Subscription items";
+$lang["subscription"] = "Recorrência";
+$lang["subscriptions"] = "Recorrências";
+$lang["subscription_value"] = "Valor da Recorrência";
+$lang["subscription_items"] = "Itens da Recorrência";
 $lang["email_subscription_to_client"] = "Email subscription to client";
-$lang["send_subscription"] = "Send subscription";
-$lang["subscription_settings"] = "Subscription Settings";
+$lang["send_subscription"] = "Enviar recorrência";
+$lang["subscription_settings"] = "Configurações da Recorrência";
 $lang["subscription_prefix"] = "Subscription prefix";
 $lang["initial_number_of_the_subscription"] = "Initial number of the subscription";
 $lang["can_access_subscriptions"] = "Can access subscriptions?";
 $lang["show_in_subscription"] = "Show in subscription";
-$lang["subscription_total"] = "Subscription total";
+$lang["subscription_total"] = "Total da recorrência";
 $lang["start_subscription"] = "Start subscription";
+$lang["consultant_amount"] = "Valor Consultor";
+$lang["client_amount"] = "Valor Cliente";
 
 $lang["subscription_success_message"] = "You're subscription has been started successfully.";
 

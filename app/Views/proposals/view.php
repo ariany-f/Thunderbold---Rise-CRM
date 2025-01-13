@@ -1,5 +1,5 @@
 <div id="page-content" class="clearfix">
-    <div style="max-width: 1000px; margin: auto;">
+    <div class="ps-3" style="margin: auto;">
         <div class="page-title clearfix mt15">
             <h1><?php echo get_proposal_id($proposal_info->id); ?> - <?php echo $proposal_info->name ?></h1>
             
@@ -92,6 +92,11 @@
                 <?php } ?>
         <div class="mt15">
             <div class="card no-border clearfix ">
+            
+                <div class="clearfix p20">
+                    <p><?= ($proposal_info->template_name) ? ('<b style="color:#2471a3 !important;">Template selecionado:  </b>' . $proposal_info->template_name) : 'Sem template selecionado' ?></p>
+                </div>
+
                 <ul data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white title" role="tablist">
                     <li><a role="presentation" data-bs-toggle="tab" href="javascript:;" data-bs-target="#proposal-items"><?php echo app_lang("proposal") . " " . app_lang("items"); ?></a></li>
                     <li><a role="presentation" data-bs-toggle="tab" href="<?php echo_uri("proposals/editor/" . $proposal_info->id); ?>" data-bs-target="#proposal-editor"><?php echo app_lang("proposal_editor"); ?></a></li>
@@ -150,7 +155,7 @@
                                     <?php echo modal_anchor(get_uri("proposals/item_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_item'), array("class" => "btn btn-info text-white", "title" => app_lang('add_item'), "data-post-proposal_id" => $proposal_info->id)); ?>
                                 </div>
                                 <div class="float-end pr15" id="proposal-total-section">
-                                    <?php echo view("proposals/proposal_total_section"); ?>
+                                    <?php  echo view("proposals/proposal_total_section"); ?>
                                 </div>
                             </div>
 
@@ -177,15 +182,56 @@
             displayLength: 100,
             columns: [
                 {visible: false, searchable: false},
-                {title: "<?php echo app_lang("item") ?> ", "bSortable": false},
-                {title: "<?php echo app_lang("rate") ?>", "class": "text-center w10p", "bSortable": false},
+                {title: "<?php echo app_lang("item") ?>", "bSortable": false},
+                {title: "<?php echo app_lang("assigned_to") ?>", "class": "w10p", "bSortable": false},
+                {title: "<?php echo app_lang("rate") ?>", "class": "text-center w5p", "bSortable": false},
                 {title: "<?php echo app_lang("quantity") ?>", "class": "text-center w10p", "bSortable": false},
-                {title: "<?php echo app_lang("quantity_gp") ?>", "class": "text-center w10p", "bSortable": false},
-                {title: "<?php echo app_lang("sum_quantity") ?>", "class": "text-center w10p", "bSortable": false},
-                {title: "<?php echo app_lang("total") ?>", "class": "text-right w10p", "bSortable": false},
+                {title: "<?php echo app_lang("quantity_gp") ?>", "class": "text-center w5p", "bSortable": false},
+                {title: "<?php echo app_lang("quantity_add") ?>", "class": "text-center w5p", "bSortable": false},
+                {title: "<?php echo app_lang("sum_quantity") ?>", "class": "text-center w5p", "bSortable": false},
+                {title: "<?php echo app_lang("total") ?>", "class": "text-right w5p", "bSortable": false},
                 {title: "<i data-feather='menu' class='icon-16'></i>", "class": "text-right option w100", "bSortable": false}
             ],
+            summation: [
+                {column: 4, dataType: 'number'},
+                {column: 5, dataType: 'number'},
+                {column: 6, dataType: 'number'},
+                {column: 7, dataType: 'number'},
+                {column: 8, dataType: 'currency', currencySymbol: '<?php echo $proposal_total_summary->currency_symbol; ?>'}
+            ],
+            // footerCallback: function (row, data, start, end, display) {
+                
+            //         var total_section = <?php //echo json_encode(view("proposals/proposal_total_section")); ?>;
+            //         var add_item = <?php //echo json_encode(modal_anchor(get_uri("proposals/item_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_item'), array("class" => "btn btn-info text-white", "title" => app_lang('add_item'), "data-post-proposal_id" => $proposal_info->id))); ?>;
+                    
+            //         var dataTotal = [];
 
+            //         dataTotal[0] = "<td></td>";
+            //         dataTotal[1] = "<td></td>";
+            //         dataTotal[2] = "<td></td>";
+            //         dataTotal[3] = "<td><?php //echo app_lang("sub_total"); ?></td>";
+            //         dataTotal[4] = "<td><?php //echo $proposal_total_summary->proposal_total_quantity; ?></td>";
+            //         dataTotal[5] = "<td><?php //echo ($proposal_total_summary->proposal_total_quantity_gp ?? 0); ?></td>";
+            //         dataTotal[6] = "<td><?php //echo ($proposal_total_summary->proposal_total_quantity_add ?? 0); ?></td>";
+            //         dataTotal[7] = "<td><?php //echo $proposal_total_summary->proposal_total_sum_quantity; ?></td>";
+            //         dataTotal[8] = "<td><?php //echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?></td>";
+            //         dataTotal[9] = "<td></td>";
+
+            //         var instance = this;
+                    
+            //         var pageInfo = instance;
+
+
+            //         console.log(pageInfo);
+
+            //         // if (pageInfo.recordsTotal) {
+            //         //     $(instance).find("tfoot").show();
+            //         // } else {
+            //         //     $(instance).find("tfoot").hide();
+            //         //     return false;
+            //         // }
+                    
+            // },
             onInitComplete: function () {
                 //apply sortable
                 $("#proposal-item-table").find("tbody").attr("id", "proposal-item-table-sortable");

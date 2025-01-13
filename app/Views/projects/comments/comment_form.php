@@ -45,6 +45,7 @@ if (isset($task_id)) {
                     <?php if ($comment_type != "file") { ?>
                         <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class='icon-16'></i> <?php echo app_lang("upload_file"); ?></button>
                     <?php } ?>
+                    <button class="btn btn-default float-start me-auto btn-sm round" title="Comentar com código (SQL, php, etc)" id="code_comment" type="button" style="color:#7988a2"><i data-feather="code" class='icon-16'></i></button>
                     <button class="btn btn-primary float-end btn-sm" type="submit"><i data-feather="send" class='icon-16'></i> <?php echo app_lang("post_comment"); ?></button>
                 </footer>
             </div>
@@ -58,6 +59,44 @@ if (isset($task_id)) {
         $('#comment_description').appMention({
             source: "<?php echo_uri("projects/get_member_suggestion_to_mention"); ?>",
             data: {project_id: <?php echo $project_id; ?>}
+        });
+
+        $('#code_comment').on('click', function() {
+            let input = $('#comment_description');
+            let value = input.val();
+            let selectionStart = input[0].selectionStart; // Posição inicial da seleção
+            let selectionEnd = input[0].selectionEnd;   // Posição final da seleção
+
+            if (selectionStart !== selectionEnd) {
+                // Texto selecionado
+                let beforeSelection = value.slice(0, selectionStart); // Texto antes da seleção
+                let selectedText = value.slice(selectionStart, selectionEnd); // Texto selecionado
+                let afterSelection = value.slice(selectionEnd); // Texto após a seleção
+
+                // Verifica se o texto selecionado já está entre crases
+                if (selectedText.startsWith('`') && selectedText.endsWith('`')) {
+                    // Remove as crases do texto selecionado
+                    selectedText = selectedText.slice(1, -1);
+                } else {
+                    // Adiciona crases ao texto selecionado
+                    selectedText = '`' + selectedText + '`';
+                }
+
+                // Atualiza o valor do input com o texto modificado
+                input.val(beforeSelection + selectedText + afterSelection);
+
+                // Mantém a seleção ao redor do texto modificado
+                input[0].setSelectionRange(selectionStart, selectionStart + selectedText.length);
+            } else {
+                // Sem texto selecionado: Aplica comportamento ao texto completo
+                if (value.startsWith('`') && value.endsWith('`')) {
+                    // Remove as crases do texto completo
+                    input.val(value.slice(1, -1));
+                } else {
+                    // Adiciona crases ao texto completo
+                    input.val('`' + value + '`');
+                }
+            }
         });
 
         var dropzone;

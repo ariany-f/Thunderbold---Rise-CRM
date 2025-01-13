@@ -396,6 +396,10 @@ if (!function_exists('get_notification_config')) {
                 "notify_to" => array("recipient"),
                 "info" => $message_link
             ),
+            "message_reply_sent_to_group_mentioning_you" => array(
+                "notify_to" => array("recipient"),
+                "info" => $message_to_group_link
+            ),
             "message_reply_sent_to_group" => array(
                 "notify_to" => array("recipient"),
                 "info" => $message_to_group_link
@@ -536,11 +540,11 @@ if (!function_exists('send_notification_emails')) {
         $ci = new App_Controller();
 
         $notification = $ci->Notifications_model->get_email_notification($notification_id);
-
+       
         if (!$notification) {
             return false;
         }
-
+        
         $url = get_uri();
         $parser_data = array();
         $info = get_notification_config($notification->event, "info", $notification);
@@ -631,7 +635,7 @@ if (!function_exists('send_notification_emails')) {
             if ($message_info->files) {
                 $email_options["attachments"] = prepare_attachment_of_files(get_setting("timeline_file_path"), $message_info->files);
             }
-        } else if ($notification->event == "new_message_sent_to_group" || $notification->event == "message_reply_sent_to_group") {
+        } else if ($notification->event == "new_message_sent_to_group" || $notification->event == "message_reply_sent_to_group" || $notification->event == "message_reply_sent_to_group_mentioning_you") {
             $template_name = "message_received_in_group";
 
             $message_info = $ci->Messages_model->get_details(array("id" => $notification->actual_message_id))->row;
@@ -661,6 +665,28 @@ if (!function_exists('send_notification_emails')) {
 
             //reply? find the subject from the parent meessage
             if ($notification->event == "message_reply_sent_to_group") {
+                $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
+                $parser_data["SUBJECT"] = $main_message_info->subject;
+               
+                if($main_message_info->task_title)
+                {
+                    $task_url = get_uri();
+                    $task_options->task_id = $main_message_info->task_id;
+        
+                    $task_info = get_notification_config("project_task_updated", "info", $task_options);
+            
+                    if (is_array($task_info) && get_array_value($task_info, "url")) {
+                        $task_url = get_array_value($task_info, "url");
+                    }
+        
+                    if($task_url !== array("url" => get_uri("projects/all_tasks")))
+                    {
+                        $parser_data["SUBJECT"] = "Tarefa #" . $main_message_info->task_id . " - " . $main_message_info->subject;
+                        $parser_data["TASK_URL"] = $task_url;
+                    }
+                }
+            } else if($notification->event == "message_reply_sent_to_group_mentioning_you") {
+                $template_name = "message_received_in_group_mentioning_you";
                 $main_message_info = $ci->Messages_model->get_details(array("id" => $message_info->message_id))->row;
                 $parser_data["SUBJECT"] = $main_message_info->subject;
                
@@ -919,6 +945,7 @@ if (!function_exists('send_notification_emails')) {
                 }
             }
         } else {
+            
             if ($email_notify_to && is_array($email_notify_to)) {
                 foreach ($email_notify_to as $user) {
                     if (is_string($user)) {

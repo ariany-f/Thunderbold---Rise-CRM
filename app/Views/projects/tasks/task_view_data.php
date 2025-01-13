@@ -17,7 +17,7 @@ if ($total_sub_tasks) {
                     <div class="d-flex m0">
                         <div class="flex-shrink-0">
                             <span class="avatar avatar-sm">
-                                <img id="task-assigned-to-avatar" src="<?php echo get_avatar($model_info->assigned_to_avatar); ?>" alt="..." />
+                                <img id="task-assigned-to-avatar" src="<?php echo get_avatar($model_info->assigned_to_avatar, $model_info->assigned_to_user); ?>" alt="..." />
                             </span>
                         </div>
                         <div class="w-100 ps-2 pt5">
@@ -128,7 +128,10 @@ if ($total_sub_tasks) {
                                 echo modal_anchor(get_uri("projects/timelog_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('log_time'), array("class" => "btn btn-success", "title" => app_lang('log_time'), "data-post-project_id" => $model_info->project_id, "data-post-task_id" => $model_info->id));
                               //  echo view("projects/tasks/task_timer");
                             }
-                        ?> 
+                            if($model_info->status_id == "1" && $login_user->user_type === 'staff') {
+                                echo ajax_anchor(get_uri("projects/start_task_dev/" . $model_info->id), "<i data-feather='play' class='icon-16'></i> " . app_lang('start_development'), array("class" => "btn btn-info color-white mt-4", "title" => app_lang('start_development'), "data-reload-on-success" => "1"));
+                            }
+                        ?>
                     </div>
 
                     <?php if (get_setting("module_project_timesheet") == "1" && $show_timesheet_info) { ?>
@@ -363,14 +366,26 @@ if ($total_sub_tasks) {
 
                         <?php echo form_close(); ?>
                     </div>
-
-                    <!--Task comment section-->
                     <div class="clearfix">
-                        <div class="b-t pt10 list-container">
-                            <?php if ($can_comment_on_tasks) { ?>
-                                <?php echo view("projects/comments/comment_form"); ?>
-                            <?php } ?>
-                            <?php echo view("projects/comments/comment_list"); ?>
+                        <strong><?php echo app_lang('select_to_see')  . ' ' .app_lang('comments')  . ' ' . app_lang('or')  . ' ' . app_lang('timesheets')  . '/' . app_lang('notes'); ?></strong>
+                        <ul id="task-tabs" data-bs-toggle="ajax-tab" class="nav nav-tabs scrollable-tabs" role="tablist">
+                            <li><a  role="presentation" data-bs-toggle="tab" data-bs-target="#task-comments"><?php echo app_lang('comments'); ?></a></li>
+                            <li><a  role="presentation" data-bs-toggle="tab" data-bs-target="#task-timesheets"><?php echo app_lang('timesheets'); ?></a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade" id="task-comments">
+                                <div class="b-t pt10 list-container">
+                                    <?php if ($can_comment_on_tasks) { ?>
+                                        <?php echo view("projects/comments/comment_form"); ?>
+                                    <?php } ?>
+                                    <?php echo view("projects/comments/comment_list"); ?>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="task-timesheets">
+                                <div class="b-t pt10 list-container">
+                                    <?php echo view("projects/tasks/summary_list"); ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -383,11 +398,21 @@ if ($total_sub_tasks) {
     <div class="box-title"><span ><?php echo app_lang("activity"); ?></span></div>
     <div class="pl15 pr15 mt15 list-container project-activity-logs-container">
         <?php echo activity_logs_widget(array("limit" => 20, "offset" => 0, "log_type" => "task", "log_type_id" => $model_info->id)); ?>
-    </div>
+    </div>0
 <?php } ?>
 
 <script>
      $('body').on('click', '.enter_chat_group_message', function () {
         getActiveChat($(this).attr("data-id"));
     });
+
+    setTimeout(function () {
+        var tab = "<?php echo ($tab ? $tab : "comments"); ?>";
+        if (tab === "comments") {
+            $("[data-bs-target='#task-comments']").trigger("click");
+        } else if (tab === "timesheets") {
+            $("[data-bs-target='#task-timesheets']").trigger("click");
+        }
+    }, 210);
+
 </script>

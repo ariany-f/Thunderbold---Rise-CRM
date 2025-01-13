@@ -25,7 +25,7 @@ if ($can_edit_timesheet_settings || $can_edit_slack_settings || $can_create_proj
                 <?php
             }
             if ($login_user->user_type == "staff") {
-                echo "<li role='presentation'>" . modal_anchor(get_uri("projects/clone_project_modal_form"), "<i data-feather='copy' class='icon-16'></i> " . app_lang('clone_project'), array("class" => "dropdown-item", "data-post-id" => $project_info->id, "title" => app_lang('clone_project'))) . " </li>";
+                echo "<li role='presentation'>" . modal_anchor(get_uri("projects/clone_project_modal_form"), "<i data-feather='copy' class='icon-16'></i> " . ($project_info->is_ticket ? app_lang('clone_ticket') : app_lang('clone_project')), array("class" => "dropdown-item", "data-post-id" => $project_info->id, "title" => app_lang('clone_project'))) . " </li>";
             }
             echo "<li role='presentation'>" . modal_anchor(get_uri("projects/modal_form"), "<i data-feather='edit' class='icon-16'></i> " . app_lang('edit_project'), array("class" => "dropdown-item edit", "title" => app_lang('edit_project'), "data-post-id" => $project_info->id)) . " </li>";
             ?>

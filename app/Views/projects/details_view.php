@@ -24,7 +24,7 @@ if (!function_exists("make_project_tabs_data")) {
         }
 
         $final_projects_tabs = $final_projects_tabs ? $final_projects_tabs : $default_project_tabs;
-
+       
         foreach ($final_projects_tabs as $key => $value) {
             $exibition_key = $key;
             if($is_ticket)
@@ -131,10 +131,6 @@ if (!function_exists("make_project_tabs_data")) {
                                 $project_tabs["customer_feedback"] = "projects/customer_feedback/" . $project_info->id;
                             }
 
-                            if ($show_timesheet_info) {
-                                $project_tabs["timesheets"] = "projects/timesheets/" . $project_info->id;
-                            }
-
                             if ($show_invoice_info && $project_info->project_type === "client_project" && !$project_info->is_ticket) {
                                 $project_tabs["invoices"] = "projects/invoices/" . $project_info->id;
                                 $project_tabs["payments"] = "projects/payments/" . $project_info->id;
@@ -150,6 +146,10 @@ if (!function_exists("make_project_tabs_data")) {
 
                             if ($show_ticket_info && $project_info->project_type === "client_project" && !$project_info->is_ticket) {
                                 $project_tabs["tickets"] = "projects/tickets/" . $project_info->id;
+                            }
+
+                            if ($show_timesheet_info) {
+                                $project_tabs["timesheets"] = "projects/timesheets/" . $project_info->id;
                             }
 
                             if ($show_timesheet_info and $login_user->is_admin) {
@@ -209,7 +209,7 @@ if (!function_exists("make_project_tabs_data")) {
                             $project_tabs_of_hook_of_client = app_hooks()->apply_filters('app_filter_clients_project_details_tab', $project_tabs_of_hook_of_client, $project_info->id);
                             $project_tabs_of_hook_of_client = is_array($project_tabs_of_hook_of_client) ? $project_tabs_of_hook_of_client : array();
                             $project_tabs = array_merge($project_tabs, $project_tabs_of_hook_of_client);
-
+                            
                             make_project_tabs_data($project_tabs, true, $project_info->is_ticket);
                         }
                         ?>
@@ -226,12 +226,12 @@ if (!function_exists("make_project_tabs_data")) {
                     <div role="tabpanel" class="tab-pane fade" id="project-comments-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-customer_feedback-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-notes-section"></div>
-                    <div role="tabpanel" class="tab-pane fade" id="project-timesheets-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-invoices-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-payments-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-expenses-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-contracts-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-tickets-section"></div>
+                    <div role="tabpanel" class="tab-pane fade" id="project-timesheets-section"></div>
                     <div role="tabpanel" class="tab-pane fade" id="project-resources-section"></div>
 
 

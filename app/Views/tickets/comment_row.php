@@ -3,9 +3,9 @@
         <div class="flex-shrink-0 mr10">
             <span class="avatar avatar-sm">
                 <?php if (!$comment->created_by || $comment->created_by == 999999999) { ?>
-                    <img src="<?php echo get_avatar("system_bot"); ?>" alt="..." />
+                    <img src="<?php echo get_avatar("system_bot", "System Bot"); ?>" alt="..." />
                 <?php } else { ?>
-                    <img src="<?php echo get_avatar($comment->created_by_avatar); ?>" alt="..." />
+                    <img src="<?php echo get_avatar($comment->created_by_avatar, (!$comment->created_by ? $comment->creator_name : $comment->created_by_user)); ?>" alt="..." />
                     <?php
                 }
                 ?>

@@ -43,6 +43,14 @@
         </div>
         <div class="form-group">
             <div class="row">
+                <label for="user_id" class=" col-md-3"><?php echo app_lang('assign_to'); ?></label>
+                <div class="col-md-9" id="dropdown-apploader-section">
+                     <?php echo form_dropdown("user_id", $users_dropdown, (isset($model_info->user_id) ? $model_info->user_id : ''), "class='select2 col-md-10 p0' id='user_id'"); ?>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
                 <label for="proposal_item_quantity" class=" col-md-3"><?php echo app_lang('quantity'); ?></label>
                 <div class="col-md-9">
                     <?php
@@ -70,6 +78,24 @@
                         "value" => $model_info->quantity_gp ? to_decimal_format($model_info->quantity_gp) : "",
                         "class" => "form-control",
                         "placeholder" => app_lang('quantity_gp'),
+                        "data-rule-required" => true,
+                        "data-msg-required" => app_lang("field_required"),
+                    ));
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <label for="proposal_item_quantity_add" class=" col-md-3"><?php echo app_lang('quantity_add'); ?></label>
+                <div class="col-md-9">
+                    <?php
+                    echo form_input(array(
+                        "id" => "proposal_item_quantity_add",
+                        "name" => "proposal_item_quantity_add",
+                        "value" => $model_info->quantity_add ? to_decimal_format($model_info->quantity_add) : "",
+                        "class" => "form-control",
+                        "placeholder" => app_lang('quantity_add'),
                         "data-rule-required" => true,
                         "data-msg-required" => app_lang("field_required"),
                     ));
@@ -143,7 +169,9 @@
             applySelect2OnItemTitle();
         })
 
+        $(".select2").select2();
     });
+    
 
     function applySelect2OnItemTitle() {
         $("#proposal_item_title").select2({

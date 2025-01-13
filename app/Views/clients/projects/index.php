@@ -101,6 +101,7 @@ if (isset($page_type) && $page_type === 'dashboard') {
                 {visible: false, searchable: false},
                 {title: '<?php echo app_lang("start_date") ?>', "class": "w10p", "iDataSort": 4},
                 {visible: false, searchable: false},
+                {visible: false, searchable: false},
                 {title: '<?php echo app_lang("deadline") ?>', "class": "w10p", "iDataSort": 6},
                 {title: '<?php echo app_lang("progress") ?>', "class": "w15p"},
                 {title: '<?php echo app_lang("status") ?>', "class": "w10p"}

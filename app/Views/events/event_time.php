@@ -11,33 +11,34 @@ if ($model_info->start_date == $model_info->end_date) {
     } else {
         $day_name = app_lang("short_" . strtolower(date("l", strtotime($model_info->start_date)))); //get short day name from language
         $month_name = app_lang(strtolower(date("F", strtotime($model_info->start_date)))); //get month name from language
-        echo $day_name . ", " . $month_name . " " . date("d", strtotime($model_info->start_date));
+        echo $day_name . ", " . date("d", strtotime($model_info->start_date)) . " de " . $month_name;
     }
 
     if (is_date_exists($model_info->start_time)) {
-        echo ", " . format_to_time($model_info->start_date . " " . $model_info->start_time, false);
+        
+        echo ", " . format_to_time($model_info->start_time, false);
 
         if (!isset($is_reminder)) {
-            echo " – " . format_to_time($model_info->end_date . " " . $model_info->end_time, false);
+            echo " – " . format_to_time($model_info->end_time, false);
         }
     }
 } else {
 
     $day_name = app_lang("short_" . strtolower(date("l", strtotime($model_info->start_date)))); //get short day name from language
     $month_name = app_lang(strtolower(date("F", strtotime($model_info->start_date)))); //get month name from language
-    echo $day_name . ", " . $month_name . " " . date("d", strtotime($model_info->start_date));
+    echo $day_name . ", " . date("d", strtotime($model_info->start_date)) . " de " . $month_name;
 
     if (is_date_exists($model_info->start_time)) {
-        echo ", " . format_to_time($model_info->start_date . " " . $model_info->start_time, false);
+        echo ", " . format_to_time($model_info->start_time, false);
     }
 
 
     $end_day_name = app_lang("short_" . strtolower(date("l", strtotime($model_info->end_date)))); //get short day name from language
     $end_month_name = app_lang(strtolower(date("F", strtotime($model_info->end_date)))); //get month name from language
-    echo " – " . $end_day_name . ", " . $end_month_name . " " . date("d", strtotime($model_info->end_date));
+    echo " – " . $end_day_name . ", " . date("d", strtotime($model_info->end_date)) . " de " . $end_month_name;
 
     if (is_date_exists($model_info->end_time)) {
-        echo ", " . format_to_time($model_info->end_date . " " . $model_info->end_time, false);
+        echo ", " . format_to_time($model_info->end_time, false);
     }
 }
 ?>

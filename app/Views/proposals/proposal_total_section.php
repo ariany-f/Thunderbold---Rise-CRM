@@ -1,25 +1,30 @@
-<table id="proposal-item-table" class="table display dataTable text-right strong table-responsive">     
-    <tr>
-        <td style="width: 120px;"><?php echo app_lang("sub_total"); ?></td>
-        <td style="width: 120px;"><?php echo $proposal_total_summary->proposal_total_quantity; ?></td>
-        <td style="width: 120px;"><?php echo $proposal_total_summary->proposal_total_quantity_gp; ?></td>
-        <td style="width: 120px;"><?php echo $proposal_total_summary->proposal_total_sum_quantity; ?></td>
-        <td style="width: 130px;"><?php echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?></td>
-        <td style="width: 130px;"> </td>
-    </tr>
+<!--table id="proposal-item-table" class="table display dataTable text-right strong table-responsive"-->
+<table width="100%">
+    <!-- <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="w10p text-center"><?php //echo app_lang("sub_total"); ?></td>
+        <td class="w10p text-center"><?php //echo $proposal_total_summary->proposal_total_quantity; ?></td>
+        <td class="w5p text-right"><?php //echo ($proposal_total_summary->proposal_total_quantity_gp ?? 0); ?></td>
+        <td class="w5p text-right"><?php //echo ($proposal_total_summary->proposal_total_quantity_add ?? 0); ?></td>
+        <td class="w5p text-center"><?php //echo $proposal_total_summary->proposal_total_sum_quantity; ?></td>
+        <td class="w5p text-center"><?php //echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?></td>
+        <td class="w15p"></td>
+    </tr> -->
 
-    <?php
+<?php
     $discount_row = "<tr>
-                        <td colspan='3'></td>
+                        <td colspan='4'></td>
                         <td style='padding-top:13px;'>" . app_lang("discount") . "</td>
-                        <td style='padding-top:13px;'>" . to_currency($proposal_total_summary->discount_total, $proposal_total_summary->currency_symbol) . "</td>
+                        <td class='text-right' style='padding:1rem 2.2rem !important;'>" . to_currency($proposal_total_summary->discount_total, $proposal_total_summary->currency_symbol) . "</td>
                         <td class='text-center option w100'>" . modal_anchor(get_uri("proposals/discount_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "data-post-proposal_id" => $proposal_id, "title" => app_lang('edit_discount'))) . "<span class='p20'>&nbsp;&nbsp;&nbsp;</span></td>
                     </tr>";
 
     $total_after_discount_row = "<tr>
-                                    <td colspan='3'></td>
+                                    <td colspan='4'></td>
                                     <td>" . app_lang("total_after_discount") . "</td>
-                                    <td style='width:120px;'>" . to_currency($proposal_total_summary->proposal_subtotal - $proposal_total_summary->discount_total, $proposal_total_summary->currency_symbol) . "</td>
+                                    <td class='text-right' style='width:80px;padding:1rem 2.2rem !important;'>" . to_currency($proposal_total_summary->proposal_subtotal - $proposal_total_summary->discount_total, $proposal_total_summary->currency_symbol) . "</td>
                                     <td></td>
                                 </tr>";
 
@@ -35,17 +40,17 @@
 
     <?php if ($proposal_total_summary->tax) { ?>
         <tr>
-            <td colspan='3'></td>
+            <td colspan='4'></td>
             <td><?php echo $proposal_total_summary->tax_name; ?></td>
-            <td><?php echo to_currency($proposal_total_summary->tax, $proposal_total_summary->currency_symbol); ?></td>
+            <td class="text-center"><?php echo to_currency($proposal_total_summary->tax, $proposal_total_summary->currency_symbol); ?></td>
             <td></td>
         </tr>
     <?php } ?>
     <?php if ($proposal_total_summary->tax2) { ?>
         <tr>
-            <td colspan='3'></td>
+            <td colspan='4'></td>
             <td><?php echo $proposal_total_summary->tax_name2; ?></td>
-            <td><?php echo to_currency($proposal_total_summary->tax2, $proposal_total_summary->currency_symbol); ?></td>
+            <td class="text-center"><?php echo to_currency($proposal_total_summary->tax2, $proposal_total_summary->currency_symbol); ?></td>
             <td></td>
         </tr>
     <?php } ?>
@@ -58,9 +63,9 @@
     ?>
 
     <tr>
-        <td colspan='3'></td>
+        <td colspan='4'></td>
         <td><?php echo app_lang("total"); ?></td>
-        <td><?php echo to_currency($proposal_total_summary->proposal_total, $proposal_total_summary->currency_symbol); ?></td>
+        <td class="text-right" style="padding:1rem 2.2rem !important"><?php echo to_currency($proposal_total_summary->proposal_total, $proposal_total_summary->currency_symbol); ?></td>
         <td></td>
     </tr>
 </table>

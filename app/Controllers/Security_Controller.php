@@ -381,7 +381,7 @@ class Security_Controller extends App_Controller {
 
         helper('cookie');
         $selected_filters_cookie = get_cookie("calendar_filters_of_user_" . $this->login_user->id);
-        $selected_filters_cookie_array = $selected_filters_cookie ? explode('-', $selected_filters_cookie) : array("events"); //load only events if there is no cookie
+        $selected_filters_cookie_array = $selected_filters_cookie ? explode('-', $selected_filters_cookie) : array("events", "task_start_date", "task_deadline", "project_start_date", "project_deadline"); //load only events if there is no cookie
 
         $calendar_filter_dropdown = array(array("id" => "events", "text" => app_lang("events"), "isChecked" => in_array("events", $selected_filters_cookie_array) ? true : false));
 
@@ -698,6 +698,24 @@ class Security_Controller extends App_Controller {
         if ($projects) {
             foreach ($projects as $project) {
                 $projects_dropdown[$project->id] = $project->title;
+            }
+        }
+
+        return $projects_dropdown;
+    }
+    
+    //get projects dropdown for speciiic client
+    protected function _get_projects_of_client_dropdown($client_id) {
+        $project_options = array("status" => "open", "deleted" => 0);
+     
+        $project_options["client_id"] = $client_id; //get client's projects
+    
+        $projects = $this->Projects_model->get_details($project_options)->getResult();
+        $projects_dropdown = array("" => "-");
+
+        if ($projects) {
+            foreach ($projects as $project) {
+                $projects_dropdown[$project->id] = ((($project->is_ticket) ? "Chamados:  " : "Projeto: ") . $project->title);
             }
         }
 

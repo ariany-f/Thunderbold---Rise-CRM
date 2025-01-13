@@ -565,6 +565,10 @@ class Left_menu {
             if (get_setting("module_knowledge_base") == "1" && !in_array("knowledge_base", $hidden_menu)) {
                 $sidebar_menu[] = array("name" => "knowledge_base", "url" => "knowledge_base", "class" => "help-circle");
             }
+            
+            if (get_setting("module_project_timesheet") && (!get_array_value($this->ci->login_user->permissions, "do_not_show_projects")) && !in_array("timesheets", $hidden_menu)) {
+                $sidebar_menu[] = array("name" => "timesheets", "url" => "clients/all_timesheets", "class" => "clock");
+            }
 
             $sidebar_menu = app_hooks()->apply_filters('app_filter_client_left_menu', $sidebar_menu);
         }

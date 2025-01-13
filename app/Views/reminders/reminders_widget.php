@@ -56,7 +56,7 @@
                 var data = {
                     message: reminder.title,
                     title: reminder.title,
-                    icon: "<?php echo get_avatar("system_bot") ?>",
+                    icon: "<?php echo get_avatar("system_bot", "System Bot") ?>",
                     notification_id: reminder.id,
                     url_attributes: "href='#' data-act='ajax-modal' data-title='<?php echo app_lang("reminder_details"); ?>' data-action-url='<?php echo get_uri("events/reminder_view"); ?>' data-post-id='" + reminder.id + "'", //open small modal for action
                     isReminder: true,

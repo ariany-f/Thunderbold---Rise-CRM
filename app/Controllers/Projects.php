@@ -724,12 +724,14 @@ class Projects extends Security_Controller {
         $copy_tasks_start_date_and_deadline = $this->request->getPost("copy_tasks_start_date_and_deadline");
         $change_the_tasks_start_date_and_deadline_based_on_project_start_date = $this->request->getPost("change_the_tasks_start_date_and_deadline_based_on_project_start_date");
         $project_type = $this->request->getPost('project_type');
+        $is_ticket = $this->request->getPost('is_ticket');
 
         //prepare new project data
         $now = get_current_utc_time();
         $data = array(
             "title" => $this->request->getPost('title'),
             "description" => $this->request->getPost('description'),
+            "is_ticket" => $is_ticket,
             "client_id" => ($project_type === "internal_project") ? 0 : $this->request->getPost('client_id'),
             "start_date" => $project_start_date,
             "deadline" => $this->request->getPost('deadline'),
@@ -926,7 +928,7 @@ class Projects extends Security_Controller {
 
             log_notification("project_created", array("project_id" => $new_project_id));
 
-            echo json_encode(array("success" => true, 'id' => $new_project_id, 'message' => app_lang('project_cloned_successfully')));
+            echo json_encode(array("success" => true, 'id' => $new_project_id, "is_ticket" => $is_ticket, 'message' => app_lang('project_cloned_successfully')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
@@ -1260,17 +1262,37 @@ class Projects extends Security_Controller {
         {
             $first_column = anchor(get_uri("projects/view/" . $data->id), $data->id);
         }
+
+        $collaborators = $this->_get_collaborators($data->collaborator_list);
+
+        if (!$collaborators) {
+            $collaborators = "-";
+        }
+
+        $client_can_view_timesheet = "";
+
+        if($this->Project_settings_model->get_setting($data->id, "client_can_view_timesheet"))
+        {
+            $client_can_view_timesheet = '<span class="mt0 badge  clickable" style="background-color:#0abb87;" title="Legenda">'.app_lang("yes") . '</span>';
+        }
+        else
+        {
+            $client_can_view_timesheet = '<span class="mt0 badge  clickable" style="background-color:#f5325c;" title="Legenda">'.app_lang("no") . '</span>';
+        }
+
         $row_data = array(
             $first_column,
             $title,
             $client_name,
             $price,
+            $collaborators,
             $data->start_date,
             $start_date,
             $data->deadline,
             $dateline,
             $progress_bar,
-            app_lang($data->status)
+            app_lang($data->status),
+            $client_can_view_timesheet,
         );
 
         foreach ($custom_fields as $field) {
@@ -1365,6 +1387,12 @@ class Projects extends Security_Controller {
             }
         }
         
+        $collaborators = $this->_get_collaborators($data->collaborator_list);
+
+        if (!$collaborators) {
+            $collaborators = "-";
+        }
+        
         $row_data = array(
             $first_column,
             $title,
@@ -1376,15 +1404,20 @@ class Projects extends Security_Controller {
         // Adicione os status individualmente ao array $row_data
         $row_data = array_merge($row_data, $status_columns);
         
+
+        $row_data[] = $collaborators;
         $row_data[] = $progress_bar;
         $row_data[] = app_lang($data->status);
         
         foreach ($custom_fields as $field) {
             $cf_id = "cfv_" . $field->id;
             $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
+            
+            
         }
         
         $row_data[] = $optoins;
+        
         return $row_data;
     }
 
@@ -1546,9 +1579,28 @@ class Projects extends Security_Controller {
         $duration = abs($info->timesheet_total); // Mantém o valor em segundos
         $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
 
-      //  $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
+        
+        if($this->login_user->is_admin)
+        {
+            $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+        }
+        else
+        {
+            $options_resource = array("project_id" => $project_id, "user_id" => $this->login_user->id);
+            $info_resource = $this->Project_resources_model->get_details($options_resource)->getRow();
+            if($info_resource)
+            {
+                $view_data['limit'] = convert_time_to_24hours_format($info_resource->hour_limit ?? 0);
+            }
+            else
+            {
+                $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+            }
+        }
+      
+        //  $view_data["total_project_hours"] = to_decimal_format($info->timesheet_total / 60 / 60);
 
-        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
+        $view_data['balance'] = ($view_data['limit'] != '00:00:00') ? (convert_seconds_to_time_format(convert_time_string_to_second($view_data['limit']) - convert_time_string_to_second($view_data["total_project_hours"]))) : 0;
 
         return $this->template->view('projects/overview', $view_data);
     }
@@ -1635,7 +1687,25 @@ class Projects extends Security_Controller {
         $duration = abs($timesheet_info->timesheet_total); // Mantém o valor em segundos
         $view_data["total_project_hours"]  = convert_seconds_to_time_format($duration); // Para exibição formatada
 
-        $view_data['limit'] = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0;
+        if($this->login_user->is_admin)
+        {
+            $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+        }
+        else
+        {
+            $options_resource = array("project_id" => $project_id, "user_id" => $this->login_user->id);
+            $info_resource = $this->Project_resources_model->get_details($options_resource)->getRow();
+            if($info_resource)
+            {
+                $view_data['limit'] = convert_time_to_24hours_format($info_resource->hour_limit ?? 0);
+            }
+            else
+            {
+                $view_data['limit'] = convert_time_to_24hours_format($this->Project_settings_model->get_setting($project_id, 'project_limit_hours') ?? 0);
+            }
+        }
+
+        $view_data['balance'] = ($view_data['limit'] != '00:00:00') ? (convert_seconds_to_time_format(convert_time_string_to_second($view_data['limit']) - convert_time_string_to_second($view_data["total_project_hours"]))) : 0;
         
         $view_data['project_id'] = $project_id;
        
@@ -1875,15 +1945,17 @@ class Projects extends Security_Controller {
             if($resource_type == "manager")
             {
                 $options_resources["is_leader"] = 1;
+
+                $options_timesheet = array("project_id" => $data->project_id, "group_by" => "project");
             }
             else
             {
                 $options_resources["is_leader"] = 0;
+
+                $options_timesheet = array("project_id" => $data->project_id, "user_id" => $data->user_id, "group_by" => "member");
             }
 
             $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
-
-            $options_timesheet = array("project_id" => $data->project_id, "user_id" => $data->user_id, "group_by" => "member");
 
             $timesheet = $this->Timesheets_model->get_summary_details($options_timesheet)->getRow();
             
@@ -2009,7 +2081,7 @@ class Projects extends Security_Controller {
         // Multiplicação de $hour_amount por $duration em horas
         $total_amount = $hour_amount * $duration_in_hours;
         
-        return array($member,  $hour_limit, ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : app_lang('not_set'))), $formatted_duration, to_currency($total_amount), $link);
+        return array($member,  ($hour_limit. ":00:00"), ($resource ? (to_currency($resource->hour_amount) . ' <i>valor projeto</i>') : (($hour_amount) ? to_currency($hour_amount) . ' <i>valor consultor</i>' : app_lang('not_set'))), $formatted_duration, to_currency($total_amount), $link);
     }
 
     /* load project members add/edit modal */
@@ -2410,6 +2482,31 @@ class Projects extends Security_Controller {
         }
     }
 
+    function start_task_dev($task_id) {
+        validate_numeric_value($task_id);
+        $this->access_only_team_members();
+
+        $task_data = $this->Tasks_model->get_one_where(array('id' => $task_id));
+
+        $data = array(
+            "assigned_to" => $this->login_user->id,
+            "status_id" => 2
+        );
+
+        $user_has_any_open_timer_on_this_task = false;
+
+        if ($task_id) {
+            $user_has_any_open_timer_on_this_task = $this->Timesheets_model->user_has_any_open_timer_on_this_task($task_id, $this->login_user->id);
+        }
+
+       if ($user_has_any_open_timer_on_this_task) {
+            app_redirect("forbidden");
+        }
+
+        $this->Tasks_model->ci_save($data, $task_id);
+        echo json_encode(array("success" => true));
+    }
+
     function create_conversation($project_id, $task_id, $group_id) {
         
         validate_numeric_value($project_id);
@@ -2605,6 +2702,7 @@ class Projects extends Security_Controller {
                 $start_time = convert_time_to_24hours_format($start_time);
                 $end_time = convert_time_to_24hours_format($end_time);
             }
+
             
             $end_time = round_up_time_interval($start_time, $end_time);
 
@@ -2615,6 +2713,8 @@ class Projects extends Security_Controller {
             //add time offset
             $start_date_time = convert_date_local_to_utc($start_date_time);
             $end_date_time = convert_date_local_to_utc($end_date_time);
+
+            
         } else {
             //date and hour mode
             $date = $this->request->getPost("date");
@@ -2632,10 +2732,11 @@ class Projects extends Security_Controller {
         $project_id = $this->request->getPost('project_id');
         $project_hour_limit = $this->Project_settings_model->get_setting($project_id, 'project_limit_hours');
 
-        if($project_hour_limit)
+        if($project_hour_limit && (!$id))
         {
             // Calcular o tempo registrado em horas
             $hours_logged = calculate_hours_diff($start_date_time, $end_date_time);
+
     
             // Verificar se o tempo registrado excede o limite de horas do projeto
             if ($hours_logged > $project_hour_limit) {
@@ -2671,6 +2772,8 @@ class Projects extends Security_Controller {
         }
 
 
+        $user_id = $this->request->getPost('user_id') ? $this->request->getPost('user_id') : $this->login_user->id;
+
         $data = array(
             "project_id" => $project_id,
             "start_time" => $start_date_time,
@@ -2680,12 +2783,42 @@ class Projects extends Security_Controller {
             "hours" => $hours
         );
 
+       
         //save user_id only on insert and it will not be editable
         if (!$id) {
             //insert mode
-            $data["user_id"] = $this->request->getPost('user_id') ? $this->request->getPost('user_id') : $this->login_user->id;
-        }
+            $data["user_id"] = $user_id;
+            $consultant_amount = 0;
+            $client_amount = 0;
+            $resource = $this->Project_resources_model->get_details(array("project_id" => $project_id, "user_id" => $user_id, "is_leader" => 0, "deleted" => 0))->getRow();
+            
+            if($resource) {
+                $consultant_amount = $resource->hour_amount;
+            }
+            else {
+                $team_job_info = $this->Users_model->get_job_info($user_id);
+                if($team_job_info)
+                {
+                    $consultant_amount = $team_job_info->salary;
+                }
+            }
 
+            $client_amount = $this->Project_settings_model->get_setting($project_id, 'project_amount_charge');
+            $data["consultant_amount"] = $consultant_amount;
+            $data["client_amount"] = $client_amount;
+        }
+        else
+        {
+            if(!is_null($this->request->getPost('consultant_amount')))
+            {
+                $data["consultant_amount"] = $this->request->getPost('consultant_amount');
+            }
+            if(!is_null($this->request->getPost('client_amount')))
+            {
+                $data["client_amount"] = $this->request->getPost('client_amount');
+            }
+        }
+        
         $this->check_timelog_update_permission($id, $project_id, get_array_value($data, "user_id"));
 
         $save_id = $this->Timesheets_model->ci_save($data, $id);
@@ -2772,6 +2905,69 @@ class Projects extends Security_Controller {
 
     /* list of timesheets, prepared for datatable  */
 
+    function timesheet_client_list_data() {
+
+        $project_id = $this->request->getPost("project_id");
+
+        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("timesheets", $this->login_user->is_admin, $this->login_user->user_type);
+
+        $options = array(
+            "project_id" => $project_id,
+            "status" => "none_open",
+            "user_id" => $this->request->getPost("user_id"),
+            "start_date" => $this->request->getPost("start_date"),
+            "end_date" => $this->request->getPost("end_date"),
+            "task_id" => $this->request->getPost("task_id"),
+            "manager_id" => $this->request->getPost("manager_id"),
+            "client_id" => $this->login_user->client_id,
+            "custom_fields" => $custom_fields,
+            "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
+        );
+
+        //get allowed member ids
+        $members = $this->_get_members_to_manage_timesheet();
+        if ($members != "all" && $this->login_user->user_type == "staff") {
+            //if user has permission to access all members, query param is not required
+            //client can view all timesheet
+            $options["allowed_members"] = $members;
+        }
+
+        $all_options = append_server_side_filtering_commmon_params($options);
+        
+        
+        if($this->login_user->user_type == "client")
+        {
+            $all_options["allowed_projects"] = true;
+        }
+
+        $result = $this->Timesheets_model->get_details($all_options);
+
+        //by this, we can handel the server side or client side from the app table prams.
+        if (get_array_value($all_options, "server_side")) {
+            $list_data = get_array_value($result, "data");
+        } else {
+            $list_data = $result->getResult();
+            $result = array();
+        }
+
+        $result_data = array();
+        foreach ($list_data as $data) {
+
+            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
+
+            $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+
+            $result_data[] = $this->_make_timesheet_row($data, $custom_fields, $resource);
+        }
+
+        $result["data"] = $result_data;
+
+        echo json_encode($result);
+    }
+
+
+    /* list of timesheets, prepared for datatable  */
+
     function timesheet_list_data() {
 
         $project_id = $this->request->getPost("project_id");
@@ -2793,6 +2989,7 @@ class Projects extends Security_Controller {
             "start_date" => $this->request->getPost("start_date"),
             "end_date" => $this->request->getPost("end_date"),
             "task_id" => $this->request->getPost("task_id"),
+            "manager_id" => $this->request->getPost("manager_id"),
             "client_id" => $this->request->getPost("client_id"),
             "custom_fields" => $custom_fields,
             "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
@@ -2807,7 +3004,7 @@ class Projects extends Security_Controller {
         }
 
         $all_options = append_server_side_filtering_commmon_params($options);
-
+        
         $result = $this->Timesheets_model->get_details($all_options);
 
         //by this, we can handel the server side or client side from the app table prams.
@@ -2820,7 +3017,12 @@ class Projects extends Security_Controller {
 
         $result_data = array();
         foreach ($list_data as $data) {
-            $result_data[] = $this->_make_timesheet_row($data, $custom_fields);
+
+            $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
+
+            $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+
+            $result_data[] = $this->_make_timesheet_row($data, $custom_fields, $resource);
         }
 
         $result["data"] = $result_data;
@@ -2835,19 +3037,44 @@ class Projects extends Security_Controller {
 
         $options = array("id" => $id, "custom_fields" => $custom_fields);
         $data = $this->Timesheets_model->get_details($options)->getRow();
-        return $this->_make_timesheet_row($data, $custom_fields);
+
+        $options_resources = array("project_id" => $data->project_id, "user_id" => $data->user_id, "is_leader" => 0);
+
+        $resource = $this->Project_resources_model->get_details($options_resources)->getRow();
+
+        return $this->_make_timesheet_row($data, $custom_fields, $resource);
     }
 
     /* prepare a row of timesheet list table */
 
-    private function _make_timesheet_row($data, $custom_fields) {
+    private function _make_timesheet_row($data, $custom_fields, $resource = null) {
+
         $image_url = get_avatar($data->logged_by_avatar, $data->logged_by_user);
         $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
 
+        if($data->manager_id)
+        {
+            $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
+            $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
+            $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
+        }
+        else {
+            $manager_member = "-";
+        }
+
         $start_time = $data->start_time;
         $end_time = $data->end_time;
+
+
         $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
-        $task_title = modal_anchor(get_uri("projects/task_view"), $data->task_title, array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
+        if($data->task_title)
+        {
+            $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
+        }
+        else
+        {
+            $task_title = app_lang('not_specified');
+        }
 
         $client_name = "-";
         if ($data->timesheet_client_company_name) {
@@ -2856,19 +3083,95 @@ class Projects extends Security_Controller {
 
         $duration = convert_seconds_to_time_format($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time))));
 
-        $row_data = array(
-            get_team_member_profile_link($data->user_id, $user),
-            $project_title,
-            $client_name,
-            $task_title,
-            $data->start_time,
-            ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
-            $data->end_time,
-            $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
-            $duration,
-            to_decimal_format(convert_time_string_to_decimal($duration)),
-            $data->note
-        );
+        $duration_for_resource = ($data->hours ? (round(($data->hours * 60), 0) * 60) : (abs(strtotime($end_time) - strtotime($start_time)))); // Mantém o valor em segundos
+
+        
+        $hour_amount = $data->project_resources_amount;
+       
+        // Convertendo $duration para horas (se estiver em segundos)
+        $duration_in_hours = $duration_for_resource / 3600; // 3600 segundos = 1 hora
+        
+
+        if($this->login_user->user_type === 'client')
+        {
+            $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+        }
+        
+        // Valor Consultor
+        $total_amount = $data->project_resources_amount_by_duration;
+
+        // Valor Gerente
+        $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
+
+        // Valor Cliente
+        $project_total_amount = $data->project_client_amount_by_duration;
+        
+        if($this->login_user->is_admin)
+        {
+            // Visão Admin
+            $row_data = array(
+                $client_name,
+                $project_title,
+                $task_title,
+                $data->start_time,
+                $data->note,
+                ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
+                $data->end_time,
+                $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
+                $duration,
+                to_decimal_format(convert_time_string_to_decimal($duration)),
+                "<span style='color: blue'>".to_currency($project_total_amount)."</span>",
+                get_team_member_profile_link($data->user_id, $user),
+                "<span style='color: red'>".to_currency($total_amount)."</span>",
+                $manager_member,
+                "<span style='color: red'>".to_currency($total_manager_amount)."</span>",
+                "<span style='color: green'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>"
+            );
+        }
+        else if($this->login_user->user_type !== 'client')
+        {
+            // Visão Consultor
+            $row_data = array(
+                $client_name,
+                $project_title,
+                $task_title,
+                $data->start_time,
+                $data->note,
+                ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
+                $data->end_time,
+                $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
+                $duration,
+                to_decimal_format(convert_time_string_to_decimal($duration)),
+                "",
+                get_team_member_profile_link($data->user_id, $user),
+                "<span style='color: green'>".to_currency($total_amount)."</span>",
+                $manager_member,
+                "",
+                ""
+            );
+        }
+        else
+        {
+             // Visão Admin
+             $row_data = array(
+                $client_name,
+                $project_title,
+                $task_title,
+                $data->start_time,
+                $data->note,
+                ($data->hours || get_setting("users_can_input_only_total_hours_instead_of_period")) ? format_to_date($data->start_time) : format_to_datetime($data->start_time),
+                $data->end_time,
+                $data->hours ? format_to_date($data->end_time) : format_to_datetime($data->end_time),
+                $duration,
+                to_decimal_format(convert_time_string_to_decimal($duration)),
+                "<span style='color: blue'>".to_currency($project_total_amount)."</span>",
+                get_team_member_profile_link($data->user_id, $user),
+                "",
+                $manager_member,
+                "",
+                ""
+            );
+        }
 
         foreach ($custom_fields as $field) {
             $cf_id = "cfv_" . $field->id;
@@ -2889,7 +3192,6 @@ class Projects extends Security_Controller {
     }
 
     /* load timesheets summary view for a project */
-
     function timesheet_summary($project_id) {
         validate_numeric_value($project_id);
 
@@ -2899,8 +3201,6 @@ class Projects extends Security_Controller {
         if (!$this->can_view_timesheet($project_id)) {
             app_redirect("forbidden");
         }
-
-
 
         $view_data['project_id'] = $project_id;
 
@@ -2948,6 +3248,7 @@ class Projects extends Security_Controller {
             "start_date" => $this->request->getPost("start_date"),
             "end_date" => $this->request->getPost("end_date"),
             "task_id" => $this->request->getPost("task_id"),
+            "manager_id" => $this->request->getPost("manager_id"),
             "group_by" => $group_by,
             "client_id" => $this->request->getPost("client_id"),
             "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
@@ -2977,10 +3278,23 @@ class Projects extends Security_Controller {
                 $member = get_team_member_profile_link($data->user_id, $user);
             }
 
-            $project_title = anchor(get_uri("projects/view/" . $data->project_id), $data->project_title);
+            if($data->manager_id and $group_by != "member" and $group_by != "member/project" )
+            {
+                $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
+                $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
 
-            if ($group_by != "member") {
-                $task_title = modal_anchor(get_uri("projects/task_view"), $data->task_title, array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
+                $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
+            }
+            else
+            {
+                $manager_member = "-";
+                $data->manager_hour_amount = 0;
+            }
+            
+            $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
+
+            if ($group_by != "member" and $group_by != "member/project" ) {
+                $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
                 if (!$data->task_title) {
                     $task_title = app_lang("not_specified");
                 }
@@ -2994,16 +3308,448 @@ class Projects extends Security_Controller {
                 $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
             }
 
-            $result[] = array(
-                $project_title,
-                $client_name,
-                $member,
-                $task_title,
-                $duration,
-                to_decimal_format(convert_time_string_to_decimal($duration))
-            );
+            $hour_amount = $data->project_resources_amount;
+            
+            // Convertendo $duration para horas (se estiver em segundos)
+            $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+
+            if($this->login_user->user_type === 'client')
+            {
+                $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+            }
+            
+            // Valor Consultor
+            $total_amount = $data->project_resources_amount_by_duration;
+
+            // Valor Gerente
+            $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
+
+            // Valor Cliente
+            $project_total_amount = $data->project_client_amount_by_duration;
+
+            $period = [
+                "start_date" => $this->request->getPost("start_date"),
+                "end_date" => $this->request->getPost("end_date")
+            ];
+
+            $menus = $nfe = "";
+            if($group_by != "member" and $group_by != "member/project" ) {
+                $options_invoices = array(
+                    "project_id" => $data->project_id,
+                    "start_timesheet_filter" => $period["start_date"],
+                    "end_timesheet_filter" => $period["end_date"]
+                );
+        
+                $invoice_for_project = $this->Invoices_model->get_details($options_invoices)->getRow();
+
+                if($invoice_for_project && $invoice_for_project->id)
+                {
+                    $nfe = $invoice_for_project->nfe_number ? $invoice_for_project->nfe_number : "";
+
+                    $invoice_labels = make_labels_view_data($invoice_for_project->labels_list, true, true);
+
+                    if ($this->login_user->user_type == "staff") {
+                        $invoice_url = anchor(get_uri("invoices/view/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                    } else {
+                        $invoice_url = anchor(get_uri("invoices/preview/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                    }
+
+                    $menus .= "<a class='' href='".get_uri("invoices/view/" . $invoice_for_project->id)."'>Fatura #" .$invoice_for_project->id . "<br/>" . get_invoice_status_label($invoice_for_project, true) . $invoice_labels . "</a>";
+                }
+                else
+                {
+                    $menus .= ajax_anchor(get_uri("projects/generate_invoice/". $data->project_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='dollar-sign' class='icon-16'></i>", array('title' => app_lang('generate_invoice'), "data-reload-on-success" => "1"));
+                }
+            }
+
+            if($group_by == "member" or $group_by == "member/project") {
+
+                $options_expenses = array(
+                    "start_timesheet_filter" => $period["start_date"],
+                    "end_timesheet_filter" => $period["end_date"]
+                );
+
+                if($group_by == "member/project")
+                {
+                    $options_expenses["project_id"] = $data->project_id;
+                }
+                if( $group_by == "member" or $group_by == "member/project")
+                {
+                    $options_expenses["user_id"] = $data->user_id;
+                }
+        
+                $expenses_for_member = $this->Expenses_model->get_details($options_expenses)->getResult();
+                
+                if($expenses_for_member && count($expenses_for_member) > 0)
+                {
+                    if(count($expenses_for_member) == 1)
+                    {
+                        $menus .= modal_anchor(get_uri("expenses/expense_details"), "Despesa #" . $expenses_for_member[0]->id , array("title" => app_lang("expense_details"), "data-post-id" => $expenses_for_member[0]->id));
+                    }
+                }
+                else
+                {
+                    if($group_by == "member/project")
+                    {
+                        $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"] . "/" . $data->project_id), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense'), "data-reload-on-success" => "1"));
+                    }
+                    else
+                    {
+                        $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense'), "data-reload-on-success" => "1"));
+                    }
+                }
+            }
+
+            if($this->login_user->is_admin)
+            {
+                $result[] = array(
+                    $client_name,
+                    $project_title,
+                    $task_title,
+                    $duration,
+                    to_decimal_format(convert_time_string_to_decimal($duration)),
+                    "<span style='color: blue;'>".to_currency($project_total_amount)."</span>",
+                    $member,
+                    "<span style='color: red;'>".to_currency($total_amount)."</span>",
+                    $manager_member,
+                    "<span style='color: red;'>".to_currency($total_manager_amount)."</span>",
+                    "<span style='color: green;'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>",
+                    $nfe,
+                    $menus
+                );
+            }
+            else
+            {
+                $result[] = array(
+                    $client_name,
+                    $project_title,
+                    $task_title,
+                    $duration,
+                    to_decimal_format(convert_time_string_to_decimal($duration)),
+                    "",
+                    $member,
+                    "<span style='color: green;'>".to_currency($total_amount)."</span>",
+                    $manager_member,
+                    "",
+                    "",
+                    $nfe,
+                    ""
+                );
+            }
         }
         echo json_encode(array("data" => $result));
+    }
+
+    /* list of timesheets summary, prepared for datatable  */
+
+    function timesheet_client_summary_list_data() {
+
+        $project_id = $this->request->getPost("project_id");
+
+        $group_by = $this->request->getPost("group_by");
+
+        $options = array(
+            "project_id" => $project_id,
+            "status" => "none_open",
+            "user_id" => $this->request->getPost("user_id"),
+            "start_date" => $this->request->getPost("start_date"),
+            "end_date" => $this->request->getPost("end_date"),
+            "task_id" => $this->request->getPost("task_id"),
+            "manager_id" => $this->request->getPost("manager_id"),
+            "group_by" => $group_by,
+            "client_id" => $this->login_user->client_id,
+            "custom_field_filter" => $this->prepare_custom_field_filter_values("timesheets", $this->login_user->is_admin, $this->login_user->user_type)
+        );
+
+        //get allowed member ids
+        $members = $this->_get_members_to_manage_timesheet();
+        if ($members != "all" && $this->login_user->user_type == "staff") {
+            //if user has permission to access all members, query param is not required
+            //client can view all timesheet
+            $options["allowed_members"] = $members;
+        }
+
+        if($this->login_user->user_type == "client")
+        {
+            $options["allowed_projects"] = true;
+        }
+
+        $list_data = $this->Timesheets_model->get_summary_details($options)->getResult();
+
+        $result = array();
+        foreach ($list_data as $data) {
+
+
+            $member = "-";
+            $task_title = "-";
+
+            if ($group_by != "task") {
+                $image_url = get_avatar($data->logged_by_avatar, $data->logged_by_user);
+                $user = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span> $data->logged_by_user";
+
+                $member = get_team_member_profile_link($data->user_id, $user);
+            }
+
+            if($data->manager_id and $group_by != "member" and $group_by != "member/project")
+            {
+                $manager_image_url = get_avatar($data->manager_avatar, $data->manager_user);
+                $manager_user = "<span class='avatar avatar-xs mr10'><img src='$manager_image_url' alt=''></span> $data->manager_user";
+
+                $manager_member = get_team_member_profile_link($data->manager_id, $manager_user);
+            }
+            else
+            {
+                $manager_member = "-";
+                $data->manager_hour_amount = 0;
+            }
+            
+            $project_title = anchor(get_uri("projects/view/" . $data->project_id . ($data->project_is_ticket ? '/ticket' : '')), (($data->project_is_ticket ? "<i data-feather='tag' class='icon-16'></i> " : "<i data-feather='grid' class='icon-16'></i> ") . $data->project_title));
+
+            if ($group_by != "member" and $group_by != "member/project" ) {
+                $task_title = modal_anchor(get_uri("projects/task_view"), ((($data->task_id) ? (" #" . $data->task_id . " - ") : "") . $data->task_title), array("title" => app_lang('task_info') . " #$data->task_id", "data-post-id" => $data->task_id, "data-modal-lg" => "1"));
+                if (!$data->task_title) {
+                    $task_title = app_lang("not_specified");
+                }
+            }
+
+
+            $duration = convert_seconds_to_time_format(abs($data->total_duration));
+
+            $client_name = "-";
+            if ($data->timesheet_client_company_name) {
+                $client_name = anchor(get_uri("clients/view/" . $data->timesheet_client_id), $data->timesheet_client_company_name);
+            }
+
+            $hour_amount = $data->project_resources_amount;
+            
+            // Convertendo $duration para horas (se estiver em segundos)
+            $duration_in_hours = (($data->total_duration) ? abs($data->total_duration) : 0) / 3600; // 3600 segundos = 1 hora
+
+            if($this->login_user->user_type === 'client')
+            {
+                $hour_amount = ((!empty($this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge'))) ? $this->Project_settings_model->get_setting($data->project_id, 'project_amount_charge') : 0);
+            }
+            
+            // Valor Consultor
+            $total_amount = $data->project_resources_amount_by_duration;
+
+            // Valor Gerente
+            $total_manager_amount = ($data->manager_hour_amount ?? 0) * $duration_in_hours;
+
+            // Valor Cliente
+            $project_total_amount = $data->project_client_amount_by_duration;
+
+            $period = [
+                "start_date" => $this->request->getPost("start_date"),
+                "end_date" => $this->request->getPost("end_date")
+            ];
+
+            $menus = $nfe = "";
+            if($group_by != "member" and $group_by != "member/project" ) {
+                $options_invoices = array(
+                    "project_id" => $data->project_id,
+                    "start_timesheet_filter" => $period["start_date"],
+                    "end_timesheet_filter" => $period["end_date"]
+                );
+        
+                $invoice_for_project = $this->Invoices_model->get_details($options_invoices)->getRow();
+
+                if($invoice_for_project && $invoice_for_project->id)
+                {
+                    $nfe = $invoice_for_project->nfe_number ? $invoice_for_project->nfe_number : "";
+
+                    $invoice_labels = make_labels_view_data($invoice_for_project->labels_list, true, true);
+
+                    if ($this->login_user->user_type == "staff") {
+                        $invoice_url = anchor(get_uri("invoices/view/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                    } else {
+                        $invoice_url = anchor(get_uri("invoices/preview/" . $invoice_for_project->id), get_invoice_id($invoice_for_project->id));
+                    }
+
+                    $menus .= "<a class='' href='".get_uri("invoices/view/" . $invoice_for_project->id)."'>Fatura #" .$invoice_for_project->id . "<br/>" . get_invoice_status_label($invoice_for_project, true) . $invoice_labels . "</a>";
+                }
+                else
+                {
+                    $menus .= ajax_anchor(get_uri("projects/generate_invoice/". $data->project_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='dollar-sign' class='icon-16'></i>", array('title' => app_lang('generate_invoice'), "data-reload-on-success" => "1"));
+                }
+            }
+
+            if($group_by == "member" or $group_by == "member/project" ) {
+                $options_expenses = array(
+                    "user_id" => $data->user_id,
+                    "start_timesheet_filter" => $period["start_date"],
+                    "end_timesheet_filter" => $period["end_date"]
+                );
+        
+                $expenses_for_member = $this->Expenses_model->get_details($options_expenses)->getRow();
+                
+                if($expenses_for_member && $expenses_for_member->id)
+                {
+                    $menus .= modal_anchor(get_uri("expenses/expense_details"), "Despesa #" . $expenses_for_member->id , array("title" => app_lang("expense_details"), "data-post-id" => $expenses_for_member->id));
+                   // $menus.= "<br/><a class='' href='".get_uri("expenses/view/" . $expenses_for_member->id)."'>Despesa #" .$expenses_for_member->id . "</a>";
+                }
+                else
+                {
+                    $menus.= "<br/>" . ajax_anchor(get_uri("projects/generate_expense/". $data->user_id . "/" . $period["start_date"] . "/" . $period["end_date"]), "<i data-feather='file-minus' class='icon-16'></i>", array('title' => app_lang('generate_expense'), "data-reload-on-success" => "1"));
+                }
+            }
+
+            if($this->login_user->is_admin)
+            {
+                $result[] = array(
+                    $client_name,
+                    $project_title,
+                    $task_title,
+                    $duration,
+                    to_decimal_format(convert_time_string_to_decimal($duration)),
+                    "<span style='color: blue;'>".to_currency($project_total_amount)."</span>",
+                    $member,
+                    "<span style='color: red;'>".to_currency($total_amount)."</span>",
+                    $manager_member,
+                    "<span style='color: red;'>".to_currency($total_manager_amount)."</span>",
+                    "<span style='color: green;'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>",
+                    "",
+                    $menus
+                );
+            }
+            else if($this->login_user->user_type !== 'client')
+            {
+                $result[] = array(
+                    $client_name,
+                    $project_title,
+                    $task_title,
+                    $duration,
+                    to_decimal_format(convert_time_string_to_decimal($duration)),
+                    "",
+                    $member,
+                    "<span style='color: green;'>".to_currency($total_amount)."</span>",
+                    $manager_member,
+                    "",
+                    "",
+                    $nfe,
+                    ""
+                );
+            }
+            else
+            {
+                $result[] = array(
+                    $client_name,
+                    $project_title,
+                    $task_title,
+                    $duration,
+                    to_decimal_format(convert_time_string_to_decimal($duration)),
+                    "<span style='color: blue;'>".to_currency($project_total_amount)."</span>",
+                    $member,
+                    "",
+                    $manager_member,
+                    "",
+                    "",
+                    $nfe,
+                    $menus
+                );
+            }
+        }
+        echo json_encode(array("data" => $result));
+    }
+    
+    /* generate invoice for a project in a specific period */
+    function generate_invoice($project_id = 0, $start_date = "", $end_date = "") {
+        
+        $this->access_only_team_members();
+        if($project_id == 0)
+        {
+            app_redirect("forbidden");
+        }
+
+        $project_info = $this->Projects_model->get_one($project_id);
+
+        $timesheet_info = $this->Timesheets_model->get_summary_details(array("group_by" => "project", "project_id" => $project_id, "start_date" => $start_date, "end_date" => $end_date))->getResult();
+
+        if($timesheet_info)
+        {
+            $invoice_data = [
+                "project_id" => $project_id,
+                "client_id" => $project_info->client_id,
+                "bill_date" => get_current_utc_time(),
+                "due_date" => get_current_utc_time(),
+                "start_timesheet_filter" => $start_date,
+                "end_timesheet_filter" => $end_date,
+                "status" => "draft"
+            ];
+
+            $invoice_id = $this->Invoices_model->ci_save($invoice_data);
+
+            if($invoice_id)
+            {
+                foreach($timesheet_info as $timesheet)
+                {
+                    $invoice_item_data = [
+                        "invoice_id" => $invoice_id,
+                        "title" => $project_info->title,
+                        "description" => "Fatura para o projeto " . $project_info->title . " referente ao período de " . $start_date . " a " . $end_date,
+                        "quantity" => 1,
+                        "rate" => $timesheet->project_client_amount_by_duration,
+                        "total" => $timesheet->project_client_amount_by_duration
+                    ];
+
+                    $this->Invoice_items_model->ci_save($invoice_item_data);
+                }
+
+                echo json_encode(array("success" => true, "message" => app_lang("invoice_generated")));
+            }
+            else
+            {
+                echo json_encode(array("success" => false, "message" => app_lang("error_occurred")));
+            }
+        }
+    }
+
+    
+    
+    /* generate expense for a consultant in a specific period */
+    function generate_expense($user_id = 0, $start_date = "", $end_date = "", $project_id = 0) {
+        
+        $this->access_only_team_members();
+        if($user_id == 0)
+        {
+            app_redirect("forbidden");
+        }
+
+        $user_info = $this->Users_model->get_one($user_id);
+
+        if($project_id == 0)
+        {
+            $timesheet_info = $this->Timesheets_model->get_summary_details(array("group_by" => "member", "user_id" => $user_id, "start_date" => $start_date, "end_date" => $end_date))->getRow();
+        }
+        else {
+            $timesheet_info = $this->Timesheets_model->get_summary_details(array("group_by" => "member/project", "project_id" => $project_id, "user_id" => $user_id, "start_date" => $start_date, "end_date" => $end_date))->getRow();
+        }
+
+        if($timesheet_info)
+        {
+            $expense_data = [
+                "user_id" => $user_id,
+                "project_id" => $project_id,
+                "expense_date" => get_current_utc_time(),
+                "start_timesheet_filter" => $start_date,
+                "end_timesheet_filter" => $end_date,
+                "amount" => $timesheet_info->project_resources_amount_by_duration,
+                "category_id" => 9,
+                "title" => "Despesa para o consultor " . $user_info->first_name . " " . $user_info->last_name,
+                "description" => "Despesa para o consultor " . $user_info->first_name . " " . $user_info->last_name . " referente ao período de " . $start_date . " a " . $end_date
+            ];
+
+            $expense_id = $this->Expenses_model->ci_save($expense_data);
+
+            if($expense_id)
+            {
+                echo json_encode(array("success" => true, "message" => app_lang("expense_generated")));
+            }
+            else
+            {
+                echo json_encode(array("success" => false, "message" => app_lang("error_occurred")));
+            }
+        }
     }
 
     /* get all projects list */
@@ -3057,6 +3803,24 @@ class Projects extends Security_Controller {
 
     /* prepare dropdown list */
 
+    private function _prepare_managers_dropdown_for_timesheet_filter($members) {
+        $where = array("user_type" => "staff");
+
+        if ($members != "all" && is_array($members) && count($members)) {
+            $where["where_in"] = array("id" => $members);
+        }
+
+        $users = $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id", $where);
+
+        $members_dropdown = array(array("id" => "", "text" => "- " . app_lang("manager") . " -"));
+        foreach ($users as $id => $name) {
+            $members_dropdown[] = array("id" => $id, "text" => $name);
+        }
+        return $members_dropdown;
+    }
+
+    /* prepare dropdown list */
+
     private function _prepare_members_dropdown_for_timesheet_filter($members) {
         $where = array("user_type" => "staff");
 
@@ -3079,6 +3843,7 @@ class Projects extends Security_Controller {
         $this->access_only_team_members();
         $members = $this->_get_members_to_manage_timesheet();
 
+        $view_data['managers_dropdown'] = json_encode($this->_prepare_managers_dropdown_for_timesheet_filter($members));
         $view_data['members_dropdown'] = json_encode($this->_prepare_members_dropdown_for_timesheet_filter($members));
         $view_data['projects_dropdown'] = json_encode($this->_get_all_projects_dropdown_list_for_timesheets_filter());
         $view_data['clients_dropdown'] = json_encode($this->_get_clients_dropdown());
@@ -3101,9 +3866,11 @@ class Projects extends Security_Controller {
                     array("id" => "", "text" => "- " . app_lang("group_by") . " -"),
                     array("id" => "member", "text" => app_lang("member")),
                     array("id" => "project", "text" => app_lang("project")),
+                    array("id" => "member/project", "text" => app_lang("member/project")),
                     array("id" => "task", "text" => app_lang("task"))
         ));
 
+        $view_data['managers_dropdown'] = json_encode($this->_prepare_managers_dropdown_for_timesheet_filter($members));
         $view_data['members_dropdown'] = json_encode($this->_prepare_members_dropdown_for_timesheet_filter($members));
         $view_data['projects_dropdown'] = json_encode($this->_get_all_projects_dropdown_list_for_timesheets_filter());
         $view_data['clients_dropdown'] = json_encode($this->_get_clients_dropdown());
@@ -3725,7 +4492,7 @@ class Projects extends Security_Controller {
         }
     }
 
-    function task_view($task_id = 0) {
+    function task_view($task_id = 0, $tab = "") {
         validate_numeric_value($task_id);
         $view_type = "";
 
@@ -3849,7 +4616,8 @@ class Projects extends Security_Controller {
         $info = $this->Timesheets_model->count_total_time($timesheet_options);
         $view_data["total_task_hours"] = convert_seconds_to_time_format($info->timesheet_total);
         $view_data["show_timesheet_info"] = $this->can_view_timesheet($model_info->project_id);
-       
+        $view_data["tab"] = clean_data($tab);
+
         if ($view_type == "details") {
             return $this->template->rander('projects/tasks/view', $view_data);
         } else {
@@ -3946,7 +4714,13 @@ class Projects extends Security_Controller {
         }
         $project_info = $this->Projects_model->get_one($project_id);
         $view_data['model_info'] = $model_info;
-        $view_data["projects_dropdown"] = $this->_get_projects_dropdown(); //projects dropdown is necessary on add multiple tasks
+
+        if ($project_id && $project_info->client_id) {
+            $view_data["projects_dropdown"] = $this->_get_projects_of_client_dropdown( $project_info->client_id ); //projects dropdown is necessary on add multiple tasks
+        }
+        else {
+            $view_data["projects_dropdown"] = $this->_get_projects_dropdown(); //projects dropdown is necessary on add multiple tasks
+        }
         $view_data["add_type"] = $add_type;
         $view_data['project_id'] = $project_id;
         $view_data['project_info'] = $project_info;
@@ -4084,7 +4858,7 @@ class Projects extends Security_Controller {
             "description" => $this->request->getPost('description'),
             "project_id" => $project_id,
             "milestone_id" => $this->request->getPost('milestone_id'),
-            "points" => $this->request->getPost('points'),
+            "points" => 1,
             "status_id" => $status_id,
             "priority_id" => $priority_id ? $priority_id : 0,
             "labels" => $this->request->getPost('labels'),
@@ -4451,7 +5225,7 @@ class Projects extends Security_Controller {
         $success_array = array("success" => true, "data" => $this->_task_row_data($save_id), 'id' => $save_id, "message" => app_lang('record_saved'));
 
         if ($data_field == "assigned_to") {
-            $success_array["assigned_to_avatar"] = get_avatar($task_info->assigned_to_avatar);
+            $success_array["assigned_to_avatar"] = get_avatar($task_info->assigned_to_avatar, $task_info->assigned_to_user);
             $success_array["assigned_to_id"] = $task_info->assigned_to;
         }
 
@@ -4823,7 +5597,8 @@ class Projects extends Security_Controller {
 
         if (($this->login_user->user_type == "staff" && can_edit_this_task_status($data->assigned_to)) || ($this->login_user->user_type == "client" && $this->can_edit_tasks())) {
             //show changeable status checkbox and link to team members
-            $check_status = js_anchor("<span class='$checkbox_class mr15 float-start'></span>", array('title' => "", "class" => "js-task", "data-id" => $data->id, "data-value" => $data->status_key_name === "done" ? "1" : "3", "data-act" => "update-task-status-checkbox")) . $data->id;
+            //$check_status = js_anchor("<span class='$checkbox_class mr15 float-start'></span>", array('title' => "", "class" => "js-task", "data-id" => $data->id, "data-value" => $data->status_key_name === "done" ? "1" : "3", "data-act" => "update-task-status-checkbox")) . $data->id;
+            $check_status = js_anchor("", array('title' => "", "class" => "js-task", "data-id" => $data->id, "data-value" => $data->status_key_name === "done" ? "1" : "3", "data-act" => "update-task-status-checkbox")) . $data->id;
             $status = js_anchor($data->status_key_name ? app_lang($data->status_key_name) : $data->status_title, array('title' => "", "class" => "badge $status_class", "data-id" => $data->id, "data-value" => $data->status_id, "data-act" => "update-task-status"));
         } else {
             //don't show clickable checkboxes/status to client
@@ -4833,8 +5608,6 @@ class Projects extends Security_Controller {
             $check_status = "<span class='$checkbox_class mr15 float-start'></span> " . $data->id;
             $status = $data->status_key_name ? app_lang($data->status_key_name) : $data->status_title;
         }
-
-
 
         $deadline_text = "-";
         if ($data->deadline && is_date_exists($data->deadline)) {
@@ -5951,6 +6724,7 @@ class Projects extends Security_Controller {
         }
 
         $settings[] = "project_limit_hours";
+        $settings[] = "project_amount_charge";
 
         if ($can_create_projects) {
             $settings[] = "remove_task_statuses";
@@ -5960,6 +6734,10 @@ class Projects extends Security_Controller {
             $value = $this->request->getPost($setting);
             if (!$value) {
                 $value = "";
+            }
+
+            if($setting == "project_amount_charge"){
+                $value = str_replace(',', '.', $value);
             }
 
             $this->Project_settings_model->save_setting($project_id, $setting, $value);
