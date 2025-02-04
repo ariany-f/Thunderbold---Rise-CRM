@@ -19,6 +19,14 @@ class Notifications extends Security_Controller {
     function load_more($offset = 0, $event = "") {
         validate_numeric_value($offset);
         $view_data = $this->_prepare_notification_list($offset, $event);
+        if($event)
+        {
+            $view_data['event'] = $event;
+        }
+        else
+        {
+            $view_data['event'] = null;
+        }
         return $this->template->view("notifications/list_data", $view_data);
     }
 
@@ -57,6 +65,14 @@ class Notifications extends Security_Controller {
         $next_page_offset = $offset + 20;
         $view_data['next_page_offset'] = $next_page_offset;
         $view_data['result_remaining'] = $notifiations->found_rows > $next_page_offset;
+        if($event)
+        {
+            $view_data['event'] = $event;
+        }
+        else
+        {
+            $view_data['event'] = null;
+        }
         return $view_data;
     }
 
