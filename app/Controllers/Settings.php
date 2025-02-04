@@ -21,7 +21,7 @@ class Settings extends Security_Controller {
     }
 
     function save_general_settings() {
-        $settings = array("site_logo", "favicon", "show_background_image_in_signin_page", "show_logo_in_signin_page", "app_title", "accepted_file_formats", "rows_per_page", "item_purchase_code", "scrollbar", "enable_rich_text_editor", "show_theme_color_changer", "default_theme_color");
+        $settings = array("site_logo", "favicon", "show_background_image_in_signin_page", "show_logo_in_signin_page", "app_title", "accepted_file_formats","days_to_save_timesheets", "rows_per_page", "item_purchase_code", "scrollbar", "enable_rich_text_editor", "show_theme_color_changer", "default_theme_color");
         $has_php_file_format = false;
 
         foreach ($settings as $setting) {

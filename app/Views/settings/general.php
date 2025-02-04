@@ -155,6 +155,24 @@
                     </div>
                     <div class="form-group">
                         <div class="row">
+                            <label for="days_to_save_timesheets" class=" col-md-2"><?php echo app_lang('days_to_save_timesheets'); ?></label>
+                            <div class=" col-md-10">
+                                <?php
+                                echo form_input(array(
+                                    "id" => "days_to_save_timesheets",
+                                    "name" => "days_to_save_timesheets",
+                                    "value" => get_setting('days_to_save_timesheets'),
+                                    "class" => "form-control",
+                                    "placeholder" => app_lang('days_to_save_timesheets'),
+                                    "data-rule-required" => true,
+                                    "data-msg-required" => app_lang("field_required"),
+                                ));
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
                             <label for="rows_per_page" class=" col-md-2"><?php echo app_lang('rows_per_page'); ?></label>
                             <div class="col-md-10">
                                 <?php

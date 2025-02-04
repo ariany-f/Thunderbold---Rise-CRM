@@ -964,6 +964,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 
 INSERT INTO `settings` (`setting_name`, `setting_value`, `deleted`) VALUES
 ('accepted_file_formats', 'jpg,jpeg,png,doc,xlsx,txt,pdf,zip', 0),
+('days_to_save_timesheets', '', 0),
 ('allowed_ip_addresses', '', 0),
 ('app_title', 'RISE - Ultimate Project Manager and CRM', 0),
 ('currency_symbol', '$', 0),
