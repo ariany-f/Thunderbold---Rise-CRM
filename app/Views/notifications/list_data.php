@@ -173,9 +173,9 @@ if(!$event) : ?>
     <script type="text/javascript">
         $(document).ready(function () {
             // Evita que o menu feche ao clicar dentro dele
-            $(".dropdown-menu").on("click", function (e) {
+            /* $(".dropdown-menu").on("click", function (e) {
                 e.stopPropagation();
-            });
+            }); */
     
             // Mantém a aba ativa ao clicar
             $(".nav-link").on("click", function (e) {
@@ -314,9 +314,9 @@ if(!$event) : ?>
         <script type="text/javascript">
             $(document).ready(function () {
                 // Evita que o menu feche ao clicar dentro dele
-                $(".dropdown-menu").on("click", function (e) {
+                /* $(".dropdown-menu").on("click", function (e) {
                     e.stopPropagation();
-                });
+                }); */
         
                 // Mantém a aba ativa ao clicar
                 $(".nav-link").on("click", function (e) {
