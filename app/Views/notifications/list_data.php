@@ -144,16 +144,16 @@ foreach ($notifications as $notification) {
                 }
 
                 if ($result_remaining) {
-                    $next_container_id = "load" . $next_page_offset;
+                    $next_container_id = "load" . $next_page_offset . '-' . $key;
                     ?>
-                    <div id="<?php echo $next_container_id; ?>">
+                    <div id="<?php echo $next_container_id; ?>-<?php echo $key?>">
 
                     </div>
 
-                    <div id="loader-<?php echo $next_container_id; ?>" >
+                    <div id="loader-<?php echo $next_container_id; ?>-<?php echo $key?>" >
                         <div class="text-center p20 clearfix margin-top-5">
                             <?php
-                            echo ajax_anchor(get_uri("notifications/load_more/" . $next_page_offset), app_lang("load_more"), array("class" => "btn btn-default load-more mt15 p10 spinning-btn pr0", "data-remove-on-success" => "#loader-" . $next_container_id, "title" => app_lang("load_more"), "data-inline-loader" => "1", "data-real-target" => "#" . $next_container_id));
+                            echo ajax_anchor(get_uri("notifications/load_more/" . $next_page_offset . '/' . $key), app_lang("load_more"), array("class" => "btn btn-default load-more mt15 p10 spinning-btn pr0", "data-remove-on-success" => "#loader-" . $next_container_id . "-" . $key, "title" => app_lang("load_more"), "data-inline-loader" => "1", "data-real-target" => "#" . $next_container_id . '-' . $key));
                             ?>
                         </div>
                     </div>
