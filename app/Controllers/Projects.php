@@ -2714,9 +2714,7 @@ class Projects extends Security_Controller {
 
         // Calcula a data limite para lançamentos
         $min_date_allowed = $this->get_working_days($days_to_save_timesheets, $today);
-
         
-        log_message('error', '[ERROR] {exception}', ['exception' => $min_date_allowed]);
         // Valida se a data do lançamento está dentro do prazo permitido
         if ($this->request->getPost('start_date') < $min_date_allowed || $this->request->getPost('start_date') > $today) {
             echo json_encode(array("success" => false, 'message' => app_lang("entry_date_out_of_range")));
