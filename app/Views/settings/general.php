@@ -161,6 +161,7 @@
                                 echo form_input(array(
                                     "id" => "days_to_save_timesheets",
                                     "name" => "days_to_save_timesheets",
+                                    "type" => 'number',
                                     "value" => get_setting('days_to_save_timesheets'),
                                     "class" => "form-control",
                                     "placeholder" => app_lang('days_to_save_timesheets'),

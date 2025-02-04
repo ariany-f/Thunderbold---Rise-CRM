@@ -447,6 +447,7 @@ $lang["history"] = "Histórico";
 
 /* timesheet */
 $lang["timesheets"] = "Gestão de Tempo";
+$lang["days_to_save_timesheets"] = "Dias permitidos para salvar rat";
 $lang["resources"] = "Gestão de Recursos";
 $lang["entry_date_out_of_range"] = "A data de entrada está fora do intervalo permitido para gravação de rat";
 $lang["log_time"] = "Registro de Horário";
