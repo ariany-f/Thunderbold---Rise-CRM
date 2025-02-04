@@ -33,6 +33,9 @@ foreach ($notifications as $notification) {
     <li class="nav-item">
         <a class="nav-link" id="propostas-tab" data-bs-toggle="tab" href="#propostas" role="tab" onclick="event.stopPropagation();">Propostas</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" id="outros-tab" data-bs-toggle="tab" href="#outros" role="tab" onclick="event.stopPropagation();">Outros</a>
+    </li>
 </ul>
 
 
