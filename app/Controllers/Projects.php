@@ -2674,12 +2674,25 @@ class Projects extends Security_Controller {
         }
     }
 
-    /* insert/update a timelog */
+    // Função para calcular dias úteis anteriores
+    function get_working_days($days, $date) {
+        $count = 0;
+        while ($count < $days) {
+            $date = date("Y-m-d", strtotime("-1 day", strtotime($date)));
+            $day_of_week = date("N", strtotime($date)); // 1 = Segunda, 7 = Domingo
 
+            if ($day_of_week < 6) { // Conta apenas dias úteis (Segunda a Sexta)
+                $count++;
+            }
+        }
+        return $date;
+    }
+
+    /* insert/update a timelog */
     function save_timelog() {
         $this->access_only_team_members();
         $id = $this->request->getPost('id');
-
+        
         $start_date_time = "";
         $end_date_time = "";
         $hours = "";
@@ -2688,33 +2701,52 @@ class Projects extends Security_Controller {
         $end_time = $this->request->getPost('end_time');
         $note = $this->request->getPost("note");
         $task_id = $this->request->getPost("task_id");
+        $days_to_save_timesheets = (int) $this->Settings_model->get_setting("days_to_save_timesheets");
+
+        // Data atual
+        $today = date("Y-m-d");
+
+        // Verifica se a data informada é válida
+        if (!$this->request->getPost('start_date') || strtotime($this->request->getPost('start_date')) === false) {
+            echo json_encode(array("success" => false, 'message' => app_lang("invalid_time_format_error_message")));
+            return false;
+        }
+
+        // Calcula a data limite para lançamentos
+        $min_date_allowed = $this->get_working_days($days_to_save_timesheets, $today);
+
+        
+        log_message('error', '[ERROR] {exception}', ['exception' => $min_date_allowed]);
+        // Valida se a data do lançamento está dentro do prazo permitido
+        if ($this->request->getPost('start_date') < $min_date_allowed || $this->request->getPost('start_date') > $today) {
+            echo json_encode(array("success" => false, 'message' => app_lang("entry_date_out_of_range")));
+            return false;
+        }
 
         if ($start_time) {
-
+            // Validação do formato de horário
             if (!is_valid_time_format($start_time) || !is_valid_time_format($end_time)) {
                 echo json_encode(array("success" => false, 'message' => app_lang("invalid_time_format_error_message")));
                 return false;
             }
 
-            //start time and end time mode
-            //convert to 24hrs time format
+            // Converter para formato 24 horas se necessário
             if (get_setting("time_format") != "24_hours") {
                 $start_time = convert_time_to_24hours_format($start_time);
                 $end_time = convert_time_to_24hours_format($end_time);
             }
 
-            
+            // Ajustar tempo final para o intervalo correto
             $end_time = round_up_time_interval($start_time, $end_time);
 
-            //join date with time
+            // Juntar data com horário
             $start_date_time = $this->request->getPost('start_date') . " " . $start_time;
             $end_date_time = $this->request->getPost('end_date') . " " . $end_time;
 
-            //add time offset
+            // Converter para UTC
             $start_date_time = convert_date_local_to_utc($start_date_time);
             $end_date_time = convert_date_local_to_utc($end_date_time);
 
-            
         } else {
             //date and hour mode
             $date = $this->request->getPost("date");
@@ -4738,7 +4770,18 @@ class Projects extends Security_Controller {
             }
         }
 
-        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("tasks", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+        $custom = $this->Custom_fields_model->get_combined_details("tasks", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+        
+        if($project_info->is_ticket)
+        {
+            foreach ($custom as $key => $item) {
+                if (isset($item->placeholder) && $item->placeholder === "HH:mm") {
+                    $custom[$key]->required = 0;
+                }
+            }
+        }
+        
+        $view_data["custom_fields"] = $custom;
 
         //clone task
         $is_clone = $this->request->getPost('is_clone');
