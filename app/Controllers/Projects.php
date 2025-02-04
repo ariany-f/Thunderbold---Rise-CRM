@@ -4738,7 +4738,18 @@ class Projects extends Security_Controller {
             }
         }
 
-        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("tasks", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+        $custom = $this->Custom_fields_model->get_combined_details("tasks", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+        
+        if($project_info->is_ticket)
+        {
+            foreach ($custom as $key => $item) {
+                if (isset($item->placeholder) && $item->placeholder === "HH:mm") {
+                    $custom[$key]->required = 0;
+                }
+            }
+        }
+        
+        $view_data["custom_fields"] = $custom;
 
         //clone task
         $is_clone = $this->request->getPost('is_clone');
