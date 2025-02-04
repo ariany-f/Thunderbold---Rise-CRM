@@ -903,7 +903,25 @@ class Notifications_model extends Crud_model {
         $where = "";
         if($event != "")
         {
-            $where .= " AND $notifications_table.event LIKE '%$event%'";
+            switch($event)
+            {
+                case 'projetos':
+                    $event = 'project';
+                    break;
+                case 'propostas':
+                    $event = 'proposal';
+                    break;
+                case 'mensagens':
+                    $event = 'message';
+                    break;
+                default:
+                    $event = null;
+
+            }
+            if($event)
+            {
+                $where .= " AND $notifications_table.event LIKE '%$event%'";
+            }
         }
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS $notifications_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image,
@@ -946,7 +964,7 @@ class Notifications_model extends Crud_model {
         LEFT JOIN $estimate_comments_table ON $estimate_comments_table.id=$notifications_table.estimate_comment_id
         WHERE $notifications_table.deleted=0 AND FIND_IN_SET($user_id, $notifications_table.notify_to) != 0 $where
         ORDER BY $notifications_table.id DESC LIMIT $offset, $limit";
-
+       
         $data = new \stdClass();
         $data->result = $this->db->query($sql)->getResult();
         $data->found_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow()->found_rows;
