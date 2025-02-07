@@ -3152,9 +3152,9 @@ class Projects extends Security_Controller {
                 to_decimal_format(convert_time_string_to_decimal($duration)),
                 "<span style='color: blue'>".to_currency($project_total_amount)."</span>",
                 get_team_member_profile_link($data->user_id, $user),
-                "<span style='color: red'>".to_currency($total_amount)."</span>",
+                "<span style='color: red'>".to_currency($total_amount). ' (' . to_currency($hour_amount) . ")</span>",
                 $manager_member,
-                "<span style='color: red'>".to_currency($total_manager_amount)."</span>",
+                "<span style='color: red'>".to_currency($total_manager_amount). ' (' . to_currency($data->manager_hour_amount) . ")</span>",
                 "<span style='color: green'>".to_currency($project_total_amount - $total_amount - $total_manager_amount)."</span>"
             );
         }
