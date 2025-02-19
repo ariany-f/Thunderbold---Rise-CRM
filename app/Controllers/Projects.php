@@ -6959,7 +6959,7 @@ class Projects extends Security_Controller {
 
         $project_id = $this->request->getPost("project_id");
 
-        $project_members = $this->Project_members_model->get_project_members_dropdown_list($project_id, "", $this->can_access_clients())->getResult();
+        $project_members = $this->Project_members_model->get_project_members_dropdown_list($project_id, "", true)->getResult();
         $project_members_dropdown = array();
         foreach ($project_members as $member) {
             $project_members_dropdown[] = array("name" => $member->member_name, "content" => "@[" . $member->member_name . " :" . $member->user_id . "]");
