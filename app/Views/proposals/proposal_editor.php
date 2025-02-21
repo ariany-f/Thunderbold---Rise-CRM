@@ -25,6 +25,12 @@
                             echo form_checkbox("gp_apart", "1", $proposal_info->gp_apart ? true : false, "id='gp_apart' class='form-check-input'");
                         ?>
                     </div>
+                    <div class=" col-md-12 text-right">
+                        <label style="color: #2471a3;" for="qa_apart"><b><?php echo app_lang('qa_apart'); ?></b></label>
+                        <?php
+                            echo form_checkbox("qa_apart", "1", $proposal_info->qa_apart ? true : false, "id='qa_apart' class='form-check-input'");
+                        ?>
+                    </div>
                     <div class=" col-md-12">
                         <?php
                         echo form_textarea(array(

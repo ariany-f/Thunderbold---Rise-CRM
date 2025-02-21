@@ -116,7 +116,8 @@ class Proposals extends Security_Controller {
         $proposal_data = array(
             "content" => decode_ajax_post_data($this->request->getPost('view')),
             "template_id" => $this->request->getPost('template_id'),
-            "gp_apart" => $this->request->getPost('gp_apart')
+            "gp_apart" => $this->request->getPost('gp_apart'),
+            "qa_apart" => $this->request->getPost('qa_apart')
         );
 
         $this->Proposals_model->ci_save($proposal_data, $id);
@@ -366,6 +367,7 @@ class Proposals extends Security_Controller {
             to_currency($data->proposal_value, $data->currency_symbol),
             $data->proposal_quantity . ' ' . $data->unit_type,
             $data->proposal_quantity_gp . ' ' . $data->unit_type,
+            $data->proposal_quantity_qa . ' ' . $data->unit_type,
             $data->proposal_quantity_add . ' ' . $data->unit_type,
             $data->proposal_sum_quantity . ' ' . $data->unit_type,
             $this->_get_proposal_status_label($data),
@@ -546,6 +548,7 @@ class Proposals extends Security_Controller {
         $rate = unformat_currency($this->request->getPost('proposal_item_rate'));
         $quantity = unformat_currency($this->request->getPost('proposal_item_quantity'));
         $quantity_gp = unformat_currency($this->request->getPost('proposal_item_quantity_gp'));
+        $quantity_qa = unformat_currency($this->request->getPost('proposal_item_quantity_qa'));
         $quantity_add = unformat_currency($this->request->getPost('proposal_item_quantity_add'));
         $proposal_item_title = $this->request->getPost('proposal_item_title');
         $item_id = 0;
@@ -574,10 +577,11 @@ class Proposals extends Security_Controller {
             "description" => $this->request->getPost('proposal_item_description'),
             "quantity" => $quantity,
             "quantity_gp" => $quantity_gp,
+            "quantity_qa" => $quantity_qa,
             "quantity_add" => $quantity_add,
             "unit_type" => $this->request->getPost('proposal_unit_type'),
             "rate" => unformat_currency($this->request->getPost('proposal_item_rate')),
-            "total" => $rate * ($quantity + $quantity_gp + $quantity_add),
+            "total" => $rate * ($quantity + $quantity_gp + $quantity_qa + $quantity_add),
         );
 
         if ($item_id) {
@@ -661,8 +665,9 @@ class Proposals extends Security_Controller {
             to_currency($data->rate, $data->currency_symbol),
             to_decimal_format($data->quantity) . " " . $type,
             to_decimal_format($data->quantity_gp) . " " . $type,
+            to_decimal_format($data->quantity_qa) . " " . $type,
             to_decimal_format($data->quantity_add) . " " . $type,
-            to_decimal_format($data->quantity_gp + $data->quantity + $data->quantity_add) . " " . $type,
+            to_decimal_format($data->quantity_gp + $data->quantity_qa + $data->quantity + $data->quantity_add) . " " . $type,
             to_currency($data->total, $data->currency_symbol),
             modal_anchor(get_uri("proposals/item_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_proposal'), "data-post-id" => $data->id))
             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("proposals/delete_item"), "data-action" => "delete"))
