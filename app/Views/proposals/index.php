@@ -58,6 +58,7 @@
                 {title: "<?php echo app_lang("amount") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("quantity") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("quantity_gp") ?>", "class": "text-right w5p"},
+                {title: "<?php echo app_lang("quantity_qa") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("quantity_add") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("sum_quantity") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("status") ?>", "class": "text-center"}

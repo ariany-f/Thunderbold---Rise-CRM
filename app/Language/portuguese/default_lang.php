@@ -585,6 +585,7 @@ $lang["create_new_item"] = "Criar novo item";
 $lang["select_or_create_new_item"] = "Escolher da lista ou criar novo item ...";
 $lang["quantity"] = "Qtd";
 $lang["quantity_gp"] = "Qtd GP";
+$lang["quantity_qa"] = "Qtd QA";
 $lang["quantity_add"] = "Qtd Adicional";
 $lang["sum_quantity"] = "Total Qtd";
 $lang["rate"] = "Custo/unidade";
@@ -2054,6 +2055,7 @@ $lang["use_template_from"] = "Usar modelo de";
 $lang["print_proposal"] = "Imprimir proposta";
 $lang["proposal_template_inserting_instruction"] = "Você perderá todas as alterações não salvas ao inserir um modelo.";
 $lang["gp_apart"] = "Separar GP";
+$lang["qa_apart"] = "Separar QA";
 
 $lang["default"] = "Predefinição";
 

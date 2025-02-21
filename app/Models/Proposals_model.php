@@ -55,6 +55,8 @@ class Proposals_model extends Crud_model {
 
         $proposal_quantity_gp_calculation = "(IFNULL(items_table.proposal_quantity_gp_total,0))";
 
+        $proposal_quantity_qa_calculation = "(IFNULL(items_table.proposal_quantity_qa_total,0))";
+
         $proposal_quantity_add_calculation = "(IFNULL(items_table.proposal_quantity_add_total,0))";
 
         $proposal_sum_quantity_calculation = "(IFNULL(items_table.proposal_sum_quantity_total,0))";
@@ -93,14 +95,14 @@ class Proposals_model extends Crud_model {
 
         $sql = "SELECT $proposals_table.*, $templates_table.title as template_name ,$clients_table.currency, $clients_table.currency_symbol, $clients_table.company_name, $clients_table.is_lead,
            CONCAT($users_table.first_name, ' ',$users_table.last_name) AS signer_name, $users_table.email AS signer_email,
-           $proposal_value_calculation AS proposal_value, (IFNULL(items_table.unit_type, '')) AS unit_type, $proposal_quantity_calculation AS proposal_quantity, $proposal_quantity_gp_calculation AS proposal_quantity_gp, $proposal_quantity_add_calculation AS proposal_quantity_add, $proposal_sum_quantity_calculation AS proposal_sum_quantity, tax_table.percentage AS tax_percentage, tax_table2.percentage AS tax_percentage2 $select_custom_fieds
+           $proposal_value_calculation AS proposal_value, (IFNULL(items_table.unit_type, '')) AS unit_type, $proposal_quantity_calculation AS proposal_quantity, $proposal_quantity_gp_calculation AS proposal_quantity_gp,  $proposal_quantity_qa_calculation AS proposal_quantity_qa, $proposal_quantity_add_calculation AS proposal_quantity_add, $proposal_sum_quantity_calculation AS proposal_sum_quantity, tax_table.percentage AS tax_percentage, tax_table2.percentage AS tax_percentage2 $select_custom_fieds
         FROM $proposals_table
         LEFT JOIN $templates_table ON $templates_table.id= $proposals_table.template_id
         LEFT JOIN $clients_table ON $clients_table.id= $proposals_table.client_id
         LEFT JOIN $users_table ON $users_table.id= $proposals_table.accepted_by
         LEFT JOIN (SELECT $taxes_table.* FROM $taxes_table) AS tax_table ON tax_table.id = $proposals_table.tax_id
         LEFT JOIN (SELECT $taxes_table.* FROM $taxes_table) AS tax_table2 ON tax_table2.id = $proposals_table.tax_id2 
-        LEFT JOIN (SELECT proposal_id, unit_type, SUM(total) AS proposal_value, SUM(quantity) AS proposal_quantity_total, SUM(quantity_add) AS proposal_quantity_add_total, SUM(quantity_gp) AS proposal_quantity_gp_total, SUM(quantity+quantity_gp+quantity_add) AS proposal_sum_quantity_total FROM $proposal_items_table WHERE deleted=0 GROUP BY proposal_id) AS items_table ON items_table.proposal_id = $proposals_table.id 
+        LEFT JOIN (SELECT proposal_id, unit_type, SUM(total) AS proposal_value, SUM(quantity) AS proposal_quantity_total, SUM(quantity_add) AS proposal_quantity_add_total, SUM(quantity_gp) AS proposal_quantity_gp_total, SUM(quantity_qa) AS proposal_quantity_qa_total, SUM(quantity+quantity_gp+quantity_qa+quantity_add) AS proposal_sum_quantity_total FROM $proposal_items_table WHERE deleted=0 GROUP BY proposal_id) AS items_table ON items_table.proposal_id = $proposals_table.id 
         $join_custom_fieds
         WHERE $proposals_table.deleted=0 $where $custom_fields_where";
         return $this->db->query($sql);
@@ -112,7 +114,7 @@ class Proposals_model extends Crud_model {
         $clients_table = $this->db->prefixTable('clients');
         $taxes_table = $this->db->prefixTable('taxes');
         
-        $item_sql = "SELECT SUM($proposal_items_table.total) AS proposal_subtotal, SUM($proposal_items_table.quantity + $proposal_items_table.quantity_gp + $proposal_items_table.quantity_add) AS proposal_total_sum_quantity, SUM($proposal_items_table.quantity) AS proposal_total_quantity, SUM($proposal_items_table.quantity_gp) AS proposal_total_quantity_gp, SUM($proposal_items_table.quantity_add) AS proposal_total_quantity_add, $proposal_items_table.unit_type 
+        $item_sql = "SELECT SUM($proposal_items_table.total) AS proposal_subtotal, SUM($proposal_items_table.quantity + $proposal_items_table.quantity_gp + $proposal_items_table.quantity_add) AS proposal_total_not_qa_sum_quantity, SUM($proposal_items_table.quantity + $proposal_items_table.quantity_qa + $proposal_items_table.quantity_add) AS proposal_total_not_gp_sum_quantity, SUM($proposal_items_table.quantity + $proposal_items_table.quantity_gp + $proposal_items_table.quantity_qa + $proposal_items_table.quantity_add) AS proposal_total_sum_quantity, SUM($proposal_items_table.quantity) AS proposal_total_quantity, SUM($proposal_items_table.quantity_gp) AS proposal_total_quantity_gp, SUM($proposal_items_table.quantity_qa) AS proposal_total_quantity_qa, SUM($proposal_items_table.quantity_add) AS proposal_total_quantity_add, $proposal_items_table.unit_type 
         FROM $proposal_items_table
         LEFT JOIN $proposals_table ON $proposals_table.id= $proposal_items_table.proposal_id    
         WHERE $proposal_items_table.deleted=0 AND $proposal_items_table.proposal_id=$proposal_id AND $proposals_table.deleted=0";
@@ -131,11 +133,16 @@ class Proposals_model extends Crud_model {
         
         $result = new \stdClass();
         $result->gp_apart = $proposal->gp_apart;
+        $result->qa_apart = $proposal->qa_apart;
         $result->proposal_subtotal = $item->proposal_subtotal;
-        $result->proposal_total_sum_quantity = $item->proposal_total_sum_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade somado gp+comum
+        $result->proposal_total_sum_quantity = $item->proposal_total_sum_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade somado qa+gp+comum
+        $result->proposal_total_not_qa_sum_quantity = $item->proposal_total_not_qa_sum_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade somado gp+comum
+        $result->proposal_total_not_gp_sum_quantity = $item->proposal_total_not_gp_sum_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade somado qa+comum
         $result->proposal_total_quantity_gp = $item->proposal_total_quantity_gp . ' ' . $item->unit_type; // Adicionado total de quantidade gp
+        $result->proposal_total_quantity_qa = $item->proposal_total_quantity_qa . ' ' . $item->unit_type; // Adicionado total de quantidade qa
         $result->proposal_total_quantity_add = $item->proposal_total_quantity_add . ' ' . $item->unit_type; // Adicionado total de quantidade gp
         $result->proposal_total_gp_quantity = (($item->proposal_total_quantity_gp ?? 0) + ($item->proposal_total_quantity_add ?? 0)). ' ' . $item->unit_type; // Adicionado total de quantidade gp
+        $result->proposal_total_qa_quantity = (($item->proposal_total_quantity_qa ?? 0) + ($item->proposal_total_quantity_add ?? 0)). ' ' . $item->unit_type; // Adicionado total de quantidade qa
         $result->proposal_total_quantity = $item->proposal_total_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade comum
         $result->tax_percentage = $proposal->tax_percentage;
         $result->tax_percentage2 = $proposal->tax_percentage2;
