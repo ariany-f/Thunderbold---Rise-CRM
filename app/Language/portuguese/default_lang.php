@@ -865,7 +865,7 @@ $lang["delete_estimate"] = "Excluir Orçamento";
 $lang["valid_until"] = "Válido até";
 $lang["estimate_date"] = "Data estimada";
 $lang["accepted"] = "Aceito";
-$lang["declined"] = "Recusado";
+$lang["declined"] = "Rejeitado";
 $lang["sent"] = "Enviado";
 $lang["estimate_preview"] = "Visualizar Orçamento";
 $lang["estimate_to"] = "Orçamento para";
@@ -883,7 +883,7 @@ $lang["mark_as_draft"] = "Marcar como Rascunho";
 $lang["mark_as_sent"] = "Marcar como Enviado";
 $lang["mark_as_accepted"] = "Marcar como Aceito";
 $lang["mark_as_rejected"] = "Marcar como Rejeitado";
-$lang["mark_as_declined"] = "Marcar como Recusado";
+$lang["mark_as_declined"] = "Marcar como Rejeitado";
 
 $lang["estimate_request_received"] = "Solicitação de orçamento recebida";
 $lang["estimate_sent"] = "Orçamento Enviado";
