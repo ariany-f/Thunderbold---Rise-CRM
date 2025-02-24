@@ -39,7 +39,7 @@
                         {text: '<?php echo app_lang("draft") ?>', value: "draft", isChecked: 1},
                         {text: '<?php echo app_lang("sent") ?>', value: "sent", isChecked: 1},
                         {text: '<?php echo app_lang("accepted") ?>', value: "accepted", isChecked: 1},
-                        {text: '<?php echo app_lang("rejected") ?>', value: "rejected", isChecked: 1},
+                        {text: '<?php echo app_lang("rejected") ?>', value: "declined", isChecked: 1},
                     ]
                 }
             ],
