@@ -74,8 +74,8 @@
                 <?php echo $custom_field_headers; ?>,
                 {visible: optionVisibility, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],
-            printColumns: combineCustomFieldsColumns([0, 1, 2, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
-            xlsColumns: combineCustomFieldsColumns([0, 1, 2, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
+            printColumns: combineCustomFieldsColumns([0, 1, 2, 3, 4, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
+            xlsColumns: combineCustomFieldsColumns([0, 1, 2, 3, 4, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
             onRelaodCallback: function (tableInstance, filterParams) {
                 
                 showHideAppTableColumn(tableInstance, 3, false);
