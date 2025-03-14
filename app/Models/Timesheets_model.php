@@ -296,7 +296,8 @@ class Timesheets_model extends Crud_model {
             $projects_table.title AS project_title,
             $projects_table.is_ticket AS project_is_ticket,
             $projects_table.client_id AS timesheet_client_id, 
-            (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id = $projects_table.client_id AND $clients_table.deleted = 0) AS timesheet_client_company_name
+            (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id = $projects_table.client_id AND $clients_table.deleted = 0) AS timesheet_client_company_name,
+            COALESCE(manager_info.manager_total_duration, 0) AS manager_total_duration
         FROM (
             SELECT DISTINCT
                 $project_settings_table.setting_value,
@@ -329,13 +330,16 @@ class Timesheets_model extends Crud_model {
                 $project_resources_table.user_id AS manager_id,
                 $project_resources_table.hour_amount AS manager_hour_amount,
                 CONCAT(project_resources_user.first_name, ' ', project_resources_user.last_name) AS manager_user,
-                project_resources_user.image AS manager_avatar
+                project_resources_user.image AS manager_avatar,
+                SUM((TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time) + ROUND(($timesheet_table.hours * 60), 0) * 60)) AS manager_total_duration
             FROM 
                 $project_resources_table
                 LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id = $project_resources_table.user_id
+                LEFT JOIN $timesheet_table ON $timesheet_table.user_id = rise_project_resources.user_id
             WHERE 
                 $project_resources_table.is_leader = 1 
                 AND $project_resources_table.deleted = 0
+            GROUP BY $project_resources_table.project_id
         ) AS manager_info ON manager_info.project_id = new_summary_table.project_id
         WHERE 1 = 1 $where_manager
         GROUP BY $group_general";
