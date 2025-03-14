@@ -141,10 +141,10 @@ class Timesheets_model extends Crud_model {
             SUM($timesheet_table.consultant_amount) AS project_resources_amount, 
             SUM($timesheet_table.consultant_amount * ((TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time) + ROUND(($timesheet_table.hours * 60), 0) * 60) / 3600)) AS project_resources_amount_by_duration,
             SUM($timesheet_table.client_amount * ((TIMESTAMPDIFF(SECOND, $timesheet_table.start_time, $timesheet_table.end_time) + ROUND(($timesheet_table.hours * 60), 0) * 60) / 3600)) AS project_client_amount_by_duration,
-            $project_resources_table.user_id AS manager_id, 
-            $project_resources_table.hour_amount AS manager_hour_amount, 
-            CONCAT(project_resources_user.first_name, ' ',project_resources_user.last_name) AS manager_user, 
-            project_resources_user.image as manager_avatar, 
+            manager_info.manager_id, 
+            manager_info.manager_hour_amount, 
+            manager_info.manager_user, 
+            manager_info.manager_avatar, 
             CONCAT($users_table.first_name, ' ',$users_table.last_name) AS logged_by_user, 
             $users_table.image as logged_by_avatar,
             $tasks_table.title AS task_title, 
@@ -157,8 +157,19 @@ class Timesheets_model extends Crud_model {
         LEFT JOIN $users_table ON $users_table.id= $timesheet_table.user_id
         LEFT JOIN $tasks_table ON $tasks_table.id= $timesheet_table.task_id
         LEFT JOIN $projects_table ON $projects_table.id= $timesheet_table.project_id
-        LEFT JOIN $project_resources_table ON $project_resources_table.project_id= $timesheet_table.project_id AND $project_resources_table.is_leader=1 AND $project_resources_table.deleted=0
-        LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id= $project_resources_table.user_id
+        LEFT JOIN ( SELECT 
+                $project_resources_table.project_id,
+                $project_resources_table.user_id AS manager_id,
+                $project_resources_table.hour_amount AS manager_hour_amount,
+                CONCAT(project_resources_user.first_name, ' ', project_resources_user.last_name) AS manager_user,
+                project_resources_user.image AS manager_avatar
+            FROM 
+                $project_resources_table
+                LEFT JOIN $users_table AS project_resources_user ON project_resources_user.id = $project_resources_table.user_id
+            WHERE 
+                $project_resources_table.is_leader = 1 
+                AND $project_resources_table.deleted = 0 
+            ) AS manager_info ON manager_info.project_id = $timesheet_table.project_id
         $join_custom_fieds
         WHERE $timesheet_table.deleted=0 $where $custom_fields_where GROUP BY $timesheet_table.id
         $order $limit_offset";
