@@ -169,6 +169,7 @@ class Timesheets_model extends Crud_model {
             WHERE 
                 $project_resources_table.is_leader = 1 
                 AND $project_resources_table.deleted = 0 
+            GROUP BY $project_resources_table.project_id -- Garante apenas um gerente por projeto
             ) AS manager_info ON manager_info.project_id = $timesheet_table.project_id
         $join_custom_fieds
         WHERE $timesheet_table.deleted=0 $where $custom_fields_where GROUP BY $timesheet_table.id
