@@ -2368,6 +2368,37 @@ class Projects extends Security_Controller {
         }
     }
 
+    private function _get_timesheet_tasks_dropdown_filtered_by_client($client_id, $return_json = false) {
+        $tasks_dropdown = array("" => "-");
+        $tasks_dropdown_json = array(array("id" => "", "text" => "- " . app_lang("task") . " -"));
+
+        $show_assigned_tasks_only_user_id = $this->show_assigned_tasks_only_user_id();
+        if (!$show_assigned_tasks_only_user_id) {
+            $timesheet_manage_permission = get_array_value($this->login_user->permissions, "timesheet_manage_permission");
+            if (!$timesheet_manage_permission || $timesheet_manage_permission === "own") {
+                //show only own tasks when the permission is no/own
+                $show_assigned_tasks_only_user_id = $this->login_user->id;
+            }
+        }
+
+        $options = array(
+            "client_id" => $client_id
+        );
+
+        $tasks = $this->Tasks_model->get_details($options)->getResult();
+
+        foreach ($tasks as $task) {
+            $tasks_dropdown_json[] = array("id" => $task->id, "text" => $task->id . " - " . $task->title);
+            $tasks_dropdown[$task->id] = $task->id . " - " . $task->title;
+        }
+
+        if ($return_json) {
+            return json_encode($tasks_dropdown_json);
+        } else {
+            return $tasks_dropdown;
+        }
+    }
+
     /* start/stop project timer */
 
     function timer($project_id, $timer_status = "start") {
@@ -2620,6 +2651,45 @@ class Projects extends Security_Controller {
 
         return $this->template->view('projects/timesheets/modal_form', $view_data);
     }
+    
+
+    /* load timelog transfer modal */
+    function timelog_modal_transfer_form() {
+        $this->access_only_team_members();
+        $view_data['time_format_24_hours'] = get_setting("time_format") == "24_hours" ? true : false;
+        $model_info = $this->Timesheets_model->get_one($this->request->getPost('id'));
+        $project_id = $this->request->getPost('project_id') ? $this->request->getPost('project_id') : $model_info->project_id;
+        $task_id = $this->request->getPost('task_id') ? $this->request->getPost('task_id') : $model_info->task_id;
+        
+        $options['id'] = $this->request->getPost('id');
+        $timesheet = $this->Timesheets_model->get_summary_details($options)->getResult();
+        $client_id = $timesheet[0]->timesheet_client_id;
+
+        //set the login user as a default selected member
+        if (!$model_info->user_id) {
+            $model_info->user_id = $this->login_user->id;
+        }
+
+        //get related data
+        $related_data = $this->_prepare_all_related_data_for_transfer_timelog($client_id);
+        $view_data["tasks_dropdown"] = get_array_value($related_data, "tasks_dropdown");
+
+        $view_data["model_info"] = $model_info;
+
+        if ($model_info->id) {
+            $show_porject_members_dropdown = false; //don't allow to edit the user on update.
+        }
+
+        $view_data["client_id"] = $client_id;
+        $view_data["project_id"] = $project_id;
+        $view_data["task_id"] = $task_id;
+        $view_data['show_porject_members_dropdown'] = $show_porject_members_dropdown;
+        $view_data["projects_dropdown"] = $this->_get_projects_dropdown();
+
+        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("timesheets", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+
+        return $this->template->view('projects/timesheets/modal_transfer_form', $view_data);
+    }
 
     private function _prepare_all_related_data_for_timelog($project_id = 0) {
         //we have to check if any defined project exists, then go through with the project id
@@ -2674,6 +2744,30 @@ class Projects extends Security_Controller {
         }
     }
 
+    private function _prepare_all_related_data_for_transfer_timelog($client_id = 0) {
+        //we have to check if any defined project exists, then go through with the project id
+        $show_porject_members_dropdown = false;
+       
+        $tasks_dropdown = $this->_get_timesheet_tasks_dropdown_filtered_by_client($client_id, true);
+
+
+        return array(
+            "tasks_dropdown" => $tasks_dropdown
+        );
+    }
+
+    function get_all_related_data_of_selected_project_for_transfer_timelog($client_id = "") {
+        validate_numeric_value($client_id);
+        if ($client_id) {
+            $related_data = $this->_prepare_all_related_data_for_transfer_timelog($client_id);
+
+            echo json_encode(array(
+                "tasks_dropdown" => json_decode(get_array_value($related_data, "tasks_dropdown"))
+            ));
+        }
+    }
+
+
     // Função para calcular dias úteis anteriores
     function get_working_days($days, $date) {
         $count = 0;
@@ -2686,6 +2780,28 @@ class Projects extends Security_Controller {
             }
         }
         return $date;
+    }
+
+    /* insert/update a timelog */
+    function transfer_timelog() {
+        $this->access_only_team_members();
+        $id = $this->request->getPost('id');
+        $task_id = $this->request->getPost("task_id");
+
+        $options['id'] = $task_id;
+        $task = $this->Tasks_model->get_details($options)->getResult();
+
+        $data = array(
+            "project_id" => current($task)->project_id,
+            "task_id" => $task_id ? $task_id : 0
+        );
+
+        $save_id = $this->Timesheets_model->ci_save($data, $id);
+        if ($save_id) {
+            echo json_encode(array("success" => true, "data" => $this->_timesheet_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
     }
 
     /* insert/update a timelog */
@@ -3209,6 +3325,7 @@ class Projects extends Security_Controller {
         }
 
         $options = modal_anchor(get_uri("projects/timelog_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_timelog'), "data-post-id" => $data->id))
+                .modal_anchor(get_uri("projects/timelog_modal_transfer_form"), "<i data-feather='external-link' class='icon-16'></i>", array("class" => "delete", "title" => app_lang('transfer_timelog'), "data-post-id" => $data->id, "data-action" => "delete"))
                 . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_timelog'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("projects/delete_timelog"), "data-action" => "delete"));
 
         $timesheet_manage_permission = get_array_value($this->login_user->permissions, "timesheet_manage_permission");
