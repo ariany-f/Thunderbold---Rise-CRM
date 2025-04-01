@@ -141,9 +141,9 @@ class Proposals_model extends Crud_model {
         $result->proposal_total_quantity_gp = $item->proposal_total_quantity_gp . ' ' . $item->unit_type; // Adicionado total de quantidade gp
         $result->proposal_total_quantity_qa = $item->proposal_total_quantity_qa . ' ' . $item->unit_type; // Adicionado total de quantidade qa
         $result->proposal_total_quantity_add = $item->proposal_total_quantity_add . ' ' . $item->unit_type; // Adicionado total de quantidade gp
-        $result->proposal_total_gp_quantity = (($item->proposal_total_quantity_gp ?? 0) + ($item->proposal_total_quantity_add ?? 0)). ' ' . $item->unit_type; // Adicionado total de quantidade gp
-        $result->proposal_total_qa_quantity = (($item->proposal_total_quantity_qa ?? 0) + ($item->proposal_total_quantity_add ?? 0)). ' ' . $item->unit_type; // Adicionado total de quantidade qa
-        $result->proposal_total_quantity = $item->proposal_total_quantity . ' ' . $item->unit_type; // Adicionado total de quantidade comum
+        $result->proposal_total_gp_quantity = (($item->proposal_total_quantity_gp ?? 0)). ' ' . $item->unit_type; // Adicionado total de quantidade gp
+        $result->proposal_total_qa_quantity = (($item->proposal_total_quantity_qa ?? 0)). ' ' . $item->unit_type; // Adicionado total de quantidade qa
+        $result->proposal_total_quantity = $item->proposal_total_quantity + ($item->proposal_total_quantity_add ?? 0) . ' ' . $item->unit_type; // Adicionado total de quantidade comum
         $result->tax_percentage = $proposal->tax_percentage;
         $result->tax_percentage2 = $proposal->tax_percentage2;
         $result->tax_name = $proposal->tax_name;
