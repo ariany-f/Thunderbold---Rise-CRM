@@ -198,7 +198,8 @@
                 {column: 5, dataType: 'number'},
                 {column: 6, dataType: 'number'},
                 {column: 7, dataType: 'number'},
-                {column: 8, dataType: 'currency', currencySymbol: '<?php echo $proposal_total_summary->currency_symbol; ?>'}
+                {column: 8, dataType: 'number'},
+                {column: 9, dataType: 'currency', currencySymbol: '<?php echo $proposal_total_summary->currency_symbol; ?>'}
             ],
             // footerCallback: function (row, data, start, end, display) {
                 

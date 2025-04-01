@@ -453,6 +453,7 @@ $lang["entry_date_out_of_range"] = "A data de entrada está fora do intervalo pe
 $lang["log_time"] = "Registro de Horário";
 $lang["timesheet_total"] = "Qtd Hr Registradas";
 $lang["edit_timelog"] = "Editar registro de horário";
+$lang["transfer_timelog"] = "Transferir registro de horário";
 $lang["delete_timelog"] = "Deletar registro de horário";
 $lang["timesheet_statistics"] = "Estatísticas da Gestão de Tempo";
 

@@ -45,15 +45,15 @@ $total_after_discount_row = '<tr>
             </td>
             <!--<td style="text-align: right; width: 20%; border: 1px solid #fff;"> <?php echo to_currency($item->rate, $item->currency_symbol); ?></td>-->
             <?php if($proposal_total_summary->gp_apart && $proposal_total_summary->qa_apart) : ?>
-                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity . " " . $item->unit_type; ?></td>
-                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_gp + ($item->quantity_add ?? 0)) . " " . $item->unit_type; ?></td>
-                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_qa + ($item->quantity_add ?? 0)) . " " . $item->unit_type; ?></td>
+                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity + ($item->quantity_add ?? 0)) . " " . $item->unit_type; ?></td>
+                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_gp) . " " . $item->unit_type; ?></td>
+                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_qa) . " " . $item->unit_type; ?></td>
             <?php elseif($proposal_total_summary->gp_apart) : ?>
-                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity + $item->quantity_qa. " " . $item->unit_type; ?></td>
-                <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_gp + ($item->quantity_add ?? 0)) . " " . $item->unit_type; ?></td>
+                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity + $item->quantity_qa + ($item->quantity_add ?? 0)). " " . $item->unit_type; ?></td>
+                <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_gp) . " " . $item->unit_type; ?></td>
             <?php elseif($proposal_total_summary->qa_apart) : ?>
-                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity + $item->quantity_gp . " " . $item->unit_type; ?></td>
-                <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_qa + ($item->quantity_add ?? 0)) . " " . $item->unit_type; ?></td>
+                <td style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo $item->quantity + $item->quantity_gp + ($item->quantity_add ?? 0) . " " . $item->unit_type; ?></td>
+                <td colspan="2" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity_qa) . " " . $item->unit_type; ?></td>
             <?php else: ?>
                 <td colspan="3" style="text-align: center; width: 10%; border: 1px solid #fff;"> <?php echo ($item->quantity + $item->quantity_gp + $item->quantity_qa + ($item->quantity_add ?? 0)) . " " . $item->unit_type; ?></td>
             <?php endif; ?>
