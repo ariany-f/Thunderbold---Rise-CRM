@@ -7,6 +7,7 @@
         <td class="w10p text-center"><?php //echo app_lang("sub_total"); ?></td>
         <td class="w10p text-center"><?php //echo $proposal_total_summary->proposal_total_quantity; ?></td>
         <td class="w5p text-right"><?php //echo ($proposal_total_summary->proposal_total_quantity_gp ?? 0); ?></td>
+        <td class="w5p text-right"><?php //echo ($proposal_total_summary->proposal_total_quantity_qa ?? 0); ?></td>
         <td class="w5p text-right"><?php //echo ($proposal_total_summary->proposal_total_quantity_add ?? 0); ?></td>
         <td class="w5p text-center"><?php //echo $proposal_total_summary->proposal_total_sum_quantity; ?></td>
         <td class="w5p text-center"><?php //echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?></td>

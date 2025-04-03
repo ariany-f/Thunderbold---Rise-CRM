@@ -77,6 +77,7 @@ class Messages_model extends Crud_model {
             COALESCE($tasks_table.title, '') AS task_title,
             COALESCE($tasks_table.status, '') AS task_status,
             COALESCE($task_status_table.key_name, '') AS task_status_key_name,
+            COALESCE($tasks_status_table.color, '') AS task_status_color,
             CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, 
             $users_table.image AS user_image, 
             $users_table.user_type, 

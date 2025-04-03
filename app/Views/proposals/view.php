@@ -187,6 +187,7 @@
                 {title: "<?php echo app_lang("rate") ?>", "class": "text-center w5p", "bSortable": false},
                 {title: "<?php echo app_lang("quantity") ?>", "class": "text-center w10p", "bSortable": false},
                 {title: "<?php echo app_lang("quantity_gp") ?>", "class": "text-center w5p", "bSortable": false},
+                {title: "<?php echo app_lang("quantity_qa") ?>", "class": "text-center w5p", "bSortable": false},
                 {title: "<?php echo app_lang("quantity_add") ?>", "class": "text-center w5p", "bSortable": false},
                 {title: "<?php echo app_lang("sum_quantity") ?>", "class": "text-center w5p", "bSortable": false},
                 {title: "<?php echo app_lang("total") ?>", "class": "text-right w5p", "bSortable": false},
@@ -197,7 +198,8 @@
                 {column: 5, dataType: 'number'},
                 {column: 6, dataType: 'number'},
                 {column: 7, dataType: 'number'},
-                {column: 8, dataType: 'currency', currencySymbol: '<?php echo $proposal_total_summary->currency_symbol; ?>'}
+                {column: 8, dataType: 'number'},
+                {column: 9, dataType: 'currency', currencySymbol: '<?php echo $proposal_total_summary->currency_symbol; ?>'}
             ],
             // footerCallback: function (row, data, start, end, display) {
                 
@@ -212,6 +214,7 @@
             //         dataTotal[3] = "<td><?php //echo app_lang("sub_total"); ?></td>";
             //         dataTotal[4] = "<td><?php //echo $proposal_total_summary->proposal_total_quantity; ?></td>";
             //         dataTotal[5] = "<td><?php //echo ($proposal_total_summary->proposal_total_quantity_gp ?? 0); ?></td>";
+            //         dataTotal[5] = "<td><?php //echo ($proposal_total_summary->proposal_total_quantity_qa ?? 0); ?></td>";
             //         dataTotal[6] = "<td><?php //echo ($proposal_total_summary->proposal_total_quantity_add ?? 0); ?></td>";
             //         dataTotal[7] = "<td><?php //echo $proposal_total_summary->proposal_total_sum_quantity; ?></td>";
             //         dataTotal[8] = "<td><?php //echo to_currency($proposal_total_summary->proposal_subtotal, $proposal_total_summary->currency_symbol); ?></td>";

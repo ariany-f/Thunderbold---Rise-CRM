@@ -39,7 +39,7 @@
                         {text: '<?php echo app_lang("draft") ?>', value: "draft", isChecked: 1},
                         {text: '<?php echo app_lang("sent") ?>', value: "sent", isChecked: 1},
                         {text: '<?php echo app_lang("accepted") ?>', value: "accepted", isChecked: 1},
-                        {text: '<?php echo app_lang("rejected") ?>', value: "rejected", isChecked: 1},
+                        {text: '<?php echo app_lang("rejected") ?>', value: "declined", isChecked: 1},
                     ]
                 }
             ],
@@ -58,6 +58,7 @@
                 {title: "<?php echo app_lang("amount") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("quantity") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("quantity_gp") ?>", "class": "text-right w5p"},
+                {title: "<?php echo app_lang("quantity_qa") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("quantity_add") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("sum_quantity") ?>", "class": "text-right w5p"},
                 {title: "<?php echo app_lang("status") ?>", "class": "text-center"}

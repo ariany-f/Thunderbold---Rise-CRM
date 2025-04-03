@@ -878,7 +878,7 @@ class Notifications_model extends Crud_model {
 
     /* prepare notifications of new events */
 
-    function get_notifications($user_id, $offset = 0, $limit = 20) {
+    function get_notifications($user_id, $offset = 0, $limit = 20, $event = "") {
         $notifications_table = $this->db->prefixTable('notifications');
         $users_table = $this->db->prefixTable('users');
         $projects_table = $this->db->prefixTable('projects');
@@ -899,6 +899,30 @@ class Notifications_model extends Crud_model {
         $estimates_table = $this->db->prefixTable('estimates');
         $proposals_table = $this->db->prefixTable('proposals');
         $estimate_comments_table = $this->db->prefixTable('estimate_comments');
+
+        $where = "";
+        if($event != "")
+        {
+            switch($event)
+            {
+                case 'projetos':
+                    $event = 'project';
+                    break;
+                case 'propostas':
+                    $event = 'proposal';
+                    break;
+                case 'mensagens':
+                    $event = 'message';
+                    break;
+                default:
+                    $event = null;
+
+            }
+            if($event)
+            {
+                $where .= " AND $notifications_table.event LIKE '%$event%'";
+            }
+        }
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS $notifications_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS user_name, $users_table.image AS user_image,
                  $projects_table.title AS project_title,
@@ -938,9 +962,9 @@ class Notifications_model extends Crud_model {
         LEFT JOIN $events_table ON $events_table.id=$notifications_table.event_id
         LEFT JOIN $announcements_table ON $announcements_table.id=$notifications_table.announcement_id
         LEFT JOIN $estimate_comments_table ON $estimate_comments_table.id=$notifications_table.estimate_comment_id
-        WHERE $notifications_table.deleted=0 AND FIND_IN_SET($user_id, $notifications_table.notify_to) != 0
+        WHERE $notifications_table.deleted=0 AND FIND_IN_SET($user_id, $notifications_table.notify_to) != 0 $where
         ORDER BY $notifications_table.id DESC LIMIT $offset, $limit";
-
+       
         $data = new \stdClass();
         $data->result = $this->db->query($sql)->getResult();
         $data->found_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow()->found_rows;

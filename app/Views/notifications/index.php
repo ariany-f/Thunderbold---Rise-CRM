@@ -6,6 +6,7 @@
         <div>
             <?php
             $view_data["notifications"] = $notifications;
+            $view_data["event"] = $event;
 
             echo view("notifications/list_data", $view_data);
             ?>

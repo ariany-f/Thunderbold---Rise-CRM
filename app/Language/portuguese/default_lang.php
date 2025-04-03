@@ -447,10 +447,13 @@ $lang["history"] = "Histórico";
 
 /* timesheet */
 $lang["timesheets"] = "Gestão de Tempo";
+$lang["days_to_save_timesheets"] = "Dias permitidos para salvar rat";
 $lang["resources"] = "Gestão de Recursos";
+$lang["entry_date_out_of_range"] = "A data de entrada está fora do intervalo permitido para gravação de rat";
 $lang["log_time"] = "Registro de Horário";
 $lang["timesheet_total"] = "Qtd Hr Registradas";
 $lang["edit_timelog"] = "Editar registro de horário";
+$lang["transfer_timelog"] = "Transferir registro de horário";
 $lang["delete_timelog"] = "Deletar registro de horário";
 $lang["timesheet_statistics"] = "Estatísticas da Gestão de Tempo";
 
@@ -491,6 +494,8 @@ $lang["labels"] = "Tags";
 $lang["to_do"] = "Esperando";
 $lang["in_validation"] = "Em Validação";
 $lang["quality"] = "Qualidade";
+$lang["next_activity"] = "Próxima Atividade";
+$lang["próxima_atividade"] = "Próxima Atividade";
 $lang["in_progress"] = "Em progresso";
 $lang["client_response"] = "Cliente Respondeu";
 $lang["qualidade"] = "Qualidade";
@@ -583,6 +588,7 @@ $lang["create_new_item"] = "Criar novo item";
 $lang["select_or_create_new_item"] = "Escolher da lista ou criar novo item ...";
 $lang["quantity"] = "Qtd";
 $lang["quantity_gp"] = "Qtd GP";
+$lang["quantity_qa"] = "Qtd QA";
 $lang["quantity_add"] = "Qtd Adicional";
 $lang["sum_quantity"] = "Total Qtd";
 $lang["rate"] = "Custo/unidade";
@@ -861,7 +867,7 @@ $lang["delete_estimate"] = "Excluir Orçamento";
 $lang["valid_until"] = "Válido até";
 $lang["estimate_date"] = "Data estimada";
 $lang["accepted"] = "Aceito";
-$lang["declined"] = "Recusado";
+$lang["declined"] = "Rejeitado";
 $lang["sent"] = "Enviado";
 $lang["estimate_preview"] = "Visualizar Orçamento";
 $lang["estimate_to"] = "Orçamento para";
@@ -879,7 +885,7 @@ $lang["mark_as_draft"] = "Marcar como Rascunho";
 $lang["mark_as_sent"] = "Marcar como Enviado";
 $lang["mark_as_accepted"] = "Marcar como Aceito";
 $lang["mark_as_rejected"] = "Marcar como Rejeitado";
-$lang["mark_as_declined"] = "Marcar como Recusado";
+$lang["mark_as_declined"] = "Marcar como Rejeitado";
 
 $lang["estimate_request_received"] = "Solicitação de orçamento recebida";
 $lang["estimate_sent"] = "Orçamento Enviado";
@@ -2052,6 +2058,7 @@ $lang["use_template_from"] = "Usar modelo de";
 $lang["print_proposal"] = "Imprimir proposta";
 $lang["proposal_template_inserting_instruction"] = "Você perderá todas as alterações não salvas ao inserir um modelo.";
 $lang["gp_apart"] = "Separar GP";
+$lang["qa_apart"] = "Separar QA";
 
 $lang["default"] = "Predefinição";
 

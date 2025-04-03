@@ -177,7 +177,7 @@
                                             $status_class = 'bg-green';
                                         }
 
-                                        $status = "<span class='badge ".$status_class."'>" . ($message_info->task_status_key_name ? app_lang($message_info->task_status_key_name) : $message_info->task_status) . "</span>";
+                                        $status = "<span style='background-color:".$message_info->task_color."' class='badge ".$status_class."'>" . ($message_info->task_status_key_name ? app_lang($message_info->task_status_key_name) : $message_info->task_status) . "</span>";
 
                                         echo modal_anchor(get_uri("projects/task_view"), 'Tarefa: #' . $message_info->task_id . ' ' . $message_info->subject, array("title" => app_lang('task_info') . " #$message_info->task_id", "data-post-id" => $message_info->task_id, "data-modal-lg" => "1"))?> <?php echo $status; ?>
                                     <?php } else { ?>
