@@ -494,6 +494,7 @@ $lang["labels"] = "Tags";
 $lang["to_do"] = "Esperando";
 $lang["in_validation"] = "Em Validação";
 $lang["quality"] = "Qualidade";
+$lang["next_activity"] = "Próxima Atividade";
 $lang["próxima_atividade"] = "Próxima Atividade";
 $lang["in_progress"] = "Em progresso";
 $lang["client_response"] = "Cliente Respondeu";
