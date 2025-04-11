@@ -104,6 +104,22 @@ class Proposals extends Security_Controller {
         return $clients_dropdown;
     }
 
+    function unlock($id = 0)
+    {
+        if(!$id) {
+            show_404();
+        }
+
+        $data['lock_change'] = 0;
+        if($this->Proposals_model->ci_save($data, $id)) {
+            echo json_encode(array("success" => true, 'message' => app_lang('record_changed')));
+        }
+        else
+        {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
     function save_view() {
         $this->access_only_allowed_members();
 
@@ -117,7 +133,8 @@ class Proposals extends Security_Controller {
             "content" => decode_ajax_post_data($this->request->getPost('view')),
             "template_id" => $this->request->getPost('template_id'),
             "gp_apart" => $this->request->getPost('gp_apart'),
-            "qa_apart" => $this->request->getPost('qa_apart')
+            "qa_apart" => $this->request->getPost('qa_apart'),
+            'lock_change' => $this->request->getPost('lock_change')
         );
 
         $this->Proposals_model->ci_save($proposal_data, $id);
