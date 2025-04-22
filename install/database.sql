@@ -903,6 +903,7 @@ CREATE TABLE IF NOT EXISTS `proposals` (
   `content` mediumtext COLLATE utf8_unicode_ci NOT NULL,
   `gp_apart` tinyint(1) NOT NULL DEFAULT '0',
   `qa_apart` tinyint(1) NOT NULL DEFAULT '0',
+  `lock_change` tinyint(1) NOT NULL DEFAULT '0',
   `template_id` int(11) NOT NULL DEFAULT '0',
   `public_key` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `accepted_by` INT(11) NOT NULL DEFAULT '0',
