@@ -65,9 +65,6 @@
             columns: [
                 {title: '<?php echo app_lang("id") ?>', "class": "all w50"},
                 {title: '<?php echo app_lang("title") ?>', "class": "all w300"},
-                // {title: '<?php// echo app_lang("client") ?>', "class": "w10p"},
-                // {visible: false, searchable: false},
-                // {title: '<?php// echo app_lang("start_date") ?>', "class": "w10p", "iDataSort": 4},
                 <?php echo $status_columns; ?> // Colunas de status dinamicamente geradas
                 {title: '<?php echo app_lang("members") ?>', "class": "w10p"},
                 {visible: false, title: '<?php echo app_lang("progress") ?>', "class": "w10p"},
