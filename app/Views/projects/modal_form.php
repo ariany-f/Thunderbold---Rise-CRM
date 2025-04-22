@@ -37,7 +37,7 @@
                         echo form_dropdown("project_type", array(
                             "client_project" => app_lang("client_project"),
                             "internal_project" => app_lang("internal_project"),
-                                ), array($model_info->project_type ? $model_info->project_type : "client_project"), "class='select2 validate-hidden' data-rule-required='true', data-msg-required='" . app_lang('field_required') . "' id='project-type-dropdown'");
+                                ), array($model_info->project_type ? $model_info->project_type : "client_project"), "class='select2 validate-hidden', data-msg-required='" . app_lang('field_required') . "' id='project-type-dropdown'");
                         ?>
                     </div>
                 </div>
