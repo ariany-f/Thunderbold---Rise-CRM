@@ -857,6 +857,7 @@ if (!function_exists('open_projects_widget')) {
         } else {
             $options = array(
                 "is_contact" => ($ci->login_user->user_type == "client" ? 1 : 0),
+                "is_ticket" => 0,
                 "user_id" => $user_id ? $user_id : $ci->login_user->id
             );
         }
