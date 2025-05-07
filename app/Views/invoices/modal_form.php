@@ -399,6 +399,7 @@
 
         $("#invoice-form").appForm({
             onSuccess: function (result) {
+                console.log(RELOAD_VIEW_AFTER_UPDATE);
                 if (typeof RELOAD_VIEW_AFTER_UPDATE !== "undefined" && RELOAD_VIEW_AFTER_UPDATE) {
                     location.reload();
                 } else {
