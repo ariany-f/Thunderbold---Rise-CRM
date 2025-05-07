@@ -389,7 +389,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         if ("<?php echo $estimate_id; ?>" || "<?php echo $proposal_id; ?>" || "<?php echo $order_id; ?>" || "<?php echo $contract_id; ?>") {
-            RELOAD_VIEW_AFTER_UPDATE = false; //go to related page
+            RELOAD_VIEW_AFTER_UPDATE = true; //go to related page
         }
 
         var uploadUrl = "<?php echo get_uri("invoices/upload_file"); ?>";
