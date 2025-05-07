@@ -852,7 +852,8 @@ if (!function_exists('open_projects_widget')) {
 
         if ($ci->login_user->is_admin) {
             $options = array(
-                "user_id" => ""
+                "user_id" => "",
+                "is_ticket" => 0
             );
         } else {
             $options = array(
@@ -948,10 +949,13 @@ if (!function_exists('my_open_projects_widget')) {
         if ($ci->login_user->user_type == "client") {
             $options["client_id"] = $client_id;
             $options["is_contact"] = 1;
+            $options["is_ticket"] = 0;
         } else if ($ci->login_user->is_admin) {
             $options["user_id"] = "";
+            $options["is_ticket"] = 0;
         } else {
             $options["user_id"] = $ci->login_user->id;
+            $options["is_ticket"] = 0;
         }
 
         $view_data["projects"] = $ci->Projects_model->get_details($options)->getResult();
