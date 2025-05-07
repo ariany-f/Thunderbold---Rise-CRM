@@ -949,6 +949,7 @@ if (!function_exists('my_open_projects_widget')) {
         if ($ci->login_user->user_type == "client") {
             $options["client_id"] = $client_id;
             $options["is_contact"] = 1;
+            $options["user_id"] = $ci->login_user->id;
             $options["is_ticket"] = 0;
         } else if ($ci->login_user->is_admin) {
             $options["user_id"] = "";
