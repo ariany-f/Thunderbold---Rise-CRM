@@ -213,6 +213,13 @@ class Projects_model extends Crud_model {
             $extra_where = " AND project_members_table.user_id=$user_id";
         }
 
+        $is_ticket = $this->_get_clean_value($options, "is_ticket");
+        if(isset($is_ticket) && ((!empty($is_ticket)) || ($is_ticket == 1 || $is_ticket == 0)))
+        {
+            $extra_where .= " AND $projects_table.is_ticket='$is_ticket'";
+        }
+
+
         $is_contact = $this->_get_clean_value($options, "is_contact");
         // Para projetos com contatos de clientes adicionados, o projeto só aparece para o contato logado caso ele esteja listado, caso não hajam contatos cadastrados como membros, o projeto aparece para todos os contatos
         if ($is_contact && $user_id) {
@@ -238,7 +245,8 @@ class Projects_model extends Crud_model {
         $sql = "SELECT $projects_table.status, COUNT($projects_table.id) as total
         FROM $projects_table
               $extra_join    
-        WHERE $projects_table.deleted=0 AND $projects_table.is_ticket = 0 AND ($projects_table.status='open' OR  $projects_table.status='completed' OR $projects_table.status='hold') $extra_where
+        WHERE $projects_table.deleted=0 AND ($projects_table.status='open' OR  $projects_table.status='completed' OR $projects_table.status='hold')
+        $extra_where
         GROUP BY $projects_table.status";
         $result = $this->db->query($sql)->getResult();
 
