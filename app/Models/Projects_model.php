@@ -214,8 +214,8 @@ class Projects_model extends Crud_model {
         }
 
         $is_contact = $this->_get_clean_value($options, "is_contact");
-         // Para projetos com contatos de clientes adicionados, o projeto só aparece para o contato logado caso ele esteja listado, caso não hajam contatos cadastrados como membros, o projeto aparece para todos os contatos
-         if ($is_contact && $user_id) {
+        // Para projetos com contatos de clientes adicionados, o projeto só aparece para o contato logado caso ele esteja listado, caso não hajam contatos cadastrados como membros, o projeto aparece para todos os contatos
+        if ($is_contact && $user_id) {
             $extra_join = " LEFT JOIN (SELECT $project_members_table.project_id 
                 FROM $project_members_table) AS project_members_table 
                 ON project_members_table.project_id = $projects_table.id";

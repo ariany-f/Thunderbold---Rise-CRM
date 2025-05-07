@@ -484,6 +484,7 @@ $lang["file_preview_is_not_available"] = "A visualização do arquivo não está
 $lang["add_task"] = "Add tarefa";
 $lang["edit_task"] = "Editar tarefa";
 $lang["delete_task"] = "Deletar tarefa";
+$lang["subir_para_qa"] = "Subir para QA";
 $lang["task"] = "Tarefa";
 $lang["tasks"] = "Tarefas";
 $lang["my_tasks"] = "Minhas Tarefas";
@@ -504,6 +505,8 @@ $lang["done"] = "Concluído";
 $lang["task_info"] = "Informações da tarefa";
 $lang["points"] = "Pontos";
 $lang["point"] = "Ponto";
+$lang["lock_change"] = "Bloquear alteração de template";
+$lang["unlock"] = "Desbloquear mudança de template";
 $lang["task_status"] = "Status da tarefa";
 
 /* comments */
