@@ -103,6 +103,7 @@
                     
                     // Aplica o filtro do cliente se existir
                     if (urlClientId) {
+                        console.log(urlClientId);
                         $("select[name='client_id']").val(urlClientId).trigger("change");
                         
                         // Se tiver project_id, aguarda o carregamento dos projetos
@@ -116,6 +117,7 @@
 
                     // Aplica os filtros de data se existirem
                     if (urlStartDate && urlEndDate) {
+                        console.log(urlStartDate, urlEndDate);
                         // Aguarda um momento para garantir que o datepicker esteja pronto
                         setTimeout(function() {
                             $("#start_date").val(urlStartDate);
