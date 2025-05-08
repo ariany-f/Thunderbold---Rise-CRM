@@ -98,7 +98,9 @@
             },
             summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}],
             drawCallback: function() {
+                console.log("drawCallback 1");
                 if (!tableInitialized) {
+                    console.log("drawCallback 2");
                     tableInitialized = true;
                     
                     // Aplica o filtro do cliente se existir
@@ -126,6 +128,8 @@
                             $("#start_date, #end_date").trigger("change");
                         }, 100);
                     }
+                }else{
+                    console.log("drawCallback 3");
                 }
             }
         });
