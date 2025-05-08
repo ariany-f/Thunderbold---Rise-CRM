@@ -110,9 +110,7 @@
             onInitComplete: function() {
                 console.log("initComplete");
                 if (!tableInitialized) {
-                    console.log("Aplicando filtros");
-                    tableInitialized = true;
-                    
+
                     // Aplica o filtro do cliente se existir
                     if (urlClientId) {
                         console.log("Aplicando client_id:", urlClientId);
@@ -133,7 +131,7 @@
                         console.log("Aplicando datas:", urlStartDate, urlEndDate);
                         
                         var datepickerr = $(".datepicker");
-                            console.log(datepickerr);
+                        console.log(datepickerr);
                         // Função para tentar aplicar as datas
                         function tryApplyDates() {
                             var $datepicker = $(".datepicker");
@@ -151,6 +149,14 @@
 
                         // Inicia a tentativa de aplicar as datas
                         // setTimeout(tryApplyDates, 100);
+                    }
+
+                    
+                    if(urlClientId || urlProjectId || urlStartDate || urlEndDate) {
+                    
+                        tableInitialized = true;
+
+                        $("#timesheet-details-button").trigger("click");
                     }
                 }
             }
