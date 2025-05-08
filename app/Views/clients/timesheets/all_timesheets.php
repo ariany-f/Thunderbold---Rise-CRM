@@ -34,7 +34,6 @@
         }
 
         // Obtém os parâmetros da URL
-        var urlClientId = getUrlParameter('client_id');
         var urlProjectId = getUrlParameter('project_id');
         var urlStartDate = getUrlParameter('start_date');
         var urlEndDate = getUrlParameter('end_date');
@@ -99,7 +98,7 @@
                         }, 2000);
                     }
 
-                    if(urlClientId || urlProjectId || urlStartDate || urlEndDate) {
+                    if(urlProjectId || urlStartDate || urlEndDate) {
                         tableInitialized = true;
                         $("#timesheet-details-button").trigger("click");
                     }

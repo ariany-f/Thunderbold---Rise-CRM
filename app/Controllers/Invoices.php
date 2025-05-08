@@ -635,7 +635,6 @@ class Invoices extends Security_Controller {
             // Preparar URL com os filtros
             if($invoice_info->start_timesheet_filter && $invoice_info->end_timesheet_filter && $invoice_info->client_id && $invoice_info->project_id) {
                 $timesheet_url = get_uri("clients/all_timesheets") . "?";
-                $timesheet_url .= "client_id=" . $invoice_info->client_id;
                 $timesheet_url .= "&project_id=" . $invoice_info->project_id;
                 $timesheet_url .= "&start_date=" . $invoice_info->start_timesheet_filter;
                 $timesheet_url .= "&end_date=" . $invoice_info->end_timesheet_filter;
