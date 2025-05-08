@@ -123,10 +123,21 @@
                         console.log("Aplicando datas:", urlStartDate, urlEndDate);
                         // Aguarda um momento para garantir que o datepicker esteja pronto
                         setTimeout(function() {
-                            $("#start_date").val(urlStartDate);
-                            $("#end_date").val(urlEndDate);
-                            // Dispara o evento de mudança para atualizar a tabela
-                            $("#start_date, #end_date").trigger("change");
+                            // Verifica se o datepicker está inicializado
+                            if ($("#start_date").data('daterangepicker')) {
+                                $("#start_date").data('daterangepicker').setStartDate(urlStartDate);
+                                $("#start_date").data('daterangepicker').setEndDate(urlEndDate);
+                                // Dispara o evento de mudança para atualizar a tabela
+                                $("#start_date").trigger("change");
+                            } else {
+                                console.log("Datepicker ainda não inicializado, tentando novamente...");
+                                // Tenta novamente após um pequeno delay
+                                setTimeout(function() {
+                                    $("#start_date").data('daterangepicker').setStartDate(urlStartDate);
+                                    $("#start_date").data('daterangepicker').setEndDate(urlEndDate);
+                                    $("#start_date").trigger("change");
+                                }, 200);
+                            }
                         }, 100);
                     }
                 }
