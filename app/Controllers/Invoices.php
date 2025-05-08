@@ -554,11 +554,22 @@ class Invoices extends Security_Controller {
 
         $due = to_currency($data->invoice_value - $data->payment_received, $data->currency_symbol);
 
+        $ticket_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>';
+        $project_icon = ' <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid icon"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>';
+
+        if($data->is_ticket && $data->project_title) {
+            $project_title = $ticket_icon . $data->project_title;
+        } else if($data->project_title) {
+            $project_title = $project_icon . $data->project_title;
+        } else {
+            $project_title = "-";
+        }
+
         $row_data = array(
             $data->id,
             $invoice_url,
             anchor(get_uri("clients/view/" . $data->client_id), $data->company_name),
-            $data->project_title ? anchor(get_uri("projects/view/" . $data->project_id), $data->project_title) : "-",
+            $data->project_title ? anchor(get_uri("projects/view/" . $data->project_id), $project_title) : "-",
             $data->bill_date,
             format_to_date($data->bill_date, false),
             $data->due_date,

@@ -136,7 +136,7 @@ class Invoices_model extends Crud_model {
         $join_custom_fieds = get_array_value($custom_field_query_info, "join_string");
         $custom_fields_where = get_array_value($custom_field_query_info, "where_string");
 
-        $sql = "SELECT $invoices_table.*, $clients_table.currency, $clients_table.currency_symbol, $clients_table.company_name, $projects_table.title AS project_title,
+        $sql = "SELECT $invoices_table.*, $clients_table.currency, $clients_table.currency_symbol, $clients_table.company_name, $projects_table.title AS project_title, $projects_table.is_ticket,
            $invoice_value_calculation_query AS invoice_value, IFNULL(payments_table.payment_received,0) AS payment_received, tax_table.percentage AS tax_percentage, tax_table2.percentage AS tax_percentage2, tax_table3.percentage AS tax_percentage3, CONCAT($users_table.first_name, ' ',$users_table.last_name) AS cancelled_by_user, $select_labels_data_query $select_custom_fieds
         FROM $invoices_table
         LEFT JOIN $clients_table ON $clients_table.id= $invoices_table.client_id
