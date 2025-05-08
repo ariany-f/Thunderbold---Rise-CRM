@@ -610,27 +610,43 @@ class Invoices extends Security_Controller {
             $edit = '<li role="presentation">' . modal_anchor(get_uri("invoices/modal_form"), "<i data-feather='edit' class='icon-16'></i> " . app_lang('edit'), array("title" => app_lang('edit_invoice'), "data-post-id" => $invoice_id, "class" => "dropdown-item")) . '</li>';
             $delete = '<li role="presentation">' . js_anchor("<i data-feather='x' class='icon-16'></i>" . app_lang('delete'), array('title' => app_lang('delete_invoice'), "class" => "delete dropdown-item", "data-id" => $invoice_id, "data-action-url" => get_uri("invoices/delete"), "data-action" => "delete-confirmation")) . '</li>';
             $add_payment = '<li role="presentation">' . modal_anchor(get_uri("invoice_payments/payment_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_payment'), array("title" => app_lang('add_payment'), "data-post-invoice_id" => $invoice_id, "class" => "dropdown-item")) . '</li>';
+             // Buscar informações da fatura para os filtros
+            $invoice_info = $this->Invoices_model->get_one($invoice_id);
+            
+            // Preparar URL com os filtros
+            if($invoice_info->start_timesheet_filter && $invoice_info->end_timesheet_filter && $invoice_info->client_id && $invoice_info->project_id) {
+                $timesheet_url = get_uri("projects/all_timesheets") . "?";
+                $timesheet_url .= "client_id=" . $invoice_info->client_id;
+                $timesheet_url .= "&project_id=" . $invoice_info->project_id;
+                $timesheet_url .= "&start_date=" . $invoice_info->start_timesheet_filter;
+                $timesheet_url .= "&end_date=" . $invoice_info->end_timesheet_filter;
+
+                $view_details = '<li role="presentation">' . anchor($timesheet_url, "<i data-feather='eye' class='icon-16'></i> Ver Detalhes", array("title" => "Ver Detalhes", "class" => "dropdown-item")) . '</li>';
+            } else {
+                $view_details = '';
+            }
         } else {
             $edit = '';
             $delete = '';
             $add_payment = '';
+             // Buscar informações da fatura para os filtros
+            $invoice_info = $this->Invoices_model->get_one($invoice_id);
+            
+            // Preparar URL com os filtros
+            if($invoice_info->start_timesheet_filter && $invoice_info->end_timesheet_filter && $invoice_info->client_id && $invoice_info->project_id) {
+                $timesheet_url = get_uri("clients/all_timesheets") . "?";
+                $timesheet_url .= "client_id=" . $invoice_info->client_id;
+                $timesheet_url .= "&project_id=" . $invoice_info->project_id;
+                $timesheet_url .= "&start_date=" . $invoice_info->start_timesheet_filter;
+                $timesheet_url .= "&end_date=" . $invoice_info->end_timesheet_filter;
+
+                $view_details = '<li role="presentation">' . anchor($timesheet_url, "<i data-feather='eye' class='icon-16'></i> Ver Detalhes", array("title" => "Ver Detalhes", "class" => "dropdown-item")) . '</li>';
+            } else {
+                $view_details = '';
+            }
         }
 
-        // Buscar informações da fatura para os filtros
-        $invoice_info = $this->Invoices_model->get_one($invoice_id);
-        
-        // Preparar URL com os filtros
-        if($invoice_info->start_timesheet_filter && $invoice_info->end_timesheet_filter && $invoice_info->client_id && $invoice_info->project_id) {
-            $timesheet_url = get_uri("projects/all_timesheets") . "?";
-            $timesheet_url .= "client_id=" . $invoice_info->client_id;
-            $timesheet_url .= "&project_id=" . $invoice_info->project_id;
-            $timesheet_url .= "&start_date=" . $invoice_info->start_timesheet_filter;
-            $timesheet_url .= "&end_date=" . $invoice_info->end_timesheet_filter;
-
-            $view_details = '<li role="presentation">' . anchor($timesheet_url, "<i data-feather='eye' class='icon-16'></i> Ver Detalhes", array("title" => "Ver Detalhes", "class" => "dropdown-item")) . '</li>';
-        } else {
-            $view_details = '';
-        }
+       
         return '
                 <span class="dropdown inline-block">
                     <button class="btn btn-default dropdown-toggle caret mt0 mb0" type="button" data-bs-toggle="dropdown" aria-expanded="true" data-bs-display="static">
