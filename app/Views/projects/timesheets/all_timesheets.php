@@ -132,12 +132,12 @@
                                 $datepicker.trigger("change");
                             } else {
                                 console.log("Datepicker não encontrado, tentando novamente...");
-                                setTimeout(tryApplyDates, 200);
+                                // setTimeout(tryApplyDates, 200);
                             }
                         }
 
                         // Inicia a tentativa de aplicar as datas
-                        setTimeout(tryApplyDates, 100);
+                        // setTimeout(tryApplyDates, 100);
                     }
                 }
             }
