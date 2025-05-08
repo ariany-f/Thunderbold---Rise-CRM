@@ -122,7 +122,7 @@
                             // Aguarda o carregamento dos projetos após o client_id
                             setTimeout(function() {
                                 $("select[name='project_id']").val(urlProjectId).trigger("change");
-                            }, 1000);
+                            }, 2000);
                         }
                     }
 
