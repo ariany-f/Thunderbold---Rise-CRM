@@ -97,7 +97,7 @@
                 clearAppTableState(tableInstance);
             },
             summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}],
-            initComplete: function() {
+            onInitComplete: function() {
                 console.log("initComplete");
                 if (!tableInitialized) {
                     console.log("Aplicando filtros");
