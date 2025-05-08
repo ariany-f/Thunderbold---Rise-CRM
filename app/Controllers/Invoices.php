@@ -569,7 +569,9 @@ class Invoices extends Security_Controller {
         
         $nfe_tags = "";
         foreach ($nfe as $nfe_number) {
-            $nfe_tags .= "<span class='badge bg-primary me-1'>" . $nfe_number . "</span>";
+            if($nfe_number != "-") {
+                $nfe_tags .= "<span class='badge bg-green fs-12 me-1'><b>" . $nfe_number . "</b></span>";
+            }
         }
         $nfe = $nfe_tags;
 
