@@ -97,19 +97,20 @@
                 clearAppTableState(tableInstance);
             },
             summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}],
-            drawCallback: function() {
-                console.log("drawCallback 1");
+            initComplete: function() {
+                console.log("initComplete");
                 if (!tableInitialized) {
-                    console.log("drawCallback 2");
+                    console.log("Aplicando filtros");
                     tableInitialized = true;
                     
                     // Aplica o filtro do cliente se existir
                     if (urlClientId) {
-                        console.log(urlClientId);
+                        console.log("Aplicando client_id:", urlClientId);
                         $("select[name='client_id']").val(urlClientId).trigger("change");
                         
                         // Se tiver project_id, aguarda o carregamento dos projetos
                         if (urlProjectId) {
+                            console.log("Aguardando para aplicar project_id:", urlProjectId);
                             // Aguarda o carregamento dos projetos após o client_id
                             setTimeout(function() {
                                 $("select[name='project_id']").val(urlProjectId).trigger("change");
@@ -119,7 +120,7 @@
 
                     // Aplica os filtros de data se existirem
                     if (urlStartDate && urlEndDate) {
-                        console.log(urlStartDate, urlEndDate);
+                        console.log("Aplicando datas:", urlStartDate, urlEndDate);
                         // Aguarda um momento para garantir que o datepicker esteja pronto
                         setTimeout(function() {
                             $("#start_date").val(urlStartDate);
@@ -128,8 +129,6 @@
                             $("#start_date, #end_date").trigger("change");
                         }, 100);
                     }
-                }else{
-                    console.log("drawCallback 3");
                 }
             }
         });
