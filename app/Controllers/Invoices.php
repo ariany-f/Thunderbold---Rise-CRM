@@ -420,7 +420,7 @@ class Invoices extends Security_Controller {
 
         //don't show draft invoices to client
         if ($this->login_user->user_type == "client") {
-            // $options["exclude_draft"] = true;
+            $options["exclude_draft"] = true;
         }
 
 
