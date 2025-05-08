@@ -28,18 +28,32 @@
             endTimeVisibility = false;
 <?php } ?>
     
-    var optionVisibility = false;
-    <?php if ($login_user->user_type === "staff" && ($login_user->is_admin || get_array_value($login_user->permissions, "timesheet_manage_permission"))) { ?>
-                optionVisibility = true;
-    <?php } ?>
-    
-    
+        var optionVisibility = false;
+        <?php if ($login_user->user_type === "staff" && ($login_user->is_admin || get_array_value($login_user->permissions, "timesheet_manage_permission"))) { ?>
+                    optionVisibility = true;
+        <?php } ?>
+        
         var projectAmount = false;
         <?php if ($login_user->is_admin) { ?>
                 projectAmount = true;
         <?php } ?>
 
-        $("#all-project-timesheet-table").appTable({
+        // Função para obter parâmetros da URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Obtém os parâmetros da URL
+        var urlClientId = getUrlParameter('client_id');
+        var urlProjectId = getUrlParameter('project_id');
+        var urlStartDate = getUrlParameter('start_date');
+        var urlEndDate = getUrlParameter('end_date');
+        var tableInitialized = false;
+
+        var table = $("#all-project-timesheet-table").appTable({
             source: '<?php echo_uri("projects/timesheet_list_data/") ?>',
             stateSave:true,
             filterDropdown: [
@@ -77,13 +91,41 @@
             printColumns: combineCustomFieldsColumns([0, 1, 2, 3, 4, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([0, 1, 2, 3, 4, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
             onRelaodCallback: function (tableInstance, filterParams) {
-                
                 showHideAppTableColumn(tableInstance, 3, false);
                 showHideAppTableColumn(tableInstance, 6, false);
                 showHideAppTableColumn(tableInstance, 9, false);
                 clearAppTableState(tableInstance);
             },
-            summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}]
+            summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}],
+            drawCallback: function() {
+                if (!tableInitialized) {
+                    tableInitialized = true;
+                    
+                    // Aplica o filtro do cliente se existir
+                    if (urlClientId) {
+                        $("select[name='client_id']").val(urlClientId).trigger("change");
+                        
+                        // Se tiver project_id, aguarda o carregamento dos projetos
+                        if (urlProjectId) {
+                            // Aguarda o carregamento dos projetos após o client_id
+                            setTimeout(function() {
+                                $("select[name='project_id']").val(urlProjectId).trigger("change");
+                            }, 500);
+                        }
+                    }
+
+                    // Aplica os filtros de data se existirem
+                    if (urlStartDate && urlEndDate) {
+                        // Aguarda um momento para garantir que o datepicker esteja pronto
+                        setTimeout(function() {
+                            $("#start_date").val(urlStartDate);
+                            $("#end_date").val(urlEndDate);
+                            // Dispara o evento de mudança para atualizar a tabela
+                            $("#start_date, #end_date").trigger("change");
+                        }, 100);
+                    }
+                }
+            }
         });
     });
 </script>
