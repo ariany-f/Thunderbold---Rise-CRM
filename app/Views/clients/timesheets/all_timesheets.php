@@ -86,16 +86,14 @@
             },
             summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}],
             onInitComplete: function() {
-                console.log("initComplete");
                 if (!tableInitialized) {
                     console.log("Aplicando filtros");
                     
                     // Se tiver project_id, aguarda o carregamento dos projetos
                     if (urlProjectId) {
-                        console.log("Aguardando para aplicar project_id:", urlProjectId);
                         setTimeout(function() {
                             $("select[name='project_id']").val(urlProjectId).trigger("change");
-                        }, 2000);
+                        }, 1000);
                     }
 
                     if(urlProjectId || urlStartDate || urlEndDate) {
