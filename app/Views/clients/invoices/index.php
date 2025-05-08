@@ -48,8 +48,11 @@
                 {title: "<?php echo app_lang("total_invoiced") ?>", "class": "w10p text-right"},
                 {title: "<?php echo app_lang("payment_received") ?>", "class": "w10p text-right"},
                 {title: "<?php echo app_lang("due") ?>", "class": "w10p text-right"},
-                {title: '<?php echo app_lang("status") ?>', "class": "w10p text-center"}
-<?php echo $custom_field_headers; ?>
+                {title: '<?php echo app_lang("status") ?>', "class": "w10p text-center"},
+                {title: "<?php echo app_lang("start_timesheet_filter") ?>"},
+                {title: "<?php echo app_lang("end_timesheet_filter") ?>"}
+                <?php echo $custom_field_headers; ?>,
+                {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center dropdown-option w100", visible: optionVisibility}
             ],
             printColumns: combineCustomFieldsColumns([1, 3, 5, 7, 8, 9, 10, 11], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([1, 3, 5, 7, 8, 9, 10, 11], '<?php echo $custom_field_headers; ?>'),

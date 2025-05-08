@@ -605,11 +605,16 @@ class Invoices extends Security_Controller {
 
     //prepare options dropdown for invoices list
     private function _make_options_dropdown($invoice_id = 0) {
-        $edit = '<li role="presentation">' . modal_anchor(get_uri("invoices/modal_form"), "<i data-feather='edit' class='icon-16'></i> " . app_lang('edit'), array("title" => app_lang('edit_invoice'), "data-post-id" => $invoice_id, "class" => "dropdown-item")) . '</li>';
 
-        $delete = '<li role="presentation">' . js_anchor("<i data-feather='x' class='icon-16'></i>" . app_lang('delete'), array('title' => app_lang('delete_invoice'), "class" => "delete dropdown-item", "data-id" => $invoice_id, "data-action-url" => get_uri("invoices/delete"), "data-action" => "delete-confirmation")) . '</li>';
-
-        $add_payment = '<li role="presentation">' . modal_anchor(get_uri("invoice_payments/payment_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_payment'), array("title" => app_lang('add_payment'), "data-post-invoice_id" => $invoice_id, "class" => "dropdown-item")) . '</li>';
+        if($this->login_user->is_admin) {
+            $edit = '<li role="presentation">' . modal_anchor(get_uri("invoices/modal_form"), "<i data-feather='edit' class='icon-16'></i> " . app_lang('edit'), array("title" => app_lang('edit_invoice'), "data-post-id" => $invoice_id, "class" => "dropdown-item")) . '</li>';
+            $delete = '<li role="presentation">' . js_anchor("<i data-feather='x' class='icon-16'></i>" . app_lang('delete'), array('title' => app_lang('delete_invoice'), "class" => "delete dropdown-item", "data-id" => $invoice_id, "data-action-url" => get_uri("invoices/delete"), "data-action" => "delete-confirmation")) . '</li>';
+            $add_payment = '<li role="presentation">' . modal_anchor(get_uri("invoice_payments/payment_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_payment'), array("title" => app_lang('add_payment'), "data-post-invoice_id" => $invoice_id, "class" => "dropdown-item")) . '</li>';
+        } else {
+            $edit = '';
+            $delete = '';
+            $add_payment = '';
+        }
 
         // Buscar informações da fatura para os filtros
         $invoice_info = $this->Invoices_model->get_one($invoice_id);
