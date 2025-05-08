@@ -565,6 +565,14 @@ class Invoices extends Security_Controller {
             $project_title = "-";
         }
 
+        $nfe = $data->nfe_number ? ($data->nfe_number ? (strpos($data->nfe_number, ',') !== false ? explode(',', $data->nfe_number) : array($data->nfe_number)) : array("-")) : array("-");
+        
+        $nfe_tags = "";
+        foreach ($nfe as $nfe_number) {
+            $nfe_tags .= "<span class='badge bg-primary me-1'>" . $nfe_number . "</span>";
+        }
+        $nfe = $nfe_tags;
+
         $row_data = array(
             $data->id,
             $invoice_url,
@@ -574,7 +582,7 @@ class Invoices extends Security_Controller {
             format_to_date($data->bill_date, false),
             $data->due_date,
             format_to_date($data->due_date, false),
-            $data->nfe_number,
+            $nfe,
             to_currency($data->invoice_value, $data->currency_symbol),
             to_currency($data->payment_received, $data->currency_symbol),
             $due,
