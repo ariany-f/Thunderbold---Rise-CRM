@@ -52,7 +52,7 @@
                 {title: "<?php echo app_lang("start_timesheet_filter") ?>"},
                 {title: "<?php echo app_lang("end_timesheet_filter") ?>"}
                 <?php echo $custom_field_headers; ?>,
-                {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center dropdown-option w100", visible: optionVisibility}
+                {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center dropdown-option w100", visible: true}
             ],
             printColumns: combineCustomFieldsColumns([1, 3, 5, 7, 8, 9, 10, 11], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([1, 3, 5, 7, 8, 9, 10, 11], '<?php echo $custom_field_headers; ?>'),
