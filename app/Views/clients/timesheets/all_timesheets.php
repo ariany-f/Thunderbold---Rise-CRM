@@ -25,14 +25,38 @@
         var optionVisibility = false;    
         var projectAmount = false;
 
+        // Função para obter parâmetros da URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Obtém os parâmetros da URL
+        var urlClientId = getUrlParameter('client_id');
+        var urlProjectId = getUrlParameter('project_id');
+        var urlStartDate = getUrlParameter('start_date');
+        var urlEndDate = getUrlParameter('end_date');
+        var tableInitialized = false;
+
         $("#all-project-timesheet-table").appTable({
             source: '<?php echo_uri("projects/timesheet_client_list_data/") ?>',
             filterDropdown: [
-                {name: "project_id", class: "w200", options: <?php echo $projects_dropdown; ?>, dependency: ["client_id"], dataSource: '<?php echo_uri("projects/get_projects_of_selected_client_for_filter") ?>', selfDependency: true} //projects are dependent on client. but we have to show all projects, if there is no selected client
+                {name: "project_id", class: "w200", options: <?php echo $projects_dropdown; ?>, dependency: ["client_id"], dataSource: '<?php echo_uri("projects/get_projects_of_selected_client_for_filter") ?>', selfDependency: true}
                 , <?php echo $custom_field_filters; ?>
             ],
-            //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
-            dateRangeType: "monthly",
+            rangeDatepicker: [{
+                startDate: {
+                    name: "start_date",
+                    value: urlStartDate || ""
+                },
+                endDate: {
+                    name: "end_date",
+                    value: urlEndDate || ""
+                },
+                showClearButton: true
+            }],
             columns: [
                 {visible: false},
                 {title: "<?php echo app_lang('project') ?>", order_by: "project"},
@@ -56,13 +80,31 @@
             printColumns: combineCustomFieldsColumns([0, 1, 2, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
             xlsColumns: combineCustomFieldsColumns([0, 1, 2, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
             onRelaodCallback: function (tableInstance, filterParams) {
-                
                 showHideAppTableColumn(tableInstance, 3, false);
                 showHideAppTableColumn(tableInstance, 6, false);
                 showHideAppTableColumn(tableInstance, 9, false);
                 clearAppTableState(tableInstance);
             },
-            summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}]
+            summation: [{column: 8, dataType: 'time'}, {column: 10, dataType: 'currency'}, {column: 12, dataType: 'currency'}, {column: 14, dataType: 'currency'},  {column: 15, dataType: 'currency'}],
+            onInitComplete: function() {
+                console.log("initComplete");
+                if (!tableInitialized) {
+                    console.log("Aplicando filtros");
+                    
+                    // Se tiver project_id, aguarda o carregamento dos projetos
+                    if (urlProjectId) {
+                        console.log("Aguardando para aplicar project_id:", urlProjectId);
+                        setTimeout(function() {
+                            $("select[name='project_id']").val(urlProjectId).trigger("change");
+                        }, 2000);
+                    }
+
+                    if(urlClientId || urlProjectId || urlStartDate || urlEndDate) {
+                        tableInitialized = true;
+                        $("#timesheet-details-button").trigger("click");
+                    }
+                }
+            }
         });
     });
 </script>
