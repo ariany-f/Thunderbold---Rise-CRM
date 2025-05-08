@@ -122,9 +122,12 @@
                     if (urlStartDate && urlEndDate) {
                         console.log("Aplicando datas:", urlStartDate, urlEndDate);
                         
+                        var datepickerr = $(".datepicker");
+                            console.log(datepickerr);
                         // Função para tentar aplicar as datas
                         function tryApplyDates() {
-                            var $datepicker = $("#start_date");
+                            var $datepicker = $(".datepicker");
+                            console.log($datepicker);
                             if ($datepicker.length && $datepicker.data('daterangepicker')) {
                                 console.log("Datepicker encontrado, aplicando datas");
                                 $datepicker.data('daterangepicker').setStartDate(moment(urlStartDate));
