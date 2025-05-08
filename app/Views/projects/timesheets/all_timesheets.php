@@ -121,24 +121,23 @@
                     // Aplica os filtros de data se existirem
                     if (urlStartDate && urlEndDate) {
                         console.log("Aplicando datas:", urlStartDate, urlEndDate);
-                        // Aguarda um momento para garantir que o datepicker esteja pronto
-                        setTimeout(function() {
-                            // Verifica se o datepicker está inicializado
-                            if ($("#start_date").data('daterangepicker')) {
-                                $("#start_date").data('daterangepicker').setStartDate(urlStartDate);
-                                $("#start_date").data('daterangepicker').setEndDate(urlEndDate);
-                                // Dispara o evento de mudança para atualizar a tabela
-                                $("#start_date").trigger("change");
+                        
+                        // Função para tentar aplicar as datas
+                        function tryApplyDates() {
+                            var $datepicker = $("#start_date");
+                            if ($datepicker.length && $datepicker.data('daterangepicker')) {
+                                console.log("Datepicker encontrado, aplicando datas");
+                                $datepicker.data('daterangepicker').setStartDate(moment(urlStartDate));
+                                $datepicker.data('daterangepicker').setEndDate(moment(urlEndDate));
+                                $datepicker.trigger("change");
                             } else {
-                                console.log("Datepicker ainda não inicializado, tentando novamente...");
-                                // Tenta novamente após um pequeno delay
-                                setTimeout(function() {
-                                    $("#start_date").data('daterangepicker').setStartDate(urlStartDate);
-                                    $("#start_date").data('daterangepicker').setEndDate(urlEndDate);
-                                    $("#start_date").trigger("change");
-                                }, 200);
+                                console.log("Datepicker não encontrado, tentando novamente...");
+                                setTimeout(tryApplyDates, 200);
                             }
-                        }, 100);
+                        }
+
+                        // Inicia a tentativa de aplicar as datas
+                        setTimeout(tryApplyDates, 100);
                     }
                 }
             }
