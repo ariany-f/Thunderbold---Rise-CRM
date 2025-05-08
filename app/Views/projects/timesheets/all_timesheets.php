@@ -65,7 +65,17 @@
 <?php } ?>
                 , <?php echo $custom_field_filters; ?>
             ],
-
+            rangeDatepicker: [{
+                startDate: {
+                    name: "start_date",
+                    value: urlStartDate || ""
+                },
+                endDate: {
+                    name: "end_date",
+                    value: urlEndDate || ""
+                },
+                showClearButton: true
+            }],
             //rangeDatepicker: [{startDate: {name: "start_date", value: moment().format("YYYY-MM-DD")}, endDate: {name: "end_date", value: moment().format("YYYY-MM-DD")}, showClearButton: true}],
             dateRangeType: "monthly",
             columns: [
